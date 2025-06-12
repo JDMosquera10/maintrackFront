@@ -1,0 +1,34 @@
+@keyframes sharedAnimation {
+  to {
+    height: 0;
+    opacity: 1;
+    background-color: 'red';
+  }
+}
+.animated-class {
+  animation: sharedAnimation 1s;
+}
+
+.open {
+  height: '200px';
+  opacity: 1;
+  background-color: 'yellow';
+  transition: all 1s;
+}
+.closed {
+  height: '100px';
+  opacity: 0.8;
+  background-color: 'blue';
+  transition: all 1s;
+}
+
+
+.example-element {
+  transition-duration: 1s;
+  transition-delay: 500ms;
+  transition-timing-function: ease-in-out;
+  transition-property: margin-right;
+}
+.example-shorthand {
+  transition: margin-right 1s ease-in-out 500ms;
+}

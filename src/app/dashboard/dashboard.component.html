@@ -1,0 +1,34 @@
+<!-- <div class="dashboard-wrapper">
+  <div class="card-grid">
+    <mat-card class="stat-card" *ngFor="let stat of stats">
+      <mat-card-header>
+        <mat-icon>{{ stat.icon }}</mat-icon>
+        <div class="title">{{ stat.label }}</div>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="value">{{ stat.value }}</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div> -->
+
+
+<mat-drawer-container class="example-container" autosize="false">
+  <mat-drawer #drawer class="example-sidenav" mode="side">
+    <!-- <p>Auto-resizing sidenav</p>
+    @if (showFiller) {
+      <p>Lorem, ipsum dolor sit amet consectetur.</p>
+    }
+    <button (click)="showFiller = !showFiller" mat-raised-button>
+      Toggle extra text
+    </button> -->
+    <app-sidebar></app-sidebar>
+  </mat-drawer>
+
+  <div class="example-sidenav-content">
+    <button type="button" mat-button (click)="drawer.toggle()">
+      Toggle sidenav
+    </button>
+  </div>
+
+</mat-drawer-container>
