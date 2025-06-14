@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 export type Image = {
-  src: string;  
+  src: string;
   title: string;
   description: string;
+  path: string;
 };
 
 @Component({
@@ -14,21 +15,37 @@ export type Image = {
   styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
+  @Output() actionComponent = new EventEmitter<string>();
+
   images: Image[] = [
     {
       src: 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen.png',
-      title: 'Imagen de prueba',
-      description: 'Esta es una imagen de prueba para el sidebar.',
+      title: 'Dashboard',
+      path: '/dashboard',
+      description: 'Puedes ver el estado general del sistema aquí.',
     },
     {
       src: 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen2.png',
-      title: 'Imagen de prueba 2',
-      description: 'Esta es una imagen de prueba 2 para el sidebar.',
+      title: 'Gestión de maquinas',
+      path: '/machines',
+      description: 'Registra y edita las maquinas de tu sistema.',
+    },
+    {
+      src: 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen4.png',
+      title: 'Gestión de mantenimientos',
+      path: '/maintenances',
+      description: 'Registra y edita los mantenimientos de tu sistema.',
     },
     {
       src: 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen3.png',
-      title: 'Imagen de prueba 3',
-      description: 'Esta es una imagen de prueba 3 para el sidebar.',
+      title: 'Tabla de máquinas',
+      path: '/machines-table',
+      description: 'mira los detalles de tus maquinas registradas en una lista.',
     }
   ];
+
+
+  onActionComponent(data: Image) {
+    this.actionComponent.emit(data.path);
+  }
 }

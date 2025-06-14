@@ -4,13 +4,27 @@
 // oscuro chimba
 @use '@angular/material' as mat;
 
+
 html {
   color-scheme: light dark;
-  @include mat.theme((
-    color: mat.$violet-palette,
-    typography: Roboto,
-    density: 0
-  ));
+  @include mat.theme((color: mat.$violet-palette,
+      typography: Roboto,
+      density: 0));
+}
+
+
+.pie-label {
+    color: white;
+    font-size: 11px;
+}
+
+.router-outlet {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 // claro
@@ -67,5 +81,13 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

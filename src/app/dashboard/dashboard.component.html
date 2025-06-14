@@ -1,34 +1,103 @@
-<!-- <div class="dashboard-wrapper">
-  <div class="card-grid">
-    <mat-card class="stat-card" *ngFor="let stat of stats">
-      <mat-card-header>
-        <mat-icon>{{ stat.icon }}</mat-icon>
-        <div class="title">{{ stat.label }}</div>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="value">{{ stat.value }}</div>
-      </mat-card-content>
+<div class="mat-header-strong">
+    <h1 class="size-title">Dashboard</h1>
+</div>
+<!-- tarjetas con detalles -->
+<div class="content-cards">
+    <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header class="mat-header-strong">
+            <mat-card-title class="size-title">32</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p class="mat-body-strong">Total máquinas</p>
+        </mat-card-content>
     </mat-card>
-  </div>
-</div> -->
 
+    <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header class="mat-header-strong">
+            <mat-card-title class="size-title">32</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p class="mat-body-strong">Mantenimientos pendientes</p>
+        </mat-card-content>
+    </mat-card>
 
-<mat-drawer-container class="example-container" autosize="false">
-  <mat-drawer #drawer class="example-sidenav" mode="side">
-    <!-- <p>Auto-resizing sidenav</p>
-    @if (showFiller) {
-      <p>Lorem, ipsum dolor sit amet consectetur.</p>
-    }
-    <button (click)="showFiller = !showFiller" mat-raised-button>
-      Toggle extra text
-    </button> -->
-    <app-sidebar></app-sidebar>
-  </mat-drawer>
+    <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header class="mat-header-strong">
+            <mat-card-title class="size-title">32</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p class="mat-body-strong">Mantenimientos realizados</p>
+        </mat-card-content>
+    </mat-card>
 
-  <div class="example-sidenav-content">
-    <button type="button" mat-button (click)="drawer.toggle()">
-      Toggle sidenav
-    </button>
-  </div>
+    <mat-card class="stat-card" appearance="outlined">
+        <mat-card-header class="mat-header-strong">
+            <mat-card-title class="size-title">32</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <p class="mat-body-strong">Próximos a vencer</p>
+        </mat-card-content>
+    </mat-card>
+</div>
+<div class="content-cards">
+    <div class="chart-container">
+        <!-- Tabla de detalles -->
+        <mat-card class="chart-card" appearance="outlined">
+            <mat-card-header class="mat-header-strong" style="height: 100%;">
+                <mat-card-title>Alertas</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="">
+                <div class="mat-elevation-z8">
+                    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                        <!-- Position Column -->
+                        <ng-container matColumnDef="model">
+                            <th mat-header-cell *matHeaderCellDef> Modelo </th>
+                            <td mat-cell *matCellDef="let element"> {{element.model}} </td>
+                        </ng-container>
 
-</mat-drawer-container>
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="serie">
+                            <th mat-header-cell *matHeaderCellDef> Serie </th>
+                            <td mat-cell *matCellDef="let element"> {{element.serie}} </td>
+                        </ng-container>
+
+                        <!-- Weight Column -->
+                        <ng-container matColumnDef="timeUse">
+                            <th mat-header-cell *matHeaderCellDef> Tiempo de uso </th>
+                            <td mat-cell *matCellDef="let element"> {{element.timeUse}} </td>
+                        </ng-container>
+
+                        <!-- Symbol Column -->
+                        <ng-container matColumnDef="client">
+                            <th mat-header-cell *matHeaderCellDef> Cliente </th>
+                            <td mat-cell *matCellDef="let element"> {{element.client}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="position">
+                            <th mat-header-cell *matHeaderCellDef> ubicación </th>
+                            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+
+                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+                        aria-label="Select page of periodic elements">
+                    </mat-paginator>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <!-- Tabla de detalles -->
+        <mat-card class="chart-card" appearance="outlined">
+            <mat-card-header class="mat-header-strong">
+                <mat-card-title>Estadísticas</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="chart-card-content">
+                <ngx-charts-pie-chart [view]="view" [gradient]="true" [scheme]="colorScheme" [results]="pieChartData"
+                    [legend]="showLegend" [labels]="showLabels" [doughnut]="false" (select)="clicltst($event)">
+                </ngx-charts-pie-chart>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
