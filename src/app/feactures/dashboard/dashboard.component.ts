@@ -1,18 +1,7 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatDividerModule } from '@angular/material/divider';
-import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { GeneralModule } from '../../modules/general.module';
 
 export interface PeriodicElement {
   model: string;
@@ -47,19 +36,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
 
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    CommonModule,
-    MatCardModule,
-    MatIconModule,
-    MatDividerModule,
-    MatSidenavModule,
-    MatButtonModule,
-    NgxChartsModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatFormFieldModule,
-    MatInputModule,
-  ],
+  imports: [GeneralModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

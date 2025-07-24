@@ -1,24 +1,50 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './shared/guards/auth.guard';
+import { RoleGuard } from './shared/guards/role.guard';
+import { UserRole } from './shared/models/user.model';
 
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
   },
   {
+    path: 'login',
+    loadComponent: () => import('./feactures/auth/login/login.component').then(m => m.LoginComponent)
+  },
+  // {
+  //   path: 'register',
+  //   loadComponent: () => import('./feactures/auth/register/register.component').then(m => m.RegisterComponent)
+  // },
+  {
     path: 'dashboard',
-    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+    loadComponent: () => import('./feactures/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [AuthGuard]
   },
   {
     path: 'machines',
-    loadComponent: () => import('./machines/machines.component').then(m => m.MachinesComponent)
+    loadComponent: () => import('./feactures/machines/machines.component').then(m => m.MachinesComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: [UserRole.ADMIN, UserRole.OPERATOR] }
   },
-   {
+  {
     path: 'maintenance',
-    loadComponent: () => import('./maintenances/maintenances.component').then(m => m.MaintenancesComponent)
+    loadComponent: () => import('./feactures/maintenances/maintenances.component').then(m => m.MaintenancesComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: [UserRole.ADMIN, UserRole.OPERATOR] }
   },
   {
     path: 'machines-table',
-    loadComponent: () => import('./details/details.component').then(m => m.DetailsComponent)
+    loadComponent: () => import('./feactures/details/details.component').then(m => m.DetailsComponent),
+    canActivate: [AuthGuard]
+  },
+  // {
+  //   path: 'unauthorized',
+  //   loadComponent: () => import('./shared/components/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
+  // },
+  {
+    path: '**',
+    redirectTo: '/dashboard'
   }
 ];

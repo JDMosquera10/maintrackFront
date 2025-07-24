@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Gestión de Máquina</h2>
+<div mat-dialog-content class="dialog-content">
+
+    <form [formGroup]="machineForm" (ngSubmit)="onSave()">
+        <div class="form-grid">
+            <mat-form-field appearance="outline">
+                <mat-label>Modelo</mat-label>
+                <input matInput formControlName="model" placeholder="Ej: CAT 320" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Serie</mat-label>
+                <input matInput formControlName="serie" placeholder="Ej: XYZ123" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Horas de uso</mat-label>
+                <input matInput type="number" formControlName="timeUse" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Cliente</mat-label>
+                <input matInput formControlName="client" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Ubicación</mat-label>
+                <input matInput formControlName="location" />
+            </mat-form-field>
+        </div>
+    </form>
+</div>
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-raised-button class="button-agregar" (click)="onSave()">Guardar</button>
+</mat-dialog-actions>
