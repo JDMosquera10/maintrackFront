@@ -7,7 +7,7 @@
         <mat-card-header>
             <div class="card-header-strong">
                 <mat-form-field appearance="outline" class="custom-input">
-                    <input matInput placeholder="Buscar máquina" aria-label="Search">
+                    <input matInput placeholder="Buscar máquina"  (change)="onSearchChange($event)"  aria-label="Search">
                     <mat-icon matSuffix>search</mat-icon>
                 </mat-form-field>
                 <button class="button-agregar" (click)="actionMachine('add')" mat-button="filled">Agregar</button>

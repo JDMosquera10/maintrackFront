@@ -5,7 +5,7 @@ export interface Machine {
   status: string;
   usageHours: number;
   client: string;
-  locations: string;
+  location: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

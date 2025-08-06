@@ -4,15 +4,6 @@
     width: 100%;
 }
 
-.maintenance-container {
-    display: flex;
-    width: 100%;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: center;
-}
-
-
 .size-title {
     font-size: 2.5rem;
     font-weight: 700;
@@ -37,7 +28,7 @@
 }
 
 .chart-card {
-    width: 50% !important;
+    width: 100% !important;
 }
 
 .card-header-strong {

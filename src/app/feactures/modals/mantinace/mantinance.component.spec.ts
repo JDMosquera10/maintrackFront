@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MantinaceComponent } from './mantinace.component';
+import { MantinanceComponent } from './mantinance.component';
 
-describe('MantinaceComponent', () => {
-  let component: MantinaceComponent;
-  let fixture: ComponentFixture<MantinaceComponent>;
+describe('MantinanceComponent', () => {
+  let component: MantinanceComponent;
+  let fixture: ComponentFixture<MantinanceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MantinaceComponent]
+      imports: [MantinanceComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MantinaceComponent);
+    fixture = TestBed.createComponent(MantinanceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

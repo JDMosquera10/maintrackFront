@@ -104,6 +104,16 @@ export class AuthService extends BaseApiService implements IAuthService {
   }
 
   /**
+   * Devuelve un observable con el rol del usuario actual (o null si no hay usuario autenticado).
+   * @returns {Observable<UserRole | null>}
+   */
+  getCurrentRole(): Observable<UserRole | undefined> {
+    return this.authStateSubject.pipe(
+      map(state => state.user?.role)
+    );
+  }
+
+  /**
    * Devuelve un observable booleano indicando si el usuario esta autenticado.
    * @returns {Observable<boolean>}
    */

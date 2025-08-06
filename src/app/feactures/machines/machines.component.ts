@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MachineComponent } from '../modals/machine/machine.component';
 import { MachineService } from '../../services/machine.service';
 import { Machine } from '../../shared/models/machine.model';
+import { MACHINE_STATUS_TRANSLATIONS } from '../../shared/constants/translation.constants';
 
 
 
@@ -18,13 +19,9 @@ import { Machine } from '../../shared/models/machine.model';
   styleUrl: './machines.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MachinesComponent implements AfterViewInit {
+export class MachinesComponent {
 
-  TRADUCERSTATES: { [key: string]: string } = {
-    operational: 'Operativo',
-    maintenance: 'En mantenimiento',
-    out_of_service: 'Fuera de servicio'
-  };
+  TRADUCERSTATES = MACHINE_STATUS_TRANSLATIONS;
   readonly dialog = inject(MatDialog);
   displayedColumns: string[] = ['model', 'serialNumber', 'status', 'usageHours', 'client', 'location', 'acciones'];
   dataSource = new MatTableDataSource<Machine>();
@@ -35,14 +32,8 @@ export class MachinesComponent implements AfterViewInit {
   constructor(private machineService: MachineService) {
     this.machineService.getMachines().subscribe((machines: Machine[]) => {
       this.dataSource.data = machines;
-    });
-  }
-
-
-  ngAfterViewInit() {
-    if (this.paginator) {
       this.dataSource.paginator = this.paginator;
-    }
+    });
   }
 
   /**
@@ -51,7 +42,7 @@ export class MachinesComponent implements AfterViewInit {
   *  @param type - Indica si se está agregando o editando una máquina.
   *  @returns void
  */
-  actionMachine(type: 'add' | 'edit', element?: Machine): void {
+  actionMachine(type: 'add' | 'edit' | 'errorAdd', element?: Machine): void {
     const dialogRef = this.dialog.open(MachineComponent, {
       data: { type, element },
       width: '600px',
@@ -63,15 +54,34 @@ export class MachinesComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-        if (type === 'add') {
-          this.dataSource.data.push(result);
+        if (type === 'add' || type === 'errorAdd') {
+          this.machineService.createMachine(result).subscribe({
+            next: machine => {
+              this.dataSource.data.push(machine);
+              this.dataSource._updateChangeSubscription();
+            },
+            error: err => {
+              if (err.status === 400) {
+                this.actionMachine('errorAdd', result);
+              }
+            }
+          });
         } else if (type === 'edit' && element) {
-          const index = this.dataSource.data.indexOf(element);
-          if (index >= 0) {
-            this.dataSource.data[index] = result;
-          }
+          this.machineService.updateMachine(result).subscribe({
+            next: machine => {
+              const index = this.dataSource.data.indexOf(element);
+              if (index >= 0) {
+                this.dataSource.data[index] = machine;
+                this.dataSource._updateChangeSubscription();
+              }
+            },
+            error: err => {
+              if (err.status === 400) {
+                this.actionMachine('edit', result);
+              }
+            }
+          });
         }
-        this.dataSource._updateChangeSubscription();
       }
     });
   }
@@ -81,10 +91,21 @@ export class MachinesComponent implements AfterViewInit {
    * @param element - El elemento a eliminar.
    */
   deleteMachine(element: Machine): void {
-    const index = this.dataSource.data.indexOf(element);
-    if (index >= 0) {
-      this.dataSource.data.splice(index, 1);
-      this.dataSource._updateChangeSubscription(); // Update the data source
-    }
+    this.machineService.deleteMachine(element.id).subscribe({
+      next: () => {
+        this.dataSource.data = this.dataSource.data.filter(machine => machine.id !== element.id);
+        this.dataSource._updateChangeSubscription();
+      }, 
+      error: err => {
+        if (err.status === 400) {
+        }
+      }
+    });
+  }
+
+
+  onSearchChange(event: Event): void {
+    const searchValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = searchValue.trim().toLowerCase();
   }
 }

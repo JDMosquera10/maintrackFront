@@ -33,7 +33,7 @@ export class SidebarComponent {
     {
       src: 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen4.png',
       title: 'Gestión de mantenimientos',
-      path: '/maintenances',
+      path: '/maintenance',
       description: 'Registra y edita los mantenimientos de tu sistema.',
     },
     {

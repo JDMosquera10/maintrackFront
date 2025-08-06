@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { ApiResponse, ErrorResponse } from '../shared/models/api-response.model';
+
+
 
 @Injectable({
   providedIn: 'root'
 })
 export abstract class BaseApiService {
   protected readonly baseUrl: string;
+
 
   constructor(
     protected http: HttpClient,
@@ -41,7 +44,10 @@ export abstract class BaseApiService {
       headers: this.getHeaders()
     }).pipe(
       map(response => response.payload),
-      catchError(this.handleError)
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error en POST:', error);
+        return throwError(() => error);
+      })
     );
   }
 
@@ -50,7 +56,10 @@ export abstract class BaseApiService {
       headers: this.getHeaders()
     }).pipe(
       map(response => response.payload),
-      catchError(this.handleError)
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error en POST:', error);
+        return throwError(() => error);
+      })
     );
   }
 
@@ -65,9 +74,9 @@ export abstract class BaseApiService {
 
   private handleError(error: any): Observable<never> {
     let errorMessage = 'An error occurred';
-    
-    if (error.error?.message) {
-      errorMessage = error.error.message;
+
+    if (error.error?.message || error.error?.error) {
+      errorMessage = error.error.message || error.error.error;
     } else if (error.message) {
       errorMessage = error.message;
     }

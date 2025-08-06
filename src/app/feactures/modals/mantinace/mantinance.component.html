@@ -1,0 +1,131 @@
+<h2 mat-dialog-title>Gestión de Máquina</h2>
+
+<mat-horizontal-stepper linear (selectedIndexChange)="changeStepper($event)">
+  <!-- Paso 1: Datos -->
+  <form [formGroup]="stepForm">
+    <mat-step [stepControl]="datosForm" label="Datos">
+      <div mat-dialog-content class="dialog-content">
+        <div [formGroup]="datosForm" class="form-grid">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Máquina</mat-label>
+            <mat-select formControlName="machine" required>
+              <mat-option *ngIf="isLoadingMachines" disabled>Cargando...</mat-option>
+              <mat-option *ngFor="let machine of machines" [value]="machine.id">
+                {{ machine.model }} ({{ machine.serialNumber }})
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Tipo de mantenimiento</mat-label>
+            <mat-select formControlName="type" required>
+              <mat-option value="preventive">Preventivo</mat-option>
+              <mat-option value="corrective">Correctivo</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Fecha</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="date" required>
+            <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Horas de trabajo</mat-label>
+            <input matInput type="number" formControlName="workHours" min="0">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100" *ngIf="!data.istechenical">
+            <mat-label>técnico</mat-label>
+            <mat-select formControlName="technician" required>
+              <mat-option *ngIf="isLoadingUsers" disabled>Cargando...</mat-option>
+              <mat-option *ngFor="let technical of technicals" [value]="technical._id">
+                {{ technical.firstName }} {{ technical.lastName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100" *ngIf="!data.istechenical">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput formControlName="observations" rows="1"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div *ngIf="data.istechenical" [formGroup]="datosForm" class="form-grid" class="containe-observation">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput formControlName="observations" rows="2"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-dialog-actions align="end">
+        <div class="step-actions">
+          <button mat-button matStepperNext [disabled]="!datosForm.valid" type="button">Siguiente</button>
+          <button mat-button (click)="cancel()">Cancelar</button>
+        </div>
+      </mat-dialog-actions>
+    </mat-step>
+
+    <!-- Paso 2: Repuestos -->
+    <mat-step [stepControl]="repuestosForm" label="Repuestos" style="height: 100%;">
+      <div mat-dialog-content class="dialog-content">
+        <div [formGroup]="repuestosForm" class="form-grid">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Agregar repuesto</mat-label>
+            <mat-chip-grid #chipGrid>
+              <input matInput [matChipInputFor]="chipGrid" placeholder="Nombre del repuesto"
+                (matChipInputTokenEnd)="addSparePart($event.value)">
+            </mat-chip-grid>
+          </mat-form-field>
+
+          <div class="chips-container" *ngIf="spareParts.controls.length > 0">
+            <mat-chip-grid #chipGrid class="mat-mdc-chip-set-stacked">
+              <mat-chip *ngFor="let part of spareParts.controls; let i = index" [removable]="true"
+                (removed)="removeSparePart(i)">
+                {{ part.value }}
+                <button mat-icon-button matChipRemove><mat-icon>cancel</mat-icon></button>
+              </mat-chip>
+            </mat-chip-grid>
+          </div>
+        </div>
+      </div>
+      <mat-dialog-actions align="end">
+        <div class="step-actions">
+          <button mat-button matStepperPrevious type="button">Anterior</button>
+          <button mat-button matStepperNext type="button">Siguiente</button>
+          <button mat-button (click)="cancel()" type="button">Cancelar</button>
+        </div>
+      </mat-dialog-actions>
+    </mat-step>
+
+    <!-- Paso 3: Confirmar -->
+    <mat-step label="Confirmar">
+      <div mat-dialog-content class="dialog-content">
+        <h3>Resumen</h3>
+        <ul>
+          <li><b>Máquina:</b> {{ getMachineModelById(datosForm.value.machine) }}</li>
+          <li *ngIf="!data.istechenical"><b>Tipo:</b> {{ TRADUCERTYPES[datosForm.value.type] || datosForm.value.type }}
+          </li>
+          <li><b>Fecha:</b> {{ fromatDate(datosForm.value.date) }}</li>
+          <li><b>Técnico:</b> {{ getNameTechnician(datosForm.value.technician) }}</li>
+          <li><b>Observaciones:</b> {{ datosForm.value.observations }}</li>
+          <li><b>Horas de trabajo:</b> {{ datosForm.value.workHours }}</li>
+          <li><b>Repuestos:</b>
+            <ul>
+              <li *ngFor="let part of spareParts.controls">{{ part.value }}</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <mat-dialog-actions align="end">
+        <div class="step-actions">
+          <button mat-button matStepperPrevious type="button">Anterior</button>
+          <button mat-raised-button color="primary" (click)="submit()">Confirmar</button>
+          <button mat-button type="button" (click)="cancel()">Cancelar</button>
+        </div>
+      </mat-dialog-actions>
+
+    </mat-step>
+  </form>
+</mat-horizontal-stepper>

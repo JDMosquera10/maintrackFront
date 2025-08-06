@@ -1,0 +1,30 @@
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 8px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+
+.containe-observation {
+    padding: 3px 8px 0px;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.dialog-content {
+    padding: 8px !important;
+}
+
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

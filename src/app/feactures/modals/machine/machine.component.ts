@@ -26,14 +26,15 @@ export class MachineComponent implements OnInit {
 
   ngOnInit(): void {
     this.machineForm = this.fb.group({
+      id: [null],
       model: ['', Validators.required],
-      serie: ['', Validators.required],
-      timeUse: [null, [Validators.required, Validators.min(0)]],
+      serialNumber: ['', Validators.required],
+      usageHours: [null, [Validators.required, Validators.min(0)]],
       client: ['', Validators.required],
       location: ['', Validators.required]
     });
 
-    if (this.data.type === 'edit') {
+    if (this.data.type === 'edit' || this.data.type === 'errorAdd') {
       this.machineForm.patchValue(this.data.element);
     }
   }

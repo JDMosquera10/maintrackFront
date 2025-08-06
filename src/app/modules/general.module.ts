@@ -19,8 +19,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatChipsModule } from '@angular/material/chips';
+import {MatChipsModule} from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatSelectModule } from '@angular/material/select';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 // Charts
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -42,7 +45,10 @@ const MATERIAL_MODULES = [
   MatToolbarModule,
   MatTooltipModule,
   MatChipsModule,
-  MatBadgeModule
+  MatBadgeModule,
+  MatStepperModule,
+  MatSelectModule,
+  MatDatepickerModule,
 ];
 
 const ANGULAR_MODULES = [
