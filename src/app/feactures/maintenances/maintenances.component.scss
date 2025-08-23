@@ -7,7 +7,7 @@
 .size-title {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--mat-sys-primary, #333);
+    // color: var(--mat-sys-primary, #333);
     margin: 0;
     padding: 16px;
 }
@@ -46,9 +46,9 @@
     overflow: auto;
     width: 100%;
     max-height: 400px; // ajusta la altura como necesites
-    border: 1px solid #444;
+    // border: 1px solid #444;
     border-radius: 8px;
-    background-color: #1e1c1c; // fondo oscuro
+    // background-color: #1e1c1c; // fondo oscuro
     color: #fff;
 
     table {
@@ -57,22 +57,22 @@
 
         th,
         td {
-            border-bottom: 1px solid #555;
+            // border-bottom: 1px solid #555;
             padding: 12px 16px;
         }
 
         th {
-            background-color: #2a2828;
+            // background-color: #2a2828;
             font-weight: 600;
-            color: #f1f1f1;
+            // color: #f1f1f1;
             position: sticky;
             top: 0;
             z-index: 2;
         }
 
-        tr:hover {
-            background-color: #333;
-        }
+        // tr:hover {
+        //     background-color: #333;
+        // }
     }
 }
 
@@ -81,9 +81,9 @@
     color: var(--mat-sys-primary);
 }
 
-.mat-mdc-row:hover {
-    background-color: rgba(0, 0, 0, 0.04);
-}
+// .mat-mdc-row:hover {
+//     background-color: rgba(0, 0, 0, 0.04);
+// }
 
 .mat-column-position {
     width: 80px;
@@ -103,11 +103,11 @@
 // modal style
 ::ng-deep .custom-dialog-container {
     border-radius: 16px;
-    background-color: #1a1a1a; // ejemplo de fondo oscuro
+    // background-color: #1a1a1a; // ejemplo de fondo oscuro
     box-shadow: 0px 0px 10px var(--mat-sys-primary, #333);
     padding: 16px;
 }
 
-::ng-deep .cdk-overlay-backdrop {
-  background-color: rgba(0, 0, 0, 0.7); // más suave que el default
-}
+// ::ng-deep .cdk-overlay-backdrop {
+//   background-color: rgba(0, 0, 0, 0.7); // más suave que el default
+// }

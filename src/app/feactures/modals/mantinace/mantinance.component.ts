@@ -10,7 +10,6 @@ import { UserService } from '../../../services/user.service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MAINTENANCE_TYPE_TRANSLATIONS } from '../../../shared/constants/translation.constants';
 import { format } from 'date-fns';
-import { id } from '@swimlane/ngx-charts';
 
 
 @Component({

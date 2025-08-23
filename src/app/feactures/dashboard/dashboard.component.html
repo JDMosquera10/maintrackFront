@@ -1,7 +1,128 @@
-<div class="mat-header-strong">
+<div class="grid-stack" #gridRef ngSkipHydration>
+    <!-- Gráfico Mantenimientos por Mes -->
+    <div class="grid-stack-item" gs-x="0" gs-y="0" gs-w="4" gs-h="3">
+        <div class="grid-stack-item-content card">
+            <h3>Mantenimientos por Mes</h3>
+            <div style="width: 400px; height: 400px;">
+                <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico Máquinas Activas vs Inactivas -->
+    <div class="grid-stack-item" gs-x="0" gs-y="2" gs-w="4" gs-h="3">
+        <div class="grid-stack-item-content card">
+            <h3>Máquinas Activas vs Inactivas</h3>
+            <div class="chart-container">
+                <canvas baseChart [data]="doughnutChartData" [options]="doughnutChartOptions" [type]="'doughnut'">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla Inventario de Máquinas -->
+    <div class="grid-stack-item" gs-x="4" gs-y="0" gs-w="5" gs-h="6">
+        <div class="grid-stack-item-content card table-card">
+            <h3>Inventario de Máquinas</h3>
+            <div style="width: 98%;" class="mat-elevation-z8">
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                    <!-- Position Column -->
+                    <ng-container matColumnDef="model">
+                        <th mat-header-cell *matHeaderCellDef> Modelo. </th>
+                        <td mat-cell *matCellDef="let element"> {{element.model}} </td>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="serialNumber">
+                        <th mat-header-cell *matHeaderCellDef> Serie </th>
+                        <td mat-cell *matCellDef="let element"> {{element.serialNumber}} </td>
+                    </ng-container>
+
+                    <!-- Weight Column -->
+                    <ng-container matColumnDef="client">
+                        <th mat-header-cell *matHeaderCellDef> Cliente </th>
+                        <td mat-cell *matCellDef="let element"> {{element.client}} </td>
+                    </ng-container>
+
+                    <!-- Symbol Column -->
+                    <ng-container matColumnDef="expirationDate">
+                        <th mat-header-cell *matHeaderCellDef>Próx. Mantenimiento</th>
+                        <td mat-cell *matCellDef="let element"> {{element.expirationDate}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <mat-paginator style="width: 100%;" [pageSizeOptions]="[7]" showFirstLastButtons
+                    aria-label="Select page of periodic elements">
+                </mat-paginator>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="grid-stack-item" gs-x="10" gs-y="0" gs-w="3" gs-h="1">
+        <div class="grid-stack-item-content card kpi">
+            <h1>24</h1>
+            <p>Total Máquinas</p>
+        </div>
+    </div>
+
+    <div class="grid-stack-item" gs-x="10" gs-y="1" gs-w="3" gs-h="1">
+        <div class="grid-stack-item-content card kpi">
+            <h1>8</h1>
+            <p>Mantenimientos Pendientes</p>
+        </div>
+    </div>
+
+    <div class="grid-stack-item" gs-x="10" gs-y="2" gs-w="3" gs-h="1">
+        <div class="grid-stack-item-content card kpi">
+            <h1>3</h1>
+            <p>Alertas Próximas</p>
+        </div>
+    </div>
+
+    <!-- Gráfico Máquinas Activas vs Inactivas -->
+    <div class="grid-stack-item" gs-x="10" gs-y="3" gs-w="3" gs-h="3">
+        <div class="grid-stack-item-content card">
+            <h3>Consumo de Repuestos por Mes</h3>
+            <div class="chart-container">
+                <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="'line'">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas -->
+    <div class="grid-stack-item" gs-x="10" gs-y="3" gs-w="12" gs-h="2">
+        <div class="grid-stack-item-content card">
+            <h3>Alertas de Mantenimiento</h3>
+            <ul>
+                <li>CAT 320D - Vence en <span class="warning">5 días</span></li>
+                <li>Komatsu PC200 - Vence en <span class="danger">2 días</span></li>
+                <li>Volvo EC210 - Vence en <span class="warning">6 días</span></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="grid-stack">
+  <div class="grid-stack-item">
+    <div class="grid-stack-item-content">Item 1</div>
+  </div>
+  <div class="grid-stack-item" gs-w="2">
+    <div class="grid-stack-item-content">Item 2 wider</div>
+  </div>
+</div> -->
+
+
+
+
+<!-- <div class="mat-header-strong">
     <h1 class="size-title">Dashboard</h1>
 </div>
-<!-- tarjetas con detalles -->
 <div class="content-cards">
     <mat-card class="stat-card" appearance="outlined">
         <mat-card-header class="mat-header-strong">
@@ -41,7 +162,6 @@
 </div>
 <div class="content-cards">
     <div class="chart-container">
-        <!-- Tabla de detalles -->
         <mat-card class="chart-card" appearance="outlined">
             <mat-card-header class="mat-header-strong" style="height: 100%;">
                 <mat-card-title>Alertas</mat-card-title>
@@ -49,25 +169,22 @@
             <mat-card-content class="">
                 <div class="mat-elevation-z8">
                     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                        <!-- Position Column -->
+                       
                         <ng-container matColumnDef="model">
                             <th mat-header-cell *matHeaderCellDef> Modelo </th>
                             <td mat-cell *matCellDef="let element"> {{element.model}} </td>
                         </ng-container>
 
-                        <!-- Name Column -->
                         <ng-container matColumnDef="serie">
                             <th mat-header-cell *matHeaderCellDef> Serie </th>
                             <td mat-cell *matCellDef="let element"> {{element.serie}} </td>
                         </ng-container>
 
-                        <!-- Weight Column -->
                         <ng-container matColumnDef="timeUse">
                             <th mat-header-cell *matHeaderCellDef> Tiempo de uso </th>
                             <td mat-cell *matCellDef="let element"> {{element.timeUse}} </td>
                         </ng-container>
 
-                        <!-- Symbol Column -->
                         <ng-container matColumnDef="client">
                             <th mat-header-cell *matHeaderCellDef> Cliente </th>
                             <td mat-cell *matCellDef="let element"> {{element.client}} </td>
@@ -88,7 +205,6 @@
                 </div>
             </mat-card-content>
         </mat-card>
-        <!-- Tabla de detalles -->
         <mat-card class="chart-card" appearance="outlined">
             <mat-card-header class="mat-header-strong">
                 <mat-card-title>Estadísticas</mat-card-title>
@@ -100,4 +216,4 @@
             </mat-card-content>
         </mat-card>
     </div>
-</div>
+</div> -->

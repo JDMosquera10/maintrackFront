@@ -75,11 +75,13 @@ export class AuthService extends BaseApiService implements IAuthService {
   }
 
   refreshToken(): Observable<LoginResponse> {
-    const refreshToken = localStorage.getItem('refreshToken');
+    let refreshToken: string | null = null;
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      refreshToken = localStorage.getItem('refreshToken');
+    }
     if (!refreshToken) {
       return throwError(() => new Error('No refresh token available'));
     }
-
     return this.http.post<LoginResponse>(`${this.baseUrl}/refresh`, { refreshToken }).pipe(
       tap(response => {
         if (response.success) {
@@ -145,23 +147,25 @@ export class AuthService extends BaseApiService implements IAuthService {
    * Inicializa el estado de autenticación desde el almacenamiento local.
    */
   private initializeAuthState(): void {
-    const token = localStorage.getItem('token');
-    const userStr = localStorage.getItem('user');
-    
-    if (token && userStr) {
-      try {
-        const user: User = JSON.parse(userStr);
-        this.setAuthState(user, token);
-      } catch (error) {
-        this.clearAuthState();
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      if (token && userStr) {
+        try {
+          const user: User = JSON.parse(userStr);
+          this.setAuthState(user, token);
+        } catch (error) {
+          this.clearAuthState();
+        }
       }
     }
   }
 
   private setAuthState(user: User, token: string): void {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+    }
     this.authStateSubject.next({
       user,
       token,
@@ -171,10 +175,11 @@ export class AuthService extends BaseApiService implements IAuthService {
   }
 
   private clearAuthState(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+    }
     this.authStateSubject.next({
       user: null,
       token: null,

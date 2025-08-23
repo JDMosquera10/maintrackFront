@@ -19,14 +19,16 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {MatChipsModule} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatSelectModule } from '@angular/material/select';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatGridListModule } from '@angular/material/grid-list';
 
-// Charts
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+
+// charts
+import { NgChartsModule } from 'ng2-charts';
 
 const MATERIAL_MODULES = [
   MatCardModule,
@@ -49,6 +51,7 @@ const MATERIAL_MODULES = [
   MatStepperModule,
   MatSelectModule,
   MatDatepickerModule,
+  MatGridListModule
 ];
 
 const ANGULAR_MODULES = [
@@ -59,7 +62,7 @@ const ANGULAR_MODULES = [
 ];
 
 const THIRD_PARTY_MODULES = [
-  NgxChartsModule
+  NgChartsModule
 ];
 
 @NgModule({
@@ -72,6 +75,7 @@ const THIRD_PARTY_MODULES = [
     ...ANGULAR_MODULES,
     ...MATERIAL_MODULES,
     ...THIRD_PARTY_MODULES
-  ]
+  ],
+  providers: [],
 })
 export class GeneralModule { }

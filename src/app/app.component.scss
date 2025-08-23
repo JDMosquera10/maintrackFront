@@ -1,6 +1,8 @@
+@import '../styles.scss';
+
 .example-container {
     width: 100%;
-    height: 90vh;
+    height: 99.9vh;
 }
 
 .example-sidenav-content {
@@ -17,21 +19,21 @@
     border-radius: 4px;
 }
 
-.gradient-divider {
-    opacity: 0.3 !important;
-    position: absolute;
-    top: 0;
-    right: 0; // Aquí se coloca al lado derecho
-    width: 2px;
-    height: 100%;
-    background-image: linear-gradient(to bottom, white, transparent);
-    background-repeat: no-repeat;
-    box-shadow: -1px -1px 7px 9px rgb(255 255 255 / 10%);
-    background-size: cover;
-    border: none;
-    opacity: 1;
-    z-index: 10;
-}
+// .gradient-divider {
+//     opacity: 0.3 !important;
+//     position: absolute;
+//     top: 0;
+//     right: 0; // Aquí se coloca al lado derecho
+//     width: 2px;
+//     height: 100%;
+//     background-image: linear-gradient(to bottom, $color-dark, transparent);
+//     background-repeat: no-repeat;
+//     box-shadow: -1px -1px 7px 9px $color-dark;
+//     background-size: cover;
+//     border: none;
+//     opacity: 1;
+//     z-index: 10;
+// }
 
 ::ng-deep .gradient-divider.mat-divider-vertical {
     background: none; // elimina fondo por defecto
@@ -44,6 +46,8 @@
     -ms-overflow-style: none;
     /* IE 10+ */
     overflow-y: auto;
+    background: transparent !important;
+    // background: $color-dark !important;
     /* Mantiene el scroll funcionando */
 }
 
@@ -52,18 +56,26 @@
     /* Chrome, Safari, Edge */
 }
 
+::ng-deep .mat-drawer-content {
+    background: transparent !important;
+    // background: $color-dark;
+    /* Chrome, Safari, Edge */
+}
+
 
 .button-menu {
     position: absolute;
-    top: 0;
-    left: 0;
-    background: #48404c;
-
+    top: 10px;
+    left: 10px;
+    border-radius: 50%;
+    // background: $color-dark-alt;
 }
 
-.router-outlet{
+.router-outlet {
     width: 100%;
     height: 100%;
+    // margin: 20px 20px 20px 0;
+    padding: 140px 30px 0px 30px;
     display: flex;
     align-items: center;
     justify-content: center;

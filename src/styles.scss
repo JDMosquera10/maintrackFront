@@ -1,129 +1,24 @@
-// Custom Theming for Angular Material
-// For more information: https://material.angular.dev/guide/theming
-
-@use 'sass:color';
-// oscuro chimba
 @use '@angular/material' as mat;
+@use 'sass:map';
+@use '../custome-theme_theme-colors.scss' as custome;
+// @import "gridstack/dist/gridstack.min.css";
 
-// $theme: mat.define-theme();
-$btn-agregar: #4caf50; // verde
-$btn-editar: #2196f3; // azul
-$btn-eliminar: #f44336; // rojo
-$btn-asociar: #9c27b0; // morado
-$btn-desasociar: #ff9800; // naranja
+
+
+$color-primary: #02BEC1;
+$color-primary-alt: #04c0c3;
+$color-dark: #192230;
+$color-dark-alt: #202837;
+$color-accent: #a44a5d;
+$color-warning: #f0961b;
 
 html {
-  color-scheme: light dark;
-  @include mat.theme((color: mat.$violet-palette,
+  @include mat.theme((color: (theme-type: dark,
+        primary: custome.$primary-palette,
+        tertiary: custome.$tertiary-palette ),
       typography: Roboto,
-      density: 0));
-  // @include mat.all-component-themes($theme);
-  // @include mat.color-variants-backwards-compatibility($theme);
-}
-
-.button-agregar {
-  background-color: $btn-agregar !important;
-  color: white !important;
-
-  &:hover {
-    background-color: color.adjust($btn-agregar, $lightness: -10%); 
-  }
-}
-
-.button-editar {
-  background-color: $btn-editar !important;
-  color: white !important;
-
-  &:hover {
-    background-color: color.adjust($btn-editar, $lightness: 10%) !important;
-  }
-}
-
-.button-eliminar {
-  background-color: $btn-eliminar !important;
-  color: white !important;
-
-  &:hover {
-    background-color: color.adjust($btn-eliminar, $lightness: 10%) !important;
-  }
-}
-
-.button-asociar {
-  background-color: $btn-asociar !important;
-  color: white !important;
-
-  &:hover {
-    background-color: color.adjust($btn-asociar, $lightness:10%) !important;
-  }
-}
-
-.pie-label {
-  color: white;
-  font-size: 11px;
-}
-
-.router-outlet {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-// claro
-// @use '@angular/material' as mat;
-
-// html {
-//   @include mat.theme((
-//     color: (
-//       primary: mat.$violet-palette,
-//       tertiary: mat.$orange-palette,
-//       theme-type: light,
-//     ),
-//     typography: Roboto,
-//     density: 0
-//   ));
-// }
-
-
-// @use '@angular/material' as mat;
-
-// html {
-//   @include mat.theme((
-//     color: mat.$violet-palette,
-//     typography: (
-//       plain-family: Roboto,
-//       brand-family: Open Sans,
-//       bold-weight: 900,
-//       medium-weight: 500,
-//       regular-weight: 300,
-//     ),
-//     density: 0,
-//   ));
-// }
-
-// @use '@angular/material' as mat;
-
-// html {
-//   @include mat.theme((
-//     color: mat.$violet-palette,
-//     typography: Roboto,
-//     density: -2,
-//   ));
-// }
-
-html,
-body {
-  height: 100%;
-}
-
-// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-body {
-  background: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+      density: 0,
+      customProperties: true));
 }
 
 html,
@@ -134,95 +29,4 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
-/* Global Snackbar Styles */
-.success-snackbar {
-  background: #4caf50;
-  color: white;
-  
-  .mat-simple-snackbar-action {
-    color: white;
-  }
-}
-
-.error-snackbar {
-  background: #f44336;
-  color: white;
-  
-  .mat-simple-snackbar-action {
-    color: white;
-  }
-}
-
-.warning-snackbar {
-  background: #ff9800;
-  color: white;
-  
-  .mat-simple-snackbar-action {
-    color: white;
-  }
-}
-
-/* Global Loading Spinner */
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100px;
-}
-
-/* Global Form Styles */
-.form-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 24px;
-}
-
-/* Global Table Styles */
-.table-container {
-  margin: 20px;
-  overflow-x: auto;
-}
-
-.table-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-/* Global Card Styles */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.card-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 500;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .form-container {
-    padding: 16px;
-  }
-  
-  .table-container {
-    margin: 16px;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-  }
 }
