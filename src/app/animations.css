@@ -1,4 +1,4 @@
-@keyframes sharedAnimation {
+/* @keyframes sharedAnimation {
   to {
     height: 0;
     opacity: 1;
@@ -31,4 +31,173 @@
 }
 .example-shorthand {
   transition: margin-right 1s ease-in-out 500ms;
+} */
+
+
+
+
+animaciones
+
+/* Animaciones adicionales para el dashboard */
+
+/* Animación de entrada para cards */
+.grid-stack-item {
+  animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+}
+
+.grid-stack-item:nth-child(1) { animation-delay: 0.1s; }
+.grid-stack-item:nth-child(2) { animation-delay: 0.2s; }
+.grid-stack-item:nth-child(3) { animation-delay: 0.3s; }
+.grid-stack-item:nth-child(4) { animation-delay: 0.4s; }
+.grid-stack-item:nth-child(5) { animation-delay: 0.5s; }
+.grid-stack-item:nth-child(6) { animation-delay: 0.6s; }
+.grid-stack-item:nth-child(7) { animation-delay: 0.7s; }
+.grid-stack-item:nth-child(8) { animation-delay: 0.8s; }
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Animación de números en KPIs */
+.kpi h1 {
+  animation: countUp 1.5s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Efecto hover suave para toda la aplicación */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Animación de carga para gráficos */
+.chart-container canvas {
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Efecto de brillo para KPIs importantes */
+.kpi:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  animation: shine 0.5s ease-out;
+}
+
+@keyframes shine {
+  to {
+    left: 100%;
+  }
+}
+
+/* Animación para alertas críticas */
+.danger {
+  position: relative;
+}
+
+.danger::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #a44a5d;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Transición suave para tablas */
+.mat-row {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mat-row:hover {
+  transform: scale(1.01);
+}
+
+/* Efecto de ondulación para botones */
+.mat-fab {
+  position: relative;
+  overflow: hidden;
+}
+
+.mat-fab::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.mat-fab:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Animación de scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Transiciones para el sidebar */
+.mat-drawer {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efecto de glass-morphism para cards especiales */
+.glass-effect {
+  background: rgba(32, 40, 55, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

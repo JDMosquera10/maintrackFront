@@ -2,8 +2,8 @@
     <!-- Gráfico Mantenimientos por Mes -->
     <div class="grid-stack-item" gs-x="0" gs-y="0" gs-w="4" gs-h="3">
         <div class="grid-stack-item-content card">
-            <h3>Mantenimientos por Mes</h3>
-            <div style="width: 400px; height: 400px;">
+            <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">analytics</mat-icon> Mantenimientos por Mes</h3>
+            <div class="chart-container">
                 <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
                 </canvas>
             </div>
@@ -13,7 +13,7 @@
     <!-- Gráfico Máquinas Activas vs Inactivas -->
     <div class="grid-stack-item" gs-x="0" gs-y="2" gs-w="4" gs-h="3">
         <div class="grid-stack-item-content card">
-            <h3>Máquinas Activas vs Inactivas</h3>
+            <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">donut_large</mat-icon> Estado de Máquinas</h3>
             <div class="chart-container">
                 <canvas baseChart [data]="doughnutChartData" [options]="doughnutChartOptions" [type]="'doughnut'">
                 </canvas>
@@ -64,6 +64,7 @@
     <!-- KPIs -->
     <div class="grid-stack-item" gs-x="10" gs-y="0" gs-w="3" gs-h="1">
         <div class="grid-stack-item-content card kpi">
+            <mat-icon style="position: absolute; top: 1rem; right: 1rem; opacity: 0.3; font-size: 2rem;">precision_manufacturing</mat-icon>
             <h1>24</h1>
             <p>Total Máquinas</p>
         </div>
@@ -71,6 +72,7 @@
 
     <div class="grid-stack-item" gs-x="10" gs-y="1" gs-w="3" gs-h="1">
         <div class="grid-stack-item-content card kpi">
+            <mat-icon style="position: absolute; top: 1rem; right: 1rem; opacity: 0.3; font-size: 2rem; color: #f0961b;">build_circle</mat-icon>
             <h1>8</h1>
             <p>Mantenimientos Pendientes</p>
         </div>
@@ -78,6 +80,7 @@
 
     <div class="grid-stack-item" gs-x="10" gs-y="2" gs-w="3" gs-h="1">
         <div class="grid-stack-item-content card kpi">
+            <mat-icon style="position: absolute; top: 1rem; right: 1rem; opacity: 0.3; font-size: 2rem; color: #a44a5d;">warning</mat-icon>
             <h1>3</h1>
             <p>Alertas Próximas</p>
         </div>
@@ -86,7 +89,7 @@
     <!-- Gráfico Máquinas Activas vs Inactivas -->
     <div class="grid-stack-item" gs-x="10" gs-y="3" gs-w="3" gs-h="3">
         <div class="grid-stack-item-content card">
-            <h3>Consumo de Repuestos por Mes</h3>
+            <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">inventory_2</mat-icon> Consumo de Repuestos</h3>
             <div class="chart-container">
                 <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="'line'">
                 </canvas>
@@ -96,12 +99,21 @@
 
     <!-- Alertas -->
     <div class="grid-stack-item" gs-x="10" gs-y="3" gs-w="12" gs-h="2">
-        <div class="grid-stack-item-content card">
-            <h3>Alertas de Mantenimiento</h3>
-            <ul>
-                <li>CAT 320D - Vence en <span class="warning">5 días</span></li>
-                <li>Komatsu PC200 - Vence en <span class="danger">2 días</span></li>
-                <li>Volvo EC210 - Vence en <span class="warning">6 días</span></li>
+        <div class="grid-stack-item-content card alerts-container">
+            <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">notifications_active</mat-icon> Alertas de Mantenimiento</h3>
+            <ul class="alerts-list">
+                <li>
+                    <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem; color: #f0961b;">schedule</mat-icon>
+                    CAT 320D - Vence en <span class="warning">5 días</span>
+                </li>
+                <li>
+                    <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem; color: #a44a5d;">error</mat-icon>
+                    Komatsu PC200 - Vence en <span class="danger">2 días</span>
+                </li>
+                <li>
+                    <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem; color: #f0961b;">schedule</mat-icon>
+                    Volvo EC210 - Vence en <span class="warning">6 días</span>
+                </li>
             </ul>
         </div>
     </div>

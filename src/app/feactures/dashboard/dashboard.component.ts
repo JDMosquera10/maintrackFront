@@ -56,24 +56,68 @@ export class DashboardComponent implements AfterViewInit {
   barChartData: ChartConfiguration<'bar'>['data'] | any;
   barChartOptions: ChartOptions<'bar'> = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: { labels: { color: '#fff' } }
+      legend: {
+        labels: {
+          color: '#fff',
+          font: { size: 12 },
+          padding: 20
+        },
+        position: 'bottom'
+      },
+      tooltip: {
+        backgroundColor: 'rgba(32, 40, 55, 0.9)',
+        titleColor: '#02BEC1',
+        bodyColor: '#fff',
+        borderColor: '#02BEC1',
+        borderWidth: 1,
+        padding: 12,
+        cornerRadius: 8
+      }
     },
     scales: {
-      x: { ticks: { color: '#fff' }, grid: { color: '#444' } },
-      y: { ticks: { color: '#fff' }, grid: { color: '#444' } }
+      x: {
+        ticks: { color: '#fff', font: { size: 11 } },
+        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+      },
+      y: {
+        ticks: { color: '#fff', font: { size: 11 } },
+        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+      }
     }
   };
 
   lineChartData: ChartConfiguration<'line'>['data'] | any;
   lineChartOptions: ChartOptions<'line'> = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: { labels: { color: '#fff' } }
+      legend: {
+        labels: {
+          color: '#fff',
+          font: { size: 12 }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(32, 40, 55, 0.9)',
+        titleColor: '#F0961B',
+        bodyColor: '#fff',
+        borderColor: '#F0961B',
+        borderWidth: 1,
+        padding: 12,
+        cornerRadius: 8
+      }
     },
     scales: {
-      x: { ticks: { color: '#fff' }, grid: { color: '#444' } },
-      y: { ticks: { color: '#fff' }, grid: { color: '#444' } }
+      x: {
+        ticks: { color: '#fff', font: { size: 11 } },
+        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+      },
+      y: {
+        ticks: { color: '#fff', font: { size: 11 } },
+        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+      }
     }
   };
 
@@ -92,8 +136,21 @@ export class DashboardComponent implements AfterViewInit {
     radius: '70%',
     plugins: {
       legend: {
-        labels: { color: '#fff' },
-        position: 'top'
+        labels: {
+          color: '#fff',
+          font: { size: 12 },
+          padding: 15
+        },
+        position: 'bottom'
+      },
+      tooltip: {
+        backgroundColor: 'rgba(32, 40, 55, 0.9)',
+        titleColor: '#02BEC1',
+        bodyColor: '#fff',
+        borderColor: '#02BEC1',
+        borderWidth: 1,
+        padding: 12,
+        cornerRadius: 8
       }
     }
   };
@@ -115,18 +172,24 @@ export class DashboardComponent implements AfterViewInit {
         {
           label: 'Preventivos',
           data: [5, 6, 5, 7, 4, 9],
-          backgroundColor: '#04c0c3',
+          backgroundColor: '#02BEC1',
+          borderColor: '#02BEC1',
+          borderWidth: 2,
           borderRadius: 8,
-          barPercentage: 0.5,
-          categoryPercentage: 0.7
+          barPercentage: 0.6,
+          categoryPercentage: 0.8,
+          hoverBackgroundColor: 'rgba(2, 190, 193, 0.8)'
         },
         {
           label: 'Correctivos',
           data: [3, 2, 4, 3, 5, 2],
-          backgroundColor: '#a44a5d',
+          backgroundColor: '#F0961B',
+          borderColor: '#F0961B',
+          borderWidth: 2,
           borderRadius: 8,
-          barPercentage: 0.5,
-          categoryPercentage: 0.7
+          barPercentage: 0.6,
+          categoryPercentage: 0.8,
+          hoverBackgroundColor: 'rgba(240, 150, 27, 0.8)'
         }
       ]
     }
@@ -138,26 +201,36 @@ export class DashboardComponent implements AfterViewInit {
       datasets: [
         {
           data: [18, 6],
-          backgroundColor: ['#04c0c3', '#a44a5d'],
-          borderWidth: 2,
-          borderColor: '#1F2430',
+          backgroundColor: ['#02BEC1', '#F0961B'],
+          borderWidth: 3,
+          borderColor: '#202837',
+          hoverBackgroundColor: [
+            'rgba(2, 190, 193, 0.8)',
+            'rgba(240, 150, 27, 0.8)'
+          ],
+          hoverBorderWidth: 4
         }
       ]
     }
   }
 
-prepareChartOptions3() {
+  prepareChartOptions3() {
     this.lineChartData = {
       labels: this.monthCurrent,
       datasets: [
         {
-          label: 'Preventivos',
-          data: [5, 6, 5, 7, 4, 9],
-          borderColor: '#04c0c3',
-          borderRadius: 8,
-          barPercentage: 0.5,
-          categoryPercentage: 0.7
-        }
+          label: 'Filtros',
+          data: [12, 19, 15, 22, 18, 25],
+          borderColor: '#02BEC1',
+          backgroundColor: 'rgba(2, 190, 193, 0.1)',
+          borderWidth: 3,
+          tension: 0.4,
+          pointRadius: 5,
+          pointBackgroundColor: '#02BEC1',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointHoverRadius: 7
+        },
       ]
     }
   }
@@ -167,8 +240,25 @@ prepareChartOptions3() {
 
     // Espera a que Angular termine de estabilizar el DOM en el navegador
     this.ngZone.onStable.pipe(take(1)).subscribe(() => {
+      // this.grid = GridStack.init(
+      //   { float: true, cellHeight: 100, column: 12 },
+      //   this.gridRef.nativeElement
+      // );
       this.grid = GridStack.init(
-        { float: true, cellHeight: 100, column: 12 },
+        { 
+          float: true, // Desactivar float para evitar superposiciones
+          cellHeight: 100, // Altura de celda optimizada
+          column: 12,
+          // margin: 0, // Sin margen en GridStack, se maneja con CSS
+          resizable: {
+            handles: 'e, se, s, sw, w'
+          },
+          draggable: {
+            handle: 'h3' // Solo arrastrar desde el título
+          },
+          animate: true,
+          alwaysShowResizeHandle: false
+        },
         this.gridRef.nativeElement
       );
       // Si prefieres, también puedes hacer: this.grid.load(this.widgets);

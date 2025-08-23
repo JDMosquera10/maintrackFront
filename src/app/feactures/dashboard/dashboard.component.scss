@@ -1,5 +1,11 @@
 @import '../../../styles.scss';
 
+// Variables adicionales para mejorar la consistencia
+$card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+$card-hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+$transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+
 :host {
   display: block;
   height: 100%;
@@ -22,14 +28,29 @@ h1 {
   color: $color-primary;
 }
 
+// .chart-container {
+//   width: 100%;
+//   height: 100%;
+//   position: relative;
+
+//   canvas {
+//     width: 95% !important; // 👈 pisa los estilos en línea
+//     height: 90% !important; // 👈 pisa los estilos en línea
+//   }
+// }
+
 .chart-container {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 3rem);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
 
   canvas {
-    width: 95% !important; // 👈 pisa los estilos en línea
-    height: 90% !important; // 👈 pisa los estilos en línea
+    max-width: 100% !important;
+    max-height: 100% !important;
   }
 }
 
@@ -53,21 +74,130 @@ h1 {
 
 .grid-stack-item-content {
   background: $color-dark-alt;
-  border-radius: 8px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
+
+   box-shadow: $card-shadow;
+  border: 1px solid rgba($color-primary, 0.1);
+  transition: $transition-base;
+  overflow: hidden;
+  // Los m\u00e1rgenes se manejan a nivel de GridStack
+  
+  &:hover {
+    box-shadow: $card-hover-shadow;
+    border-color: rgba($color-primary, 0.3);
+    transform: translateY(-2px);
+  }
 }
 
-::ng-deep .grid-stack-item-content {
-  text-align: center;
-  background-color: $color-dark-alt;
+// ::ng-deep .grid-stack-item-content {
+//   text-align: center;
+//   background-color: $color-dark-alt;
+// }
+
+::ng-deep .grid-stack {
+  .grid-stack-item {
+    padding: 6px !important; // Espacio de 6px alrededor de cada tarjeta
+    // box-sizing: border-box !important;
+    
+    &.ui-draggable-dragging {
+      z-index: 100;
+      
+      .grid-stack-item-content {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+      }
+    }
+  }
+  
+  .grid-stack-item-content {
+    text-align: center;
+    background-color: $color-dark-alt !important;
+    border-radius: 12px !important;
+    box-shadow: $card-shadow !important;
+    border: 1px solid rgba($color-primary, 0.1) !important;
+    transition: $transition-base !important;
+    overflow: hidden !important;
+    // width: 100% !important;
+    // height: 100% !important;
+    margin: 0 !important;
+    padding: 1.5rem !important;
+    
+    &:hover {
+      box-shadow: $card-hover-shadow !important;
+      border-color: rgba($color-primary, 0.3) !important;
+      transform: translateY(-2px) !important;
+    }
+  }
+}
+
+
+
+// Asegurar altura mínima para elementos
+// .grid-stack-item[gs-h="1"] .grid-stack-item-content {
+//   min-height: 80px;
+// }
+
+// .grid-stack-item[gs-h="2"] .grid-stack-item-content {
+//   min-height: 160px;
+// }
+
+// .grid-stack-item[gs-h="3"] .grid-stack-item-content {
+//   min-height: 240px;
+// }
+
+// Responsividad mejorada
+@media (max-width: 768px) {
+  .grid-stack {
+    .grid-stack-item {
+      position: relative !important;
+      width: 100% !important;
+      left: 0 !important;
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .grid-stack-item-content {
+    padding: 1rem;
+  }
+  
+  .kpi h1 {
+    font-size: 2rem;
+  }
+  
+  .card h3 {
+    font-size: 1rem;
+  }
+  
+  .alerts-list {
+    flex-direction: column;
+    gap: 0.5rem;
+    
+    li {
+      text-align: left;
+    }
+  }
 }
 
 .table-card {
   display: block;
+  // height: 100%;
+  
+  .table-wrapper {
+    flex: 1;
+    overflow: auto;
+    margin: 0 -1.5rem; // Compensar padding del card
+    padding: 0 1.5rem;
+    max-height: calc(100% - 8rem); // Dejar espacio para header y paginator
+  }
+  
+  mat-paginator {
+    margin: 0 -1.5rem -1.5rem;
+    border-radius: 0 0 12px 12px;
+  }
 }
 
 .mat-elevation-z8 {
@@ -103,5 +233,137 @@ h1 {
 
   mat-paginator {
     background-color: $color-dark-alt;
+  }
+
+}
+
+.alerts-container {
+  h3 {
+    color: $color-accent;
+    margin-bottom: 0.5rem !important;
+
+    &::before {
+      background: $color-accent;
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.5rem 1rem;
+      background: rgba($color-dark, 0.5);
+      border-radius: 8px;
+      border-left: 3px solid $color-dark-alt;
+      transition: $transition-base;
+
+      &:hover {
+        background: rgba($color-dark, 0.8);
+        transform: translateX(2px);
+      }
+
+      &:nth-child(1) {
+        border-left-color: $color-warning;
+      }
+
+      &:nth-child(2) {
+        border-left-color: $color-accent;
+      }
+
+      &:nth-child(3) {
+        border-left-color: $color-warning;
+      }
+
+      .warning {
+        color: $color-warning;
+        font-weight: 600;
+      }
+
+      .danger {
+        color: $color-accent;
+        font-weight: 600;
+        animation: pulse 2s infinite;
+      }
+    }
+  }
+}
+
+.alerts-list {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-around;
+  flex-wrap: wrap;
+
+  li {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+  }
+}
+
+
+// os para KPIs
+.kpi {
+  text-align: center;
+  padding: 1.5rem 1rem !important;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  // min-height: 100px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, $color-primary 0%, $color-accent 100%);
+  }
+  
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    animation: fadeInUp 0.6s ease-out;
+  }
+  
+  p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.75rem;
+    margin: 0.25rem 0 0 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  mat-icon {
+    width: auto !important;
+    height: auto !important;
+  }
+}
+
+// Animaciones
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
   }
 }
