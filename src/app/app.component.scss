@@ -63,12 +63,127 @@
 }
 
 
-.button-menu {
+// Contenedor del menú expandible
+.menu-container {
     position: absolute;
     top: 10px;
     left: 10px;
+    z-index: 1000;
+}
+
+.button-menu {
     border-radius: 50%;
-    // background: $color-dark-alt;
+    background-color: $color-primary !important;
+    color: white !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+// Navegación rápida - siempre visible cuando menú cerrado
+.quick-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    
+    &.visible {
+        pointer-events: auto;
+        
+        .quick-nav-icons {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .quick-nav-button {
+            opacity: 1;
+            transform: scale(0.8) translateX(0);
+            
+            &:nth-child(1) { transition-delay: 0.1s; }
+            &:nth-child(2) { transition-delay: 0.15s; }
+            &:nth-child(3) { transition-delay: 0.2s; }
+            &:nth-child(4) { transition-delay: 0.25s; }
+        }
+    }
+}
+
+.quick-nav-icons {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding-left: 60px; // Espacio para el botón principal
+    padding-top: 4px; // Alineación vertical
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-nav-button {
+    width: 40px !important;
+    height: 40px !important;
+    background-color: rgba($color-dark-alt, 0.95) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba($color-primary, 0.3) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+    opacity: 0;
+    transform: scale(0.5) translateX(-20px);
+    
+    &:hover {
+        background-color: $color-primary !important;
+        color: white !important;
+        transform: scale(1) !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
+        border-color: $color-primary !important;
+    }
+    
+    mat-icon {
+        font-size: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+    }
+}
+
+// Animación de entrada para los botones
+.quick-nav.visible .quick-nav-button {
+    animation: slideInScale 0.3s ease forwards;
+}
+
+@keyframes slideInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.5) translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(0.8) translateX(0);
+    }
+}
+
+// Responsividad para dispositivos móviles
+@media (max-width: 768px) {
+    .menu-container {
+        top: 15px;
+        left: 15px;
+    }
+    
+    .quick-nav-icons {
+        flex-direction: column;
+        padding-left: 0;
+        padding-top: 60px; // Colocar debajo del botón principal
+        gap: 6px;
+    }
+    
+    .quick-nav-button {
+        width: 36px !important;
+        height: 36px !important;
+        
+        mat-icon {
+            font-size: 16px !important;
+            width: 16px !important;
+            height: 16px !important;
+        }
+    }
 }
 
 .router-outlet {

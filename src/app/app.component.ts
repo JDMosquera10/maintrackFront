@@ -20,10 +20,20 @@ export class AppComponent {
   constructor(private router: Router) { }
 
   showFilterImage = false;
+  isMenuOpen = false; // Para saber si el menú está abierto
+  
   stats = [
     { label: 'Máquinas registradas', value: 14, icon: 'precision_manufacturing' },
     { label: 'Mantenimientos pendientes', value: 5, icon: 'build' },
     { label: 'Alertas próximas', value: 3, icon: 'warning' }
+  ];
+
+  // Módulos de navegación rápida basados en el sidebar
+  quickNavModules = [
+    { icon: 'dashboard', path: '/dashboard', title: 'Dashboard' },
+    { icon: 'precision_manufacturing', path: '/machines', title: 'Máquinas' },
+    { icon: 'build', path: '/maintenance', title: 'Mantenimientos' },
+    { icon: 'table_chart', path: '/machines-table', title: 'Tabla Máquinas' }
   ];
 
   navegate(event: string, cb: MatDrawer) {
@@ -31,6 +41,22 @@ export class AppComponent {
     this.showFilterImage = false;
     this.router.navigate([event || '/dashboard']);
     cb.toggle();
+    this.isMenuOpen = false; // El menú se cierra después de navegar
+  }
 
+  toggleMenu(drawer: MatDrawer) {
+    // Actualizar el estado inmediatamente basándose en el estado actual
+    this.isMenuOpen = !drawer.opened;
+    this.showFilterImage = !this.showFilterImage;
+    
+    // Realizar el toggle después de actualizar el estado
+    drawer.toggle();
+  }
+
+  // Método ya no necesario - los iconos se controlan directamente con isMenuOpen
+
+  navigateQuick(path: string) {
+    this.router.navigate([path]);
+    // Los iconos permanecen visibles después de navegar
   }
 }

@@ -182,9 +182,32 @@
       <div class="router-outlet">
         <router-outlet></router-outlet>
       </div>
-      <button mat-fab aria-label="Menu lateral" class="button-menu" (click)="drawer.toggle(); showFilterImage = !showFilterImage">
-        <mat-icon>menu</mat-icon>
-      </button>
+      
+      <!-- Botón de menú expandible -->
+      <div class="menu-container">
+        
+        <!-- Botón principal del menú -->
+        <button mat-fab 
+                aria-label="Menu lateral" 
+                class="button-menu" 
+                (click)="toggleMenu(drawer)">
+          <mat-icon>menu</mat-icon>
+        </button>
+
+        <!-- Navegación rápida - siempre visible cuando el menú está cerrado -->
+        <div class="quick-nav" [class.visible]="!isMenuOpen">
+          <div class="quick-nav-icons">
+            @for (module of quickNavModules; track module.path) {
+              <button mat-mini-fab 
+                      class="quick-nav-button" 
+                      [title]="module.title"
+                      (click)="navigateQuick(module.path)">
+                <mat-icon>{{ module.icon }}</mat-icon>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
       }
     </div>
   </mat-drawer-container>
