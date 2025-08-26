@@ -4,7 +4,11 @@
         <div class="grid-stack-item-content card">
             <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">analytics</mat-icon> Mantenimientos por Mes</h3>
             <div class="chart-container">
-                <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
+                <canvas baseChart 
+                        #barChart
+                        [data]="barChartData" 
+                        [options]="barChartOptions" 
+                        [type]="'bar'">
                 </canvas>
             </div>
         </div>
@@ -15,7 +19,11 @@
         <div class="grid-stack-item-content card">
             <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">donut_large</mat-icon> Estado de Máquinas</h3>
             <div class="chart-container">
-                <canvas baseChart [data]="doughnutChartData" [options]="doughnutChartOptions" [type]="'doughnut'">
+                <canvas baseChart 
+                        #doughnutChart
+                        [data]="doughnutChartData" 
+                        [options]="doughnutChartOptions" 
+                        [type]="'doughnut'">
                 </canvas>
             </div>
         </div>
@@ -91,7 +99,11 @@
         <div class="grid-stack-item-content card">
             <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">inventory_2</mat-icon> Consumo de Repuestos</h3>
             <div class="chart-container">
-                <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="'line'">
+                <canvas baseChart 
+                        #lineChart
+                        [data]="lineChartData" 
+                        [options]="lineChartOptions" 
+                        [type]="'line'">
                 </canvas>
             </div>
         </div>

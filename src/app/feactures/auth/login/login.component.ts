@@ -26,6 +26,15 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.checkAuthStatus();
+  }
+
+  private checkAuthStatus(): void {
+    this.authService.isAuthenticated().subscribe(isAuthenticated => {
+      if (isAuthenticated) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
   }
 
   private initForm(): void {

@@ -8,11 +8,12 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { routes } from './app.routes';
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './shared/interceptors/error.interceptor';
+import { ThemeService } from './services/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-  provideHttpClient(withFetch()),
+    provideHttpClient(withFetch()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     },
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideAnimations()
+    provideAnimations(),
+    ThemeService
   ]
 };

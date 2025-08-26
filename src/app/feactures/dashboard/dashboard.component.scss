@@ -13,7 +13,8 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 mat-grid-tile {
-  background: $color-primary;
+  // background: $color-primary;
+  background: var(--bg-primary);
 }
 
 
@@ -25,7 +26,8 @@ p {
 h1 {
   margin: 0;
   padding: 0;
-  color: $color-primary;
+  // color: $color-primary;
+  color: var(--color-primary);
 }
 
 // .chart-container {
@@ -73,12 +75,14 @@ h1 {
 }
 
 .grid-stack-item-content {
-  background: $color-dark-alt;
+  // background: $color-dark-alt;
+  background: var(--bg-secondary);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  // color: white;
+  color: var(--text-primary);
   font-weight: bold;
 
    box-shadow: $card-shadow;
@@ -115,7 +119,8 @@ h1 {
   
   .grid-stack-item-content {
     text-align: center;
-    background-color: $color-dark-alt !important;
+    // background-color: $color-dark-alt !important;
+    background-color: var(--bg-secondary) !important;
     border-radius: 12px !important;
     box-shadow: $card-shadow !important;
     border: 1px solid rgba($color-primary, 0.1) !important;
@@ -204,7 +209,8 @@ h1 {
   // overflow: auto;
   border-radius: 8px;
   // background-color: #1e1c1c; // fondo oscuro
-  color: #fff;
+  // color: #fff;
+  color: var(--text-primary);
 
   table {
     width: 100%;
@@ -214,13 +220,15 @@ h1 {
     td {
       border-bottom: 1px solid #555;
       padding: 12px 16px;
-      background-color: $color-dark-alt;
+      // background-color: $color-dark-alt;
+      background-color: var(--bg-secondary);
     }
 
     th {
       // background-color: #2a2828;
       font-weight: 600;
-      color: $color-primary;
+      // color: $color-primary;
+      color: var(--color-primary);
       position: sticky;
       top: 0;
       z-index: 2;
@@ -232,18 +240,21 @@ h1 {
   }
 
   mat-paginator {
-    background-color: $color-dark-alt;
+    // background-color: $color-dark-alt;
+    background-color: var(--bg-secondary);
   }
 
 }
 
 .alerts-container {
   h3 {
-    color: $color-accent;
+    // color: $color-accent;
+    color: var(--color-accent);
     margin-bottom: 0.5rem !important;
 
     &::before {
-      background: $color-accent;
+      // background: $color-accent;
+      background: var(--color-accent);
     }
   }
 
@@ -254,35 +265,35 @@ h1 {
 
     li {
       padding: 0.5rem 1rem;
-      background: rgba($color-dark, 0.5);
+      background: var(--bg-primary);
       border-radius: 8px;
-      border-left: 3px solid $color-dark-alt;
+      border-left: 3px solid var(--bg-primary);
       transition: $transition-base;
 
       &:hover {
-        background: rgba($color-dark, 0.8);
+        background: var(--bg-tertiary);
         transform: translateX(2px);
       }
 
       &:nth-child(1) {
-        border-left-color: $color-warning;
+        border-left-color: var(--color-warning);
       }
 
       &:nth-child(2) {
-        border-left-color: $color-accent;
+        border-left-color: var(--color-accent);
       }
 
       &:nth-child(3) {
-        border-left-color: $color-warning;
+        border-left-color: var(--color-warning);
       }
 
       .warning {
-        color: $color-warning;
+        color: var(--color-warning);
         font-weight: 600;
       }
 
       .danger {
-        color: $color-accent;
+        color: var(--color-accent);
         font-weight: 600;
         animation: pulse 2s infinite;
       }
@@ -328,13 +339,15 @@ h1 {
   h1 {
     font-size: 2.2rem;
     font-weight: 700;
-    color: #fff;
+    // color: #fff;
+    color: var(--text-primary);
     margin: 0;
     animation: fadeInUp 0.6s ease-out;
   }
   
   p {
-    color: rgba(255, 255, 255, 0.7);
+    // color: rgba(255, 255, 255, 0.7);
+    color: var(--text-secondary);
     font-size: 0.75rem;
     margin: 0.25rem 0 0 0;
     text-transform: uppercase;

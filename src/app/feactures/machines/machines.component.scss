@@ -54,15 +54,15 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 .chart-card {
     width: 100% !important;
-    background-color: $color-dark-alt !important;
+    background-color: var(--bg-secondary) !important;
     border-radius: 8px !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
-    border: 1px solid rgba($color-primary, 0.1) !important;
+    box-shadow: 0 2px 4px var(--shadow-color) !important;
+    border: 1px solid var(--border-color) !important;
     transition: box-shadow 0.2s ease !important;
     overflow: hidden;
     
     &:hover {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25) !important;
+        box-shadow: 0 4px 8px var(--shadow-color-strong) !important;
     }
 }
 
@@ -73,8 +73,8 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 1.5rem 1rem;
-    border-bottom: 1px solid rgba($color-primary, 0.1);
-    background: linear-gradient(135deg, rgba($color-primary, 0.05) 0%, rgba($color-accent, 0.05) 100%);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
 }
 
 // Estilos para el campo de búsqueda - más sobrios
@@ -93,29 +93,29 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .mat-mdc-form-field-outline {
-        color: rgba(255, 255, 255, 0.3);
+        color: var(--border-color-strong);
     }
     
     &.mat-focused .mat-mdc-form-field-outline {
-        color: rgba($color-primary, 0.8);
+        color: var(--color-primary);
     }
     
     input {
-        color: white;
+        color: var(--text-primary);
         
         &::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--text-tertiary);
         }
     }
     
     mat-icon {
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--text-secondary);
     }
 }
 
 // Botón agregar más profesional
 .button-agregar {
-    background-color: $color-primary !important;
+    background-color: var(--color-primary) !important;
     color: white !important;
     border-radius: 4px !important;
     padding: 0 1.2rem !important;
@@ -123,16 +123,16 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-transform: none !important;
     letter-spacing: normal !important;
     box-shadow: none !important;
-    border: 1px solid $color-primary !important;
+    border: 1px solid var(--color-primary) !important;
     transition: all 0.2s ease !important;
     
     &:hover {
-        background-color: $color-primary-alt !important;
-        border-color: $color-primary-alt !important;
+        background-color: var(--color-primary-alt) !important;
+        border-color: var(--color-primary-alt) !important;
     }
     
     &:active {
-        background-color: darken($color-primary, 10%) !important;
+        opacity: 0.8 !important;
     }
 }
 
@@ -141,10 +141,10 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 // Estilos de la tabla de datos mejorados
 .mat-elevation-z8 {
     border-radius: 8px !important;
-    background-color: $color-dark-alt !important;
-    color: white !important;
-    box-shadow: $card-shadow !important;
-    border: 1px solid rgba($color-primary, 0.1) !important;
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 2px 4px var(--shadow-color) !important;
+    border: 1px solid var(--border-color) !important;
     overflow: hidden !important;
     margin: 1rem 0 !important;
 
@@ -155,16 +155,16 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
         th,
         td {
-            border-bottom: 1px solid rgba($color-primary, 0.1) !important;
+            border-bottom: 1px solid var(--border-color) !important;
             padding: 16px !important;
             background-color: transparent !important;
-            transition: $transition-base !important;
+            transition: background-color 0.2s ease !important;
         }
 
         th {
             font-weight: 600 !important;
-            color: $color-primary !important;
-            background-color: rgba($color-dark, 0.5) !important;
+            color: var(--color-primary) !important;
+            background-color: var(--bg-tertiary) !important;
             position: sticky !important;
             top: 0 !important;
             z-index: 2 !important;
@@ -174,14 +174,14 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         td {
-            color: rgba(255, 255, 255, 0.9) !important;
+            color: var(--text-primary) !important;
         }
 
         tr {
             transition: background-color 0.2s ease !important;
             
             &:hover {
-                background-color: rgba($color-primary, 0.03) !important;
+                background-color: var(--bg-tertiary) !important;
             }
         }
     }
@@ -189,43 +189,43 @@ $transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 // Estilos para el paginador
 mat-paginator {
-    background-color: $color-dark-alt !important;
-    color: white !important;
-    border-top: 1px solid rgba($color-primary, 0.1) !important;
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-top: 1px solid var(--border-color) !important;
     border-radius: 0 0 8px 8px !important;
     
     .mat-mdc-paginator-range-label {
-        color: rgba(255, 255, 255, 0.7) !important;
+        color: var(--text-secondary) !important;
     }
     
     .mat-mdc-icon-button {
-        color: rgba(255, 255, 255, 0.7) !important;
+        color: var(--text-secondary) !important;
         
         &:hover {
-            background-color: rgba($color-primary, 0.1) !important;
-            color: $color-primary !important;
+            background-color: var(--bg-tertiary) !important;
+            color: var(--color-primary) !important;
         }
         
         &[disabled] {
-            color: rgba(255, 255, 255, 0.3) !important;
+            color: var(--text-tertiary) !important;
         }
     }
 }
 
 // Estilos para el menú de acciones
 .mat-mdc-menu-panel {
-    background-color: $color-dark-alt !important;
-    border: 1px solid rgba($color-primary, 0.2) !important;
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color-strong) !important;
     border-radius: 8px !important;
-    box-shadow: $card-hover-shadow !important;
+    box-shadow: 0 4px 8px var(--shadow-color-strong) !important;
     
     .mat-mdc-menu-item {
-        color: white !important;
-        transition: $transition-base !important;
+        color: var(--text-primary) !important;
+        transition: all 0.2s ease !important;
         
         &:hover {
-            background-color: rgba($color-primary, 0.1) !important;
-            color: $color-primary !important;
+            background-color: var(--bg-tertiary) !important;
+            color: var(--color-primary) !important;
         }
         
         mat-icon {
@@ -237,12 +237,12 @@ mat-paginator {
 
 // Botón de menú más discreto
 .mat-mdc-icon-button {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: var(--text-secondary) !important;
     transition: all 0.2s ease !important;
     
     &:hover {
-        background-color: rgba($color-primary, 0.08) !important;
-        color: rgba(255, 255, 255, 0.9) !important;
+        background-color: var(--bg-tertiary) !important;
+        color: var(--text-primary) !important;
     }
 }
 
@@ -297,9 +297,10 @@ mat-paginator {
 // Modal styles mejorados
 ::ng-deep .custom-dialog-container {
     border-radius: 16px !important;
-    background-color: $color-dark-alt !important;
+    // background-color: $color-dark-alt !important;
+    background-color: var(--bg-secondary) !important;
     box-shadow: $card-hover-shadow !important;
-    border: 1px solid rgba($color-primary, 0.2) !important;
+    border: 1px solid var(--border-color) !important;
     padding: 1.5rem !important;
 }
 

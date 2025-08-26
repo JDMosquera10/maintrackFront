@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './shared/guards/auth.guard';
+import { NoAuthGuard } from './shared/guards/no-auth.guard';
 import { RoleGuard } from './shared/guards/role.guard';
 import { UserRole } from './shared/models/user.model';
 
@@ -11,7 +12,8 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./feactures/auth/login/login.component').then(m => m.LoginComponent)
+    loadComponent: () => import('./feactures/auth/login/login.component').then(m => m.LoginComponent),
+    canActivate: [NoAuthGuard]
   },
   // {
   //   path: 'register',

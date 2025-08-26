@@ -17,7 +17,7 @@ mat-form-field {
   width: 100%;
   
   .mat-mdc-form-field-focus-overlay {
-    background-color: rgba($color-primary, 0.05);
+    background-color: var(--bg-primary);
   }
   
   .mat-mdc-text-field-wrapper {
@@ -27,33 +27,34 @@ mat-form-field {
   }
   
   .mat-mdc-form-field-outline {
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--border-color);
   }
   
   &.mat-focused .mat-mdc-form-field-outline {
-    color: rgba($color-primary, 0.8);
+    color: var(--color-primary);
   }
   
   input, textarea, mat-select {
-    color: white;
+    color: var(--text-primary);
     
     &::placeholder {
-      color: rgba(255, 255, 255, 0.4);
+      color: var(--text-tertiary);
     }
   }
   
   .mat-mdc-form-field-label {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-secondary);
   }
   
   &.mat-focused .mat-mdc-form-field-label {
-    color: rgba($color-primary, 0.9);
+    color: var(--color-primary);
   }
 }
 
 .dialog-content {
   padding: 1.5rem !important;
-  background-color: $color-dark-alt !important;
+  // background-color: $color-dark-alt !important;
+  background-color: var(--bg-secondary) !important;
   color: white !important;
   max-height: 70vh !important;
   overflow-y: auto !important;
@@ -64,16 +65,16 @@ mat-form-field {
   }
   
   &::-webkit-scrollbar-track {
-    background: rgba($color-dark, 0.3);
+    background: var(--bg-primary);
     border-radius: 3px;
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba($color-primary, 0.5);
+    background: var(--color-primary);
     border-radius: 3px;
     
     &:hover {
-      background: rgba($color-primary, 0.7);
+      background: var(--color-primary);
     }
   }
 }
@@ -81,7 +82,8 @@ mat-form-field {
 // Estilos para botones del diálogo - más profesionales
 ::ng-deep .mat-mdc-dialog-actions {
   padding: 1rem 1.5rem !important;
-  background: rgba($color-dark-alt, 0.8) !important;
+  // background: rgba($color-dark-alt, 0.8) !important;
+  background: var(--bg-secondary) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
   
   .mat-mdc-button {
@@ -93,23 +95,26 @@ mat-form-field {
     transition: all 0.2s ease !important;
     
     &[mat-dialog-close] {
-      color: rgba(255, 255, 255, 0.7) !important;
+      // color: rgba(255, 255, 255, 0.7) !important;
+      color: var(--text-primary) !important;
       border: 1px solid rgba(255, 255, 255, 0.3) !important;
       
       &:hover {
-        background-color: rgba(255, 255, 255, 0.05) !important;
-        border-color: rgba(255, 255, 255, 0.4) !important;
+        // background-color: rgba(255, 255, 255, 0.05) !important;
+        background-color: var(--bg-primary) !important;
+        // border-color: rgba(255, 255, 255, 0.4) !important;
+        border-color: var(--border-color) !important;
       }
     }
     
     &:not([mat-dialog-close]) {
-      background-color: $color-primary !important;
-      color: white !important;
-      border: 1px solid $color-primary !important;
+      background-color: var(--color-primary) !important;
+      color: var(--text-primary) !important;
+      border: 1px solid var(--color-primary) !important;
       
       &:hover {
-        background-color: $color-primary-alt !important;
-        border-color: $color-primary-alt !important;
+        background-color: var(--color-primary-alt) !important;
+        border-color: var(--color-primary-alt) !important;
       }
     }
   }
@@ -117,7 +122,8 @@ mat-form-field {
 
 // Título del modal - más sobrio
 ::ng-deep .mat-mdc-dialog-title {
-  color: rgba(255, 255, 255, 0.9) !important;
+  // color: rgba(255, 255, 255, 0.9) !important;
+  color: var(--text-primary) !important;
   font-weight: 600 !important;
   margin-bottom: 1rem !important;
   padding-bottom: 0.5rem !important;

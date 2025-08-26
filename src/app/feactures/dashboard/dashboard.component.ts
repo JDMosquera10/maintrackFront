@@ -1,21 +1,15 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Inject, NgZone, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, NgZone, PLATFORM_ID, ViewChild, OnDestroy } from '@angular/core';
 import { GeneralModule } from '../../modules/general.module';
 
 import { GridStack } from 'gridstack';
 import { isPlatformBrowser } from '@angular/common';
-import { take } from 'rxjs';
+import { take, Subject, takeUntil } from 'rxjs';
 import { eachMonthOfInterval, format, startOfYear } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-// export interface PeriodicElement {
-//   model: string;
-//   serie: number;
-//   timeUse: number;
-//   client: string;
-//   position: number;
-// }
+import { ThemeService } from '../../services/theme.service';
 
 export interface PeriodicElement {
   model: string;
@@ -43,83 +37,100 @@ const ELEMENT_DATA: PeriodicElement[] = [
   imports: [GeneralModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements AfterViewInit, OnDestroy {
   @ViewChild('gridRef', { static: true }) gridRef!: ElementRef<HTMLElement>;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  
+  // Referencias a los gráficos para forzar actualización
+  @ViewChild('barChart') barChart: any;
+  @ViewChild('lineChart') lineChart: any;
+  @ViewChild('doughnutChart') doughnutChart: any;
+  
+  private destroy$ = new Subject<void>();
 
   private grid?: GridStack;
   public today: Date = new Date();
   // private today: Date = new Date();
   protected monthCurrent: string[] = [];
   barChartData: ChartConfiguration<'bar'>['data'] | any;
-  barChartOptions: ChartOptions<'bar'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: {
-          color: '#fff',
-          font: { size: 12 },
-          padding: 20
+  barChartOptions: ChartOptions<'bar'> = {};
+  
+  private getBarChartOptions(): ChartOptions<'bar'> {
+    const colors = this.getThemeColors();
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            color: colors.textPrimary,
+            font: { size: 12 },
+            padding: 20
+          },
+          position: 'bottom'
         },
-        position: 'bottom'
-      },
-      tooltip: {
-        backgroundColor: 'rgba(32, 40, 55, 0.9)',
-        titleColor: '#02BEC1',
-        bodyColor: '#fff',
-        borderColor: '#02BEC1',
-        borderWidth: 1,
-        padding: 12,
-        cornerRadius: 8
-      }
-    },
-    scales: {
-      x: {
-        ticks: { color: '#fff', font: { size: 11 } },
-        grid: { color: 'rgba(255, 255, 255, 0.1)' }
-      },
-      y: {
-        ticks: { color: '#fff', font: { size: 11 } },
-        grid: { color: 'rgba(255, 255, 255, 0.1)' }
-      }
-    }
-  };
-
-  lineChartData: ChartConfiguration<'line'>['data'] | any;
-  lineChartOptions: ChartOptions<'line'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: {
-          color: '#fff',
-          font: { size: 12 }
+        tooltip: {
+          backgroundColor: colors.bgSecondary,
+          titleColor: colors.primary,
+          bodyColor: colors.textPrimary,
+          borderColor: colors.primary,
+          borderWidth: 1,
+          padding: 12,
+          cornerRadius: 8
         }
       },
-      tooltip: {
-        backgroundColor: 'rgba(32, 40, 55, 0.9)',
-        titleColor: '#F0961B',
-        bodyColor: '#fff',
-        borderColor: '#F0961B',
-        borderWidth: 1,
-        padding: 12,
-        cornerRadius: 8
+      scales: {
+        x: {
+          ticks: { color: colors.textPrimary, font: { size: 11 } },
+          grid: { color: colors.borderColor }
+        },
+        y: {
+          ticks: { color: colors.textPrimary, font: { size: 11 } },
+          grid: { color: colors.borderColor }
+        }
       }
-    },
-    scales: {
-      x: {
-        ticks: { color: '#fff', font: { size: 11 } },
-        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+    };
+  }
+
+  lineChartData: ChartConfiguration<'line'>['data'] | any;
+  lineChartOptions: ChartOptions<'line'> = {};
+  
+  private getLineChartOptions(): ChartOptions<'line'> {
+    const colors = this.getThemeColors();
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            color: colors.textPrimary,
+            font: { size: 12 }
+          }
+        },
+        tooltip: {
+          backgroundColor: colors.bgSecondary,
+          titleColor: colors.warning,
+          bodyColor: colors.textPrimary,
+          borderColor: colors.warning,
+          borderWidth: 1,
+          padding: 12,
+          cornerRadius: 8
+        }
       },
-      y: {
-        ticks: { color: '#fff', font: { size: 11 } },
-        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+      scales: {
+        x: {
+          ticks: { color: colors.textPrimary, font: { size: 11 } },
+          grid: { color: colors.borderColor }
+        },
+        y: {
+          ticks: { color: colors.textPrimary, font: { size: 11 } },
+          grid: { color: colors.borderColor }
+        }
       }
-    }
-  };
+    };
+  }
 
 
   displayedColumns: string[] = ['model', 'serialNumber', 'client', 'expirationDate'];
@@ -129,110 +140,280 @@ export class DashboardComponent implements AfterViewInit {
   // --- Máquinas Activas vs Inactivas ---
   doughnutChartData: ChartConfiguration<'doughnut'>['data'] | any;
 
-  doughnutChartOptions: ChartOptions<'doughnut'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '70%',
-    radius: '70%',
-    plugins: {
-      legend: {
-        labels: {
-          color: '#fff',
-          font: { size: 12 },
-          padding: 15
+  doughnutChartOptions: ChartOptions<'doughnut'> = {};
+  
+  private getDoughnutChartOptions(): ChartOptions<'doughnut'> {
+    const colors = this.getThemeColors();
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '70%',
+      radius: '70%',
+      plugins: {
+        legend: {
+          labels: {
+            color: colors.textPrimary,
+            font: { size: 12 },
+            padding: 15
+          },
+          position: 'bottom'
         },
-        position: 'bottom'
-      },
-      tooltip: {
-        backgroundColor: 'rgba(32, 40, 55, 0.9)',
-        titleColor: '#02BEC1',
-        bodyColor: '#fff',
-        borderColor: '#02BEC1',
-        borderWidth: 1,
-        padding: 12,
-        cornerRadius: 8
+        tooltip: {
+          backgroundColor: colors.bgSecondary,
+          titleColor: colors.primary,
+          bodyColor: colors.textPrimary,
+          borderColor: colors.primary,
+          borderWidth: 1,
+          padding: 12,
+          cornerRadius: 8
+        }
       }
-    }
-  };
+    };
+  }
 
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private ngZone: NgZone) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object, 
+    private ngZone: NgZone,
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.getMonthToday();
     this.prepareChartOptions1();
     this.prepareChartOptions2();
     this.prepareChartOptions3();
     this.dataSource.data = ELEMENT_DATA;
+  }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.grid?.destroy(false); // evita fugas al navegar
+    this.grid = undefined;
+  }
+
+  /**
+   * Obtiene los colores actuales del tema desde las variables CSS
+   */
+  private getThemeColors() {
+    // Verificar si estamos en el navegador
+    if (!isPlatformBrowser(this.platformId)) {
+      return this.getDefaultColors();
+    }
+    
+    try {
+      // Obtener el tema actual directamente del servicio
+      const isDark = this.themeService?.isDarkTheme() ?? true;
+      console.log('getThemeColors - Tema detectado:', isDark ? 'Oscuro' : 'Claro');
+      
+      const root = document.documentElement;
+      const computedStyle = getComputedStyle(root);
+      
+      // Obtener colores base
+      const primary = computedStyle.getPropertyValue('--color-primary').trim() || '#02BEC1';
+      const primaryAlt = computedStyle.getPropertyValue('--color-primary-alt').trim() || '#04c0c3';
+      const accent = computedStyle.getPropertyValue('--color-accent').trim() || '#a44a5d';
+      const warning = computedStyle.getPropertyValue('--color-warning').trim() || '#f0961b';
+      
+      // Verificar qué colores de texto tenemos en CSS
+      const cssTextPrimary = computedStyle.getPropertyValue('--text-primary').trim();
+      console.log('CSS --text-primary:', cssTextPrimary);
+      
+      // Usar colores específicos según el tema actual
+      if (isDark) {
+        return {
+          primary,
+          primaryAlt,
+          accent,
+          warning,
+          textPrimary: '#ffffff',
+          textSecondary: 'rgba(255, 255, 255, 0.7)',
+          bgSecondary: '#202837',
+          borderColor: 'rgba(255, 255, 255, 0.1)'
+        };
+      } else {
+        return {
+          primary,
+          primaryAlt,
+          accent,
+          warning,
+          textPrimary: '#1a202c',
+          textSecondary: 'rgba(26, 32, 44, 0.7)',
+          bgSecondary: '#ffffff',
+          borderColor: 'rgba(203, 213, 224, 0.6)'
+        };
+      }
+    } catch (error) {
+      console.warn('Error al obtener colores del tema, usando colores por defecto:', error);
+      return this.getDefaultColors();
+    }
+  }
+
+  /**
+   * Colores por defecto cuando no se pueden obtener del CSS
+   */
+  private getDefaultColors() {
+    return {
+      primary: '#02BEC1',
+      primaryAlt: '#04c0c3',
+      accent: '#a44a5d',
+      warning: '#f0961b',
+      textPrimary: '#ffffff',
+      textSecondary: 'rgba(255, 255, 255, 0.7)',
+      bgSecondary: '#202837',
+      borderColor: 'rgba(255, 255, 255, 0.1)'
+    };
+  }
+
+  /**
+   * Actualiza todos los gráficos cuando cambia el tema
+   */
+  private updateChartsForTheme(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      console.log('Tema cambiado, iniciando actualización de gráficos...');
+      
+      // Estrategia múltiple para asegurar actualización
+      this.ngZone.run(() => {
+        // Primer intento después de un pequeño delay para que CSS se actualice
+        setTimeout(() => {
+          console.log('Primera actualización - Tema actual:', this.themeService?.isDarkTheme() ? 'Oscuro' : 'Claro');
+          this.prepareChartOptions1();
+          this.prepareChartOptions2();
+          this.prepareChartOptions3();
+          this.cdr.detectChanges();
+          this.forceChartsUpdate();
+        }, 100);
+        
+        // Segundo intento con delay mayor para asegurar que todo esté actualizado
+        setTimeout(() => {
+          console.log('Segunda actualización (confirmación)');
+          this.prepareChartOptions1();
+          this.prepareChartOptions2();
+          this.prepareChartOptions3();
+          this.cdr.detectChanges();
+          this.forceChartsUpdate();
+          console.log('Gráficos completamente actualizados');
+        }, 300);
+      });
+    }
+  }
+
+  /**
+   * Fuerza la actualización de las instancias de Chart.js
+   */
+  private forceChartsUpdate(): void {
+    try {
+      // Estrategia 1: Usar las referencias del ViewChild
+      this.updateChartInstance(this.barChart, this.barChartData, this.barChartOptions);
+      this.updateChartInstance(this.lineChart, this.lineChartData, this.lineChartOptions);
+      this.updateChartInstance(this.doughnutChart, this.doughnutChartData, this.doughnutChartOptions);
+      
+      // Estrategia 2: Forzar nueva asignación para trigger change detection
+      setTimeout(() => {
+        this.barChartData = { ...this.barChartData };
+        this.lineChartData = { ...this.lineChartData };
+        this.doughnutChartData = { ...this.doughnutChartData };
+        this.cdr.detectChanges();
+      }, 50);
+      
+    } catch (error) {
+      console.warn('Error al actualizar gráficos:', error);
+      // Como fallback, forzar re-renderización completa
+      this.cdr.markForCheck();
+    }
+  }
+
+  /**
+   * Actualiza una instancia específica de gráfico
+   */
+  private updateChartInstance(chartRef: any, data: any, options: any): void {
+    if (chartRef && chartRef.chart) {
+      chartRef.chart.data = data;
+      chartRef.chart.options = options;
+      chartRef.chart.update('none'); // 'none' es más rápido que 'active'
+    }
   }
 
   prepareChartOptions1() {
+    const colors = this.getThemeColors();
+    
     this.barChartData = {
       labels: this.monthCurrent,
       datasets: [
         {
           label: 'Preventivos',
           data: [5, 6, 5, 7, 4, 9],
-          backgroundColor: '#02BEC1',
-          borderColor: '#02BEC1',
+          backgroundColor: colors.primary,
+          borderColor: colors.primary,
           borderWidth: 2,
           borderRadius: 8,
           barPercentage: 0.6,
           categoryPercentage: 0.8,
-          hoverBackgroundColor: 'rgba(2, 190, 193, 0.8)'
+          hoverBackgroundColor: colors.primaryAlt
         },
         {
           label: 'Correctivos',
           data: [3, 2, 4, 3, 5, 2],
-          backgroundColor: '#F0961B',
-          borderColor: '#F0961B',
+          backgroundColor: colors.warning,
+          borderColor: colors.warning,
           borderWidth: 2,
           borderRadius: 8,
           barPercentage: 0.6,
           categoryPercentage: 0.8,
-          hoverBackgroundColor: 'rgba(240, 150, 27, 0.8)'
+          hoverBackgroundColor: colors.accent
         }
       ]
-    }
+    };
+    
+    this.barChartOptions = this.getBarChartOptions();
   }
 
   prepareChartOptions2() {
+    const colors = this.getThemeColors();
+    
     this.doughnutChartData = {
       labels: ['Mantenimiento', 'Operación'],
       datasets: [
         {
           data: [18, 6],
-          backgroundColor: ['#02BEC1', '#F0961B'],
+          backgroundColor: [colors.primary, colors.warning],
           borderWidth: 3,
-          borderColor: '#202837',
+          borderColor: colors.bgSecondary,
           hoverBackgroundColor: [
-            'rgba(2, 190, 193, 0.8)',
-            'rgba(240, 150, 27, 0.8)'
+            colors.primaryAlt,
+            colors.accent
           ],
           hoverBorderWidth: 4
         }
       ]
-    }
+    };
+    
+    this.doughnutChartOptions = this.getDoughnutChartOptions();
   }
 
   prepareChartOptions3() {
+    const colors = this.getThemeColors();
+    
     this.lineChartData = {
       labels: this.monthCurrent,
       datasets: [
         {
           label: 'Filtros',
           data: [12, 19, 15, 22, 18, 25],
-          borderColor: '#02BEC1',
-          backgroundColor: 'rgba(2, 190, 193, 0.1)',
+          borderColor: colors.primary,
+          backgroundColor: colors.primary + '20', // 20 para transparencia
           borderWidth: 3,
           tension: 0.4,
           pointRadius: 5,
-          pointBackgroundColor: '#02BEC1',
-          pointBorderColor: '#fff',
+          pointBackgroundColor: colors.primary,
+          pointBorderColor: colors.textPrimary,
           pointBorderWidth: 2,
           pointHoverRadius: 7
         },
       ]
-    }
+    };
+    
+    this.lineChartOptions = this.getLineChartOptions();
   }
 
   ngAfterViewInit(): void {
@@ -265,11 +446,22 @@ export class DashboardComponent implements AfterViewInit {
     });
     this.dataSource.paginator = this.paginator;
 
-  }
+    // Suscribirse a cambios de tema después de que el componente esté inicializado
+    if (this.themeService && this.themeService.theme$) {
+      this.themeService.theme$.pipe(
+        takeUntil(this.destroy$)
+      ).subscribe((theme) => {
+        console.log('=== CAMBIO DE TEMA DETECTADO ===');
+        console.log('Nuevo tema desde observable:', theme);
+        console.log('isDarkTheme():', this.themeService.isDarkTheme());
+        console.log('Clase HTML actual:', document.documentElement.className);
+        
+        this.updateChartsForTheme();
+      });
+    } else {
+      console.warn('ThemeService no está disponible en DashboardComponent');
+    }
 
-  ngOnDestroy(): void {
-    this.grid?.destroy(false); // evita fugas al navegar
-    this.grid = undefined;
   }
 
   getMonthToday() {

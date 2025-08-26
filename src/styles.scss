@@ -12,13 +12,72 @@ $color-dark-alt: #202837;
 $color-accent: #a44a5d;
 $color-warning: #f0961b;
 
-html {
+// Variables CSS dinámicas para el cambio de tema
+:root {
+  // Colores para tema oscuro (por defecto)
+  --color-primary: #{$color-primary};
+  --color-primary-alt: #{$color-primary-alt};
+  --color-dark: #{$color-dark};
+  --color-dark-alt: #{$color-dark-alt};
+  --color-accent: #{$color-accent};
+  --color-warning: #{$color-warning};
+  
+  // Colores de texto y fondo para tema oscuro
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.5);
+  --bg-primary: #{$color-dark};
+  --bg-secondary: #{$color-dark-alt};
+  --bg-tertiary: #2a3441;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color-strong: rgba(255, 255, 255, 0.2);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-color-strong: rgba(0, 0, 0, 0.5);
+}
+
+// Tema por defecto (oscuro)
+html,
+html.theme-dark {
   @include mat.theme((color: (theme-type: dark,
         primary: custome.$primary-palette,
         tertiary: custome.$tertiary-palette ),
       typography: Roboto,
       density: 0,
       customProperties: true));
+}
+
+// Tema claro
+html.theme-light {
+  @include mat.theme((color: (theme-type: light,
+        primary: custome.$primary-palette,
+        tertiary: custome.$tertiary-palette ),
+      typography: Roboto,
+      density: 0,
+      customProperties: true));
+  
+  // Variables CSS optimizadas para tema claro
+  --color-dark: #f8f9fa;
+  --color-dark-alt: #ffffff;
+  --color-primary: #{$color-primary};
+  --color-primary-alt: #{$color-primary-alt};
+  --color-accent: #{$color-accent};
+  --color-warning: #{$color-warning};
+  
+  // Colores de texto para tema claro
+  --text-primary: #1a202c;
+  --text-secondary: rgba(26, 32, 44, 0.7);
+  --text-tertiary: rgba(26, 32, 44, 0.5);
+  
+  // Fondos para tema claro
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e2e8f0;
+  
+  // Bordes y sombras para tema claro
+  --border-color: rgba(203, 213, 224, 0.6);
+  --border-color-strong: rgba(203, 213, 224, 0.8);
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-color-strong: rgba(0, 0, 0, 0.15);
 }
 
 html,

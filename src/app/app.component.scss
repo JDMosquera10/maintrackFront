@@ -73,9 +73,9 @@
 
 .button-menu {
     border-radius: 50%;
-    background-color: $color-primary !important;
+    background-color: var(--color-primary) !important;
     color: white !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 4px 8px var(--shadow-color) !important;
     transition: all 0.3s ease !important;
 }
 
@@ -103,6 +103,8 @@
             &:nth-child(2) { transition-delay: 0.15s; }
             &:nth-child(3) { transition-delay: 0.2s; }
             &:nth-child(4) { transition-delay: 0.25s; }
+            &:nth-child(5) { transition-delay: 0.3s; } // Para el botón de tema
+            &:nth-child(6) { transition-delay: 0.35s; } // Para el botón de logout
         }
     }
 }
@@ -119,28 +121,70 @@
 }
 
 .quick-nav-button {
-    width: 40px !important;
-    height: 40px !important;
-    background-color: rgba($color-dark-alt, 0.95) !important;
-    color: rgba(255, 255, 255, 0.8) !important;
-    border: 1px solid rgba($color-primary, 0.3) !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    width: 50px !important;
+    height: 50px !important;
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 2px 6px var(--shadow-color) !important;
     transition: all 0.3s ease !important;
     opacity: 0;
     transform: scale(0.5) translateX(-20px);
     
     &:hover {
-        background-color: $color-primary !important;
+        background-color: var(--color-primary) !important;
         color: white !important;
         transform: scale(1) !important;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
-        border-color: $color-primary !important;
+        box-shadow: 0 4px 8px var(--shadow-color-strong) !important;
+        border-color: var(--color-primary) !important;
     }
     
     mat-icon {
         font-size: 18px !important;
         width: 18px !important;
         height: 18px !important;
+    }
+}
+
+// Estilos específicos para el botón de cambio de tema
+.theme-toggle-button {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--color-warning) !important;
+    
+    &:hover {
+        background-color: var(--color-warning) !important;
+        border-color: var(--color-warning) !important;
+        color: white !important;
+    }
+    
+    mat-icon {
+        color: var(--color-warning) !important;
+    }
+    
+    &:hover mat-icon {
+        color: white !important;
+    }
+}
+
+// Estilos específicos para el botón de logout
+.logout-button {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--color-accent) !important;
+    
+    &:hover {
+        background-color: var(--color-accent) !important;
+        border-color: var(--color-accent) !important;
+        color: white !important;
+        transform: scale(1) !important;
+        box-shadow: 0 4px 12px rgba(164, 74, 93, 0.4) !important;
+    }
+    
+    mat-icon {
+        color: var(--color-accent) !important;
+    }
+    
+    &:hover mat-icon {
+        color: white !important;
     }
 }
 

@@ -5,19 +5,26 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule, MatDrawer } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { ThemeService } from './services/theme.service';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, MatCardModule, MatIconModule, MatDividerModule, MatSidenavModule, MatButtonModule, SidebarComponent],
+  imports: [RouterOutlet, CommonModule, MatCardModule, MatIconModule, MatDividerModule, MatSidenavModule, MatButtonModule, MatSnackBarModule, SidebarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'machingP';
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    public themeService: ThemeService,
+    private authService: AuthService
+  ) { }
 
   showFilterImage = false;
   isMenuOpen = false; // Para saber si el menú está abierto
@@ -35,6 +42,21 @@ export class AppComponent {
     { icon: 'build', path: '/maintenance', title: 'Mantenimientos' },
     { icon: 'table_chart', path: '/machines-table', title: 'Tabla Máquinas' }
   ];
+
+  // Función para obtener el icono del tema
+  getThemeIcon(): string {
+    return this.themeService.isDarkTheme() ? 'light_mode' : 'dark_mode';
+  }
+
+  // Función para obtener el tooltip del tema
+  getThemeTooltip(): string {
+    return this.themeService.isDarkTheme() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro';
+  }
+
+  // Función para cambiar el tema
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+  }
 
   navegate(event: string, cb: MatDrawer) {
     console.log(event);
@@ -58,5 +80,21 @@ export class AppComponent {
   navigateQuick(path: string) {
     this.router.navigate([path]);
     // Los iconos permanecen visibles después de navegar
+  }
+
+  // Método para hacer logout
+  logout(): void {
+    this.authService.logout().subscribe({
+      next: (success) => {
+        if (success) {
+          this.router.navigate(['/login']);
+        }
+      },
+      error: (error) => {
+        console.error('Error during logout:', error);
+        // Aunque haya error, limpiar sesión local y redirigir
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

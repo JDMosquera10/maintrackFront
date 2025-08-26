@@ -205,6 +205,22 @@
                 <mat-icon>{{ module.icon }}</mat-icon>
               </button>
             }
+            
+            <!-- Botón de cambio de tema -->
+            <button mat-mini-fab 
+                    class="quick-nav-button theme-toggle-button" 
+                    [title]="getThemeTooltip()"
+                    (click)="toggleTheme()">
+              <mat-icon>{{ getThemeIcon() }}</mat-icon>
+            </button>
+
+            <!-- Botón de logout -->
+            <button mat-mini-fab 
+                    class="quick-nav-button logout-button" 
+                    title="Cerrar sesión"
+                    (click)="logout()">
+              <mat-icon>logout</mat-icon>
+            </button>
           </div>
         </div>
       </div>
