@@ -23,7 +23,7 @@ export class AppComponent {
   constructor(
     private router: Router,
     public themeService: ThemeService,
-    private authService: AuthService
+    protected authService: AuthService
   ) { }
 
   showFilterImage = false;

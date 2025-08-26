@@ -184,7 +184,7 @@
       </div>
       
       <!-- Botón de menú expandible -->
-      <div class="menu-container">
+      <div *ngIf="authService.isAuthenticated() | async" class="menu-container">
         
         <!-- Botón principal del menú -->
         <button mat-fab 
