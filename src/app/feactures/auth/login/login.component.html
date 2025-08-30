@@ -1,40 +1,30 @@
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <h1>Machine Management System</h1>
-      <p>Sign in to your account</p>
-    </div>
-
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="email" placeholder="Enter your email">
-        <mat-error *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          {{ getErrorMessage('email') }}
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Password</mat-label>
-        <input matInput formControlName="password" type="password" placeholder="Enter your password">
-        <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          {{ getErrorMessage('password') }}
-        </mat-error>
-      </mat-form-field>
-
-      <button 
-        mat-raised-button 
-        color="primary" 
-        type="submit" 
-        class="login-button"
-        [disabled]="loginForm.invalid || isLoading">
-        <mat-spinner *ngIf="isLoading" diameter="20" class="spinner"></mat-spinner>
-        <span *ngIf="!isLoading">Sign In</span>
-      </button>
-    </form>
-
-    <div class="login-footer">
-      <p>Don't have an account? <a routerLink="/register">Sign up</a></p>
-    </div>
+<div class="login-card">
+  <div class="login-header">
+    <h1>Mecanica Integral</h1>
+    <p>Iniciar sesión</p>
   </div>
-</div> 
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Usuario</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="Enter your email">
+      <mat-error *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+        {{ getErrorMessage('email') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput formControlName="password" type="password" placeholder="Enter your password">
+      <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+        {{ getErrorMessage('password') }}
+      </mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" class="login-button"
+      [disabled]="loginForm.invalid || isLoading">
+      <mat-spinner *ngIf="isLoading" diameter="20" class="spinner"></mat-spinner>
+      <span *ngIf="!isLoading">Ingresar</span>
+    </button>
+  </form>
+</div>

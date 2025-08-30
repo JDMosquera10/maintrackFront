@@ -179,9 +179,9 @@
       <img [src]="'https://machine-app-test-1.s3.us-east-2.amazonaws.com/fondos/logo2.png'"
         style="width: 100%; height: 100%;" alt="Sidebar image">
       } @else {
-      <div class="router-outlet">
-        <router-outlet></router-outlet>
-      </div>
+             <div class="router-outlet" [class.login-route]="isLoginRoute">
+         <router-outlet></router-outlet>
+       </div>
       
       <!-- Botón de menú expandible -->
       <div *ngIf="authService.isAuthenticated() | async" class="menu-container">

@@ -1,4 +1,64 @@
+<!-- Dashboard Header -->
+<div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 1rem; background: var(--color-surface); border-radius: 8px;">
+    <div>
+        <h2 style="margin: 0; color: var(--text-primary);">Dashboard de Máquinas</h2>
+        <p style="margin: 0.5rem 0 0 0; color: var(--text-secondary); font-size: 0.875rem;">
+            @if (lastUpdate) {
+                Última actualización: {{ lastUpdate | date:'short':'es-ES' }}
+            } @else {
+                Cargando datos...
+            }
+            @if (isLoading) {
+                <mat-icon style="font-size: 1rem; margin-left: 0.5rem; animation: spin 1s linear infinite;">refresh</mat-icon>
+            }
+        </p>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+        <button mat-raised-button color="primary" (click)="refreshDashboard()" [disabled]="isLoading">
+            <mat-icon style="margin-right: 0.5rem;">refresh</mat-icon>
+            Actualizar
+        </button>
+        <button mat-icon-button [matTooltip]="'Estado de conexión: ' + (webSocketService.isConnected() ? 'Conectado' : 'Desconectado')">
+            <mat-icon [style.color]="webSocketService.isConnected() ? '#4caf50' : '#f44336'">
+                {{ webSocketService.isConnected() ? 'wifi' : 'wifi_off' }}
+            </mat-icon>
+        </button>
+    </div>
+</div>
+
 <div class="grid-stack" #gridRef ngSkipHydration>
+   <!-- Alertas -->
+   <div class="grid-stack-item" gs-x="10" gs-y="0" gs-w="12" gs-h="2">
+    <div class="grid-stack-item-content card alerts-container">
+        <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">notifications_active</mat-icon> Alertas de Mantenimiento</h3>
+        <ul class="alerts-list">
+            @if (isLoading) {
+                <li class="loading-alert">
+                    <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem; animation: spin 1s linear infinite;">refresh</mat-icon>
+                    Cargando alertas...
+                </li>
+            } @else if (dashboardData && dashboardData.alerts && dashboardData.alerts.length > 0) {
+                @for (alert of getSortedAlerts(); track alert.id) {
+                    <li [class]="getAlertClass(alert)">
+                        <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem;" [style.color]="getAlertIconColor(alert)">
+                            {{ getAlertIcon(alert) }}
+                        </mat-icon>
+                        {{ alert.machineModel }} - {{ getAlertText(alert) }}
+                        <span [class]="getAlertSpanClass(alert)">
+                            {{ getAlertDaysText(alert) }}
+                        </span>
+                    </li>
+                }
+            } @else {
+                <li class="no-alerts">
+                    <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem; color: #4caf50;">check_circle</mat-icon>
+                    No hay alertas de mantenimiento pendientes
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
     <!-- Gráfico Mantenimientos por Mes -->
     <div class="grid-stack-item" gs-x="0" gs-y="0" gs-w="4" gs-h="3">
         <div class="grid-stack-item-content card">
@@ -73,7 +133,7 @@
     <div class="grid-stack-item" gs-x="10" gs-y="0" gs-w="3" gs-h="1">
         <div class="grid-stack-item-content card kpi">
             <mat-icon style="position: absolute; top: 1rem; right: 1rem; opacity: 0.3; font-size: 2rem;">precision_manufacturing</mat-icon>
-            <h1>24</h1>
+            <h1>{{ dashboardData?.stats?.totalMachines || 24 }}</h1>
             <p>Total Máquinas</p>
         </div>
     </div>
@@ -81,7 +141,7 @@
     <div class="grid-stack-item" gs-x="10" gs-y="1" gs-w="3" gs-h="1">
         <div class="grid-stack-item-content card kpi">
             <mat-icon style="position: absolute; top: 1rem; right: 1rem; opacity: 0.3; font-size: 2rem; color: #f0961b;">build_circle</mat-icon>
-            <h1>8</h1>
+            <h1>{{ dashboardData?.stats?.pendingMaintenances || 8 }}</h1>
             <p>Mantenimientos Pendientes</p>
         </div>
     </div>
@@ -89,7 +149,7 @@
     <div class="grid-stack-item" gs-x="10" gs-y="2" gs-w="3" gs-h="1">
         <div class="grid-stack-item-content card kpi">
             <mat-icon style="position: absolute; top: 1rem; right: 1rem; opacity: 0.3; font-size: 2rem; color: #a44a5d;">warning</mat-icon>
-            <h1>3</h1>
+            <h1>{{ dashboardData?.stats?.upcomingAlerts || 3 }}</h1>
             <p>Alertas Próximas</p>
         </div>
     </div>
@@ -109,135 +169,5 @@
         </div>
     </div>
 
-    <!-- Alertas -->
-    <div class="grid-stack-item" gs-x="10" gs-y="3" gs-w="12" gs-h="2">
-        <div class="grid-stack-item-content card alerts-container">
-            <h3><mat-icon style="font-size: 1.2rem; vertical-align: middle;">notifications_active</mat-icon> Alertas de Mantenimiento</h3>
-            <ul class="alerts-list">
-                <li>
-                    <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem; color: #f0961b;">schedule</mat-icon>
-                    CAT 320D - Vence en <span class="warning">5 días</span>
-                </li>
-                <li>
-                    <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem; color: #a44a5d;">error</mat-icon>
-                    Komatsu PC200 - Vence en <span class="danger">2 días</span>
-                </li>
-                <li>
-                    <mat-icon style="font-size: 1rem; vertical-align: middle; margin-right: 0.5rem; color: #f0961b;">schedule</mat-icon>
-                    Volvo EC210 - Vence en <span class="warning">6 días</span>
-                </li>
-            </ul>
-        </div>
-    </div>
+ 
 </div>
-
-
-<!-- <div class="grid-stack">
-  <div class="grid-stack-item">
-    <div class="grid-stack-item-content">Item 1</div>
-  </div>
-  <div class="grid-stack-item" gs-w="2">
-    <div class="grid-stack-item-content">Item 2 wider</div>
-  </div>
-</div> -->
-
-
-
-
-<!-- <div class="mat-header-strong">
-    <h1 class="size-title">Dashboard</h1>
-</div>
-<div class="content-cards">
-    <mat-card class="stat-card" appearance="outlined">
-        <mat-card-header class="mat-header-strong">
-            <mat-card-title class="size-title">32</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <p class="mat-body-strong">Total máquinas</p>
-        </mat-card-content>
-    </mat-card>
-
-    <mat-card class="stat-card" appearance="outlined">
-        <mat-card-header class="mat-header-strong">
-            <mat-card-title class="size-title">32</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <p class="mat-body-strong">Mantenimientos pendientes</p>
-        </mat-card-content>
-    </mat-card>
-
-    <mat-card class="stat-card" appearance="outlined">
-        <mat-card-header class="mat-header-strong">
-            <mat-card-title class="size-title">32</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <p class="mat-body-strong">Mantenimientos realizados</p>
-        </mat-card-content>
-    </mat-card>
-
-    <mat-card class="stat-card" appearance="outlined">
-        <mat-card-header class="mat-header-strong">
-            <mat-card-title class="size-title">32</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-            <p class="mat-body-strong">Próximos a vencer</p>
-        </mat-card-content>
-    </mat-card>
-</div>
-<div class="content-cards">
-    <div class="chart-container">
-        <mat-card class="chart-card" appearance="outlined">
-            <mat-card-header class="mat-header-strong" style="height: 100%;">
-                <mat-card-title>Alertas</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="">
-                <div class="mat-elevation-z8">
-                    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-                       
-                        <ng-container matColumnDef="model">
-                            <th mat-header-cell *matHeaderCellDef> Modelo </th>
-                            <td mat-cell *matCellDef="let element"> {{element.model}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="serie">
-                            <th mat-header-cell *matHeaderCellDef> Serie </th>
-                            <td mat-cell *matCellDef="let element"> {{element.serie}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="timeUse">
-                            <th mat-header-cell *matHeaderCellDef> Tiempo de uso </th>
-                            <td mat-cell *matCellDef="let element"> {{element.timeUse}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="client">
-                            <th mat-header-cell *matHeaderCellDef> Cliente </th>
-                            <td mat-cell *matCellDef="let element"> {{element.client}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="position">
-                            <th mat-header-cell *matHeaderCellDef> ubicación </th>
-                            <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                    </table>
-
-                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
-                        aria-label="Select page of periodic elements">
-                    </mat-paginator>
-                </div>
-            </mat-card-content>
-        </mat-card>
-        <mat-card class="chart-card" appearance="outlined">
-            <mat-card-header class="mat-header-strong">
-                <mat-card-title>Estadísticas</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="chart-card-content">
-                <ngx-charts-pie-chart [view]="view" [gradient]="true" [scheme]="colorScheme" [results]="pieChartData"
-                    [legend]="showLegend" [labels]="showLabels" [doughnut]="false" (select)="clicltst($event)">
-                </ngx-charts-pie-chart>
-            </mat-card-content>
-        </mat-card>
-    </div>
-</div> -->

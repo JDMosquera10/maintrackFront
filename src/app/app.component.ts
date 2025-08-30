@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule, MatDrawer } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ThemeService } from './services/theme.service';
 import { AuthService } from './services/auth.service';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -17,8 +19,10 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'machingP';
+  isLoginRoute = false;
+  private routerSubscription: Subscription = new Subscription();
 
   constructor(
     private router: Router,
@@ -96,5 +100,22 @@ export class AppComponent {
         this.router.navigate(['/login']);
       }
     });
+  }
+
+  ngOnInit(): void {
+    // Suscribirse a los eventos de navegación para detectar la ruta actual
+    this.routerSubscription = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.isLoginRoute = event.url === '/login';
+      });
+
+    // Verificar la ruta actual al inicializar
+    this.isLoginRoute = this.router.url === '/login';
+  }
+
+  ngOnDestroy(): void {
+    // Limpiar la suscripción para evitar memory leaks
+    this.routerSubscription.unsubscribe();
   }
 }
