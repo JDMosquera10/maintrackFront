@@ -51,6 +51,18 @@ export abstract class BaseApiService {
     );
   }
 
+  protected patch<T>(url: string, data: any): Observable<T> {
+    return this.http.patch<ApiResponse<T>>(url, data, {
+      headers: this.getHeaders()
+    }).pipe(
+      map(response => response.payload),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error en PATCH:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   protected put<T>(url: string, data: any): Observable<T> {
     return this.http.put<ApiResponse<T>>(url, data, {
       headers: this.getHeaders()

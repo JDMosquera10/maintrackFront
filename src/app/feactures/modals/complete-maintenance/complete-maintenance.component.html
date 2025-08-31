@@ -1,0 +1,85 @@
+<div class="complete-maintenance-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon class="header-icon">check_circle</mat-icon>
+      Completar Mantenimiento
+    </h2>
+    <button mat-icon-button (click)="onCancel()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="maintenance-info">
+      <p class="info-text">
+        <strong>Máquina:</strong> {{ data.maintenance.machineId?.model }} - {{ data.maintenance.machineId?.serialNumber }}
+      </p>
+      <p class="info-text">
+        <strong>Tipo:</strong> {{ data.maintenance.type }}
+      </p>
+      <p class="info-text">
+        <strong>Fecha:</strong> {{ data.maintenance.date | date:'dd/MM/yyyy' }}
+      </p>
+    </div>
+
+    <form [formGroup]="form" class="form-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Horas Trabajadas</mat-label>
+        <input 
+          matInput 
+          type="number" 
+          formControlName="workHours" 
+          placeholder="Ej: 4.5"
+          min="0.1" 
+          max="24" 
+          step="0.1">
+        <mat-icon matSuffix>schedule</mat-icon>
+        <mat-error *ngIf="form.get('workHours')?.hasError('required')">
+          {{ getErrorMessage('workHours') }}
+        </mat-error>
+        <mat-error *ngIf="form.get('workHours')?.hasError('min') || form.get('workHours')?.hasError('max')">
+          {{ getErrorMessage('workHours') }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Observaciones</mat-label>
+        <textarea 
+          matInput 
+          formControlName="observations" 
+          placeholder="Describe el trabajo realizado, problemas encontrados, repuestos utilizados..."
+          rows="4"
+          maxlength="500">
+        </textarea>
+        <mat-icon matSuffix>description</mat-icon>
+        <mat-hint align="end">{{ form.get('observations')?.value?.length || 0 }}/500</mat-hint>
+        <mat-error *ngIf="form.get('observations')?.hasError('required')">
+          {{ getErrorMessage('observations') }}
+        </mat-error>
+        <mat-error *ngIf="form.get('observations')?.hasError('minlength') || form.get('observations')?.hasError('maxlength')">
+          {{ getErrorMessage('observations') }}
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button 
+      mat-button 
+      (click)="onCancel()" 
+      [disabled]="isLoading"
+      class="cancel-button">
+      Cancelar
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onSubmit()" 
+      [disabled]="form.invalid || isLoading"
+      class="confirm-button">
+      <mat-icon *ngIf="!isLoading">check</mat-icon>
+      <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+      Confirmar
+    </button>
+  </mat-dialog-actions>
+</div>

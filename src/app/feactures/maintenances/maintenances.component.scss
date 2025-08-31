@@ -304,6 +304,24 @@ mat-paginator {
     padding: 1.5rem !important;
 }
 
+// Estilos para el badge de estado
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: var(--color-warning);
+    color: white;
+    transition: all 0.2s ease;
+    
+    &.completed {
+        background-color: var(--color-primary);
+    }
+}
+
 ::ng-deep .cdk-overlay-backdrop {
     background-color: rgba(0, 0, 0, 0.7) !important;
     backdrop-filter: blur(4px) !important;

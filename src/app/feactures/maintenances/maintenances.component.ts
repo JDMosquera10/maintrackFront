@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Maintenance } from '../../shared/models/maintenance.model';
 import { MaintenanceService } from '../../services/maintenance.service';
 import { MantinanceComponent } from '../modals/mantinace/mantinance.component';
+import { CompleteMaintenanceComponent, CompleteMaintenanceRequest } from '../modals/complete-maintenance/complete-maintenance.component';
 import { AuthService } from '../../services/auth.service';
 import { MAINTENANCE_TYPE_TRANSLATIONS } from '../../shared/constants/translation.constants';
 
@@ -21,7 +22,7 @@ export class MaintenancesComponent {
   TRADUCERTYPES = MAINTENANCE_TYPE_TRANSLATIONS;
 
   readonly dialog = inject(MatDialog);
-  displayColunmMaintenance: string[] = ['date', 'type', 'spareParts', 'acciones'];
+  displayColunmMaintenance: string[] = ['date', 'type', 'spareParts', 'status', 'acciones'];
   dataSource = new MatTableDataSource<Maintenance>();
   istechenical = true;
 
@@ -32,7 +33,7 @@ export class MaintenancesComponent {
       this.authService.getCurrentRole().subscribe((role) => {
         if (['coordinator', 'admin'].includes(role || '')) {
           this.istechenical = false;
-          this.displayColunmMaintenance = ['date', 'type', 'spareParts', 'technicianId', 'acciones'];
+          this.displayColunmMaintenance = ['date', 'type', 'spareParts', 'technicianId', 'status', 'acciones'];
         }
       });
       maintenances.forEach((item: Maintenance) => item.technician = `${item.technicianId?.firstName} ${item.technicianId?.lastName}`)
@@ -104,6 +105,35 @@ export class MaintenancesComponent {
       error: err => {
         if (err.status === 400) {
         }
+      }
+    });
+  }
+
+  completeMaintenance(element: Maintenance): void {
+    const dialogRef = this.dialog.open(CompleteMaintenanceComponent, {
+      data: { maintenance: element },
+      width: '600px',
+      disableClose: true,
+      autoFocus: true,
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe((result: CompleteMaintenanceRequest | undefined) => {
+      if (result) {
+        this.maintenanceService.completeMaintenance(element.id, result.workHours, result.observations).subscribe({
+          next: () => {
+            // Actualizar el estado del mantenimiento en lugar de eliminarlo
+            const index = this.dataSource.data.findIndex(m => m.id === element.id);
+            if (index >= 0) {
+              this.dataSource.data[index] = { ...element, isCompleted: true };
+              this.dataSource._updateChangeSubscription();
+            }
+          },
+          error: (err) => {
+            console.error('Error completando mantenimiento:', err);
+            // Aquí podrías mostrar un mensaje de error al usuario
+          }
+        });
       }
     });
   }

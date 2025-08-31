@@ -59,6 +59,20 @@ export class MaintenanceService extends BaseApiService {
   }
 
   /**
+   * Completes a maintenance by its ID with work hours and observations.
+   * @param id - The maintenance ID to complete
+   * @param workHours - The number of hours worked
+   * @param observations - The observations about the completed work
+   * @returns An observable indicating success or failure.
+   */
+  completeMaintenance(id: string, workHours: number, observations: string): Observable<boolean> {
+    return this.patch<boolean>(`${this.baseUrl}/${id}/complete`, {
+      workHours,
+      observations
+    });
+  }
+
+  /**
    *  Convierte un objeto de datos en un objeto de máquina.
    * @param data - El objeto de datos a convertir.
    * @returns El objeto de máquina convertido.

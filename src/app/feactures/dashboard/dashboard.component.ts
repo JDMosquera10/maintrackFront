@@ -651,7 +651,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     const colors = this.getThemeColors();
     
     this.doughnutChartData = {
-      labels: ['Operación', 'Mantenimiento', 'Fuera de servicio'],
+      labels: ['Operación', 'Mantenimiento'],
       datasets: [
         {
           data: [data.operational || 0, data.maintenance || 0, data.offline || 0],
