@@ -15,10 +15,6 @@ export const routes: Routes = [
     loadComponent: () => import('./feactures/auth/login/login.component').then(m => m.LoginComponent),
     canActivate: [NoAuthGuard]
   },
-  // {
-  //   path: 'register',
-  //   loadComponent: () => import('./feactures/auth/register/register.component').then(m => m.RegisterComponent)
-  // },
   {
     path: 'dashboard',
     loadComponent: () => import('./feactures/dashboard/dashboard.component').then(m => m.DashboardComponent),
@@ -28,23 +24,19 @@ export const routes: Routes = [
     path: 'machines',
     loadComponent: () => import('./feactures/machines/machines.component').then(m => m.MachinesComponent),
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: [UserRole.ADMIN, UserRole.OPERATOR] }
+    data: { roles: [UserRole.ADMIN, UserRole.COORDINATOR] }
   },
   {
     path: 'maintenance',
     loadComponent: () => import('./feactures/maintenances/maintenances.component').then(m => m.MaintenancesComponent),
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: [UserRole.ADMIN, UserRole.OPERATOR] }
+    data: { roles: [UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.COORDINATOR] }
   },
   {
     path: 'machines-table',
     loadComponent: () => import('./feactures/details/details.component').then(m => m.DetailsComponent),
     canActivate: [AuthGuard]
   },
-  // {
-  //   path: 'unauthorized',
-  //   loadComponent: () => import('./shared/components/unauthorized/unauthorized.component').then(m => m.UnauthorizedComponent)
-  // },
   {
     path: '**',
     redirectTo: '/dashboard'

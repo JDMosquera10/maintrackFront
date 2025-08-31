@@ -1,0 +1,328 @@
+@import '../../../styles.scss';
+
+// Variables para consistencia con el dashboard
+$card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+$card-hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+$transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+:host {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: transparent;
+}
+
+.size-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $color-primary;
+    margin: 0;
+    padding: 2rem 1rem 1rem;
+    text-align: center;
+    position: relative;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: 0.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 180px;
+        height: 3px;
+        background: linear-gradient(90deg, $color-primary 0%, $color-accent 100%);
+        border-radius: 2px;
+    }
+}
+
+.mat-header-strong {
+    display: flex;
+    padding: 1rem;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.content-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    padding: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.chart-card {
+    width: 100% !important;
+    background-color: var(--bg-secondary) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 4px var(--shadow-color) !important;
+    border: 1px solid var(--border-color) !important;
+    transition: box-shadow 0.2s ease !important;
+    overflow: hidden;
+    
+    &:hover {
+        box-shadow: 0 4px 8px var(--shadow-color-strong) !important;
+    }
+}
+
+.card-header-strong {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+}
+
+// Estilos para el campo de búsqueda - más sobrios
+.custom-input {
+    flex: 1;
+    margin-right: 1rem;
+    
+    .mat-mdc-form-field-focus-overlay {
+        background-color: rgba($color-primary, 0.05);
+    }
+    
+    .mat-mdc-text-field-wrapper {
+        background-color: transparent;
+        border-radius: 4px;
+        transition: border-color 0.2s ease;
+    }
+    
+    .mat-mdc-form-field-outline {
+        color: var(--border-color-strong);
+    }
+    
+    &.mat-focused .mat-mdc-form-field-outline {
+        color: var(--color-primary);
+    }
+    
+    input {
+        color: var(--text-primary);
+        
+        &::placeholder {
+            color: var(--text-tertiary);
+        }
+    }
+    
+    mat-icon {
+        color: var(--text-secondary);
+    }
+}
+
+// Botón agregar más profesional
+.button-agregar {
+    background-color: var(--color-primary) !important;
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 0 1.2rem !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    box-shadow: none !important;
+    border: 1px solid var(--color-primary) !important;
+    transition: all 0.2s ease !important;
+    
+    &:hover {
+        background-color: var(--color-primary-alt) !important;
+        border-color: var(--color-primary-alt) !important;
+    }
+    
+    &:active {
+        opacity: 0.8 !important;
+    }
+}
+
+
+
+// Estilos de la tabla de datos mejorados
+.mat-elevation-z8 {
+    border-radius: 8px !important;
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 2px 4px var(--shadow-color) !important;
+    border: 1px solid var(--border-color) !important;
+    overflow: hidden !important;
+    margin: 1rem 0 !important;
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        background-color: transparent !important;
+
+        th,
+        td {
+            border-bottom: 1px solid var(--border-color) !important;
+            padding: 16px !important;
+            background-color: transparent !important;
+            transition: background-color 0.2s ease !important;
+        }
+
+        th {
+            font-weight: 600 !important;
+            color: var(--color-primary) !important;
+            background-color: var(--bg-tertiary) !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 2 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            font-size: 0.85rem !important;
+        }
+
+        td {
+            color: var(--text-primary) !important;
+        }
+
+        tr {
+            transition: background-color 0.2s ease !important;
+            
+            &:hover {
+                background-color: var(--bg-tertiary) !important;
+            }
+        }
+    }
+}
+
+// Estilos para el paginador
+mat-paginator {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    border-radius: 0 0 8px 8px !important;
+    
+    .mat-mdc-paginator-range-label {
+        color: var(--text-secondary) !important;
+    }
+    
+    .mat-mdc-icon-button {
+        color: var(--text-secondary) !important;
+        
+        &:hover {
+            background-color: var(--bg-tertiary) !important;
+            color: var(--color-primary) !important;
+        }
+        
+        &[disabled] {
+            color: var(--text-tertiary) !important;
+        }
+    }
+}
+
+// Estilos para el menú de acciones
+.mat-mdc-menu-panel {
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color-strong) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 8px var(--shadow-color-strong) !important;
+    
+    .mat-mdc-visibility-item {
+        color: var(--text-primary) !important;
+        transition: all 0.2s ease !important;
+        
+        &:hover {
+            background-color: var(--bg-tertiary) !important;
+            color: var(--color-primary) !important;
+        }
+        
+        mat-icon {
+            color: inherit !important;
+            margin-right: 0.5rem !important;
+        }
+    }
+}
+
+// Botón de menú más discreto
+.mat-mdc-icon-button {
+    color: var(--text-secondary) !important;
+    transition: all 0.2s ease !important;
+    
+    &:hover {
+        background-color: var(--bg-tertiary) !important;
+        color: var(--text-primary) !important;
+    }
+}
+
+.chart-card-content {
+    padding: 0 !important;
+    background-color: transparent !important;
+}
+
+// Animaciones adicionales
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chart-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+// Responsividad mejorada
+@media (max-width: 768px) {
+    .card-header-strong {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        align-items: stretch !important;
+    }
+    
+    .custom-input {
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+    
+    .button-agregar {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    
+    .mat-elevation-z8 {
+        font-size: 0.8rem !important;
+        
+        th, td {
+            padding: 8px !important;
+        }
+    }
+}
+
+// Modal styles mejorados
+::ng-deep .custom-dialog-container {
+    border-radius: 16px !important;
+    // background-color: $color-dark-alt !important;
+    background-color: var(--bg-secondary) !important;
+    box-shadow: $card-hover-shadow !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 1.5rem !important;
+}
+
+// Estilos para el badge de estado
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: var(--color-warning);
+    color: white;
+    transition: all 0.2s ease;
+    
+    &.completed {
+        background-color: var(--color-primary);
+    }
+}
+
+::ng-deep .cdk-overlay-backdrop {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(4px) !important;
+}

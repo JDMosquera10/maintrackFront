@@ -197,7 +197,7 @@
         <!-- Navegación rápida - siempre visible cuando el menú está cerrado -->
         <div class="quick-nav" [class.visible]="!isMenuOpen">
           <div class="quick-nav-icons">
-            @for (module of quickNavModules; track module.path) {
+            @for (module of quickNavModulesFiltered; track module.path) {
               <button mat-mini-fab 
                       class="quick-nav-button" 
                       [title]="module.title"

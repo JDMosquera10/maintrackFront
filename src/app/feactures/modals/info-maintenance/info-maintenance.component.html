@@ -1,0 +1,56 @@
+<div class="complete-maintenance-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon class="header-icon">check_circle</mat-icon>
+      Informacion del Mantenimiento
+    </h2>
+    <button mat-icon-button (click)="onCancel()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="maintenance-info">
+      <p class="info-text">
+        <strong>Máquina:</strong> {{ data.maintenance.machineId?.model }} - {{ data.maintenance.machineId?.serialNumber }}
+      </p>
+      <p class="info-text">
+        <strong>Tipo:</strong> {{ data.maintenance.type }}
+      </p>
+      <p class="info-text">
+        <strong>Observaciones:</strong> {{ data.maintenance.observations }}
+      </p>
+      <p class="info-text">
+        <strong>Horas de trabajo:</strong> {{ data.maintenance.workHours }}
+      </p>
+      <p class="info-text">
+        <strong>Estado:</strong> {{ data.maintenance.isCompleted ? 'Completado' : 'Pendiente' }}
+      </p>
+      <p class="info-text">
+        <strong>Fecha de creación:</strong> {{ data.maintenance.createdAt | date:'dd/MM/yyyy' }}
+      </p>
+      <p class="info-text">
+        <strong>Fecha de actualización:</strong> {{ data.maintenance.updatedAt | date:'dd/MM/yyyy' }}
+      </p>
+      <p class="info-text">
+        <strong>Técnico:</strong> {{ data.maintenance.technicianId?.firstName }} {{ data.maintenance.technicianId?.lastName }}
+      </p>
+      <p class="info-text">
+        <strong>Piezas de repuesto:</strong> {{ data.maintenance.spareParts.join(', ') }}
+      </p>
+      <p class="info-text">
+        <strong>Fecha:</strong> {{ data.maintenance.date | date:'dd/MM/yyyy' }}
+      </p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button 
+      mat-button 
+      (click)="onCancel()" 
+      [disabled]="isLoading"
+      class="cancel-button">
+      Cerrar
+    </button>
+  </mat-dialog-actions>
+</div>

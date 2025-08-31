@@ -1,4 +1,5 @@
 export interface User {
+  _id: string;
   id: string;
   email: string;
   firstName: string;
@@ -11,8 +12,8 @@ export interface User {
 
 export enum UserRole {
   ADMIN = 'admin',
-  OPERATOR = 'operator',
-  VIEWER = 'viewer'
+  COORDINATOR = 'coordinator',
+  TECHNICIAN = 'technician'
 }
 
 export interface LoginRequest {

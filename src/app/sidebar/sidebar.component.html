@@ -1,5 +1,5 @@
 <div class="sidebar-container">
-  <div class="image-wrapper" *ngFor="let img of images" (click)="onActionComponent(img)">
+  <div class="image-wrapper" *ngFor="let img of imagesFiltered" (click)="onActionComponent(img)">
     <img [src]="img.src" alt="Sidebar image" />
     <div class="title">{{ img.title }}</div>
     <p class="description"><strong>{{ img.description }}</strong></p>

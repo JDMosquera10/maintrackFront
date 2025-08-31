@@ -29,17 +29,23 @@ export class MaintenancesComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private maintenanceService: MaintenanceService, private authService: AuthService) {
-    this.maintenanceService.getMaintenances().subscribe((maintenances: Maintenance[]) => {
-      this.authService.getCurrentRole().subscribe((role) => {
-        if (['coordinator', 'admin'].includes(role || '')) {
-          this.istechenical = false;
-          this.displayColunmMaintenance = ['date', 'type', 'spareParts', 'technicianId', 'status', 'acciones'];
+    this.authService.getCurrentUser().subscribe((user) => {
+      if (user) {
+        if (['coordinator', 'admin'].includes(user?.role || '')) {
+          this.maintenanceService.getMaintenancesPending().subscribe((maintenances: Maintenance[]) => {
+            this.istechenical = false;
+            this.displayColunmMaintenance = ['date', 'type', 'spareParts', 'technicianId', 'status', 'acciones'];
+            maintenances.forEach((item: Maintenance) => item.technician = `${item.technicianId?.firstName} ${item.technicianId?.lastName}`)
+            this.dataSource.data = maintenances;
+            this.dataSource.paginator = this.paginator;
+          });
+        } else {
+          this.maintenanceService.getMaintenancesByTechnicianPending(user?._id || '').subscribe((maintenances: Maintenance[]) => {
+            this.dataSource.data = maintenances;
+            this.dataSource.paginator = this.paginator;
+          });
         }
-      });
-      maintenances.forEach((item: Maintenance) => item.technician = `${item.technicianId?.firstName} ${item.technicianId?.lastName}`)
-      this.dataSource.data = maintenances;
-
-      this.dataSource.paginator = this.paginator;
+      }
     });
   }
 
@@ -101,7 +107,7 @@ export class MaintenancesComponent {
       next: () => {
         this.dataSource.data = this.dataSource.data.filter(machine => machine.id !== element.id);
         this.dataSource._updateChangeSubscription();
-      }, 
+      },
       error: err => {
         if (err.status === 400) {
         }
@@ -125,7 +131,7 @@ export class MaintenancesComponent {
             // Actualizar el estado del mantenimiento en lugar de eliminarlo
             const index = this.dataSource.data.findIndex(m => m.id === element.id);
             if (index >= 0) {
-              this.dataSource.data[index] = { ...element, isCompleted: true };
+              this.dataSource.data = this.dataSource.data.filter(machine => machine.id !== element.id);
               this.dataSource._updateChangeSubscription();
             }
           },

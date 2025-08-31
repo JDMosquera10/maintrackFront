@@ -12,6 +12,7 @@ import { ThemeService } from './services/theme.service';
 import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { UserRole } from './shared/models/user.model';
 
 @Component({
   selector: 'app-root',
@@ -24,28 +25,38 @@ export class AppComponent implements OnInit, OnDestroy {
   isLoginRoute = false;
   private routerSubscription: Subscription = new Subscription();
 
-  constructor(
-    private router: Router,
-    public themeService: ThemeService,
-    protected authService: AuthService
-  ) { }
+
 
   showFilterImage = false;
   isMenuOpen = false; // Para saber si el menú está abierto
-  
+
   stats = [
     { label: 'Máquinas registradas', value: 14, icon: 'precision_manufacturing' },
     { label: 'Mantenimientos pendientes', value: 5, icon: 'build' },
     { label: 'Alertas próximas', value: 3, icon: 'warning' }
   ];
 
+  protected quickNavModulesFiltered: { icon: string; path: string; title: string; role: UserRole[] }[] = [];
+
   // Módulos de navegación rápida basados en el sidebar
-  quickNavModules = [
-    { icon: 'dashboard', path: '/dashboard', title: 'Dashboard' },
-    { icon: 'precision_manufacturing', path: '/machines', title: 'Máquinas' },
-    { icon: 'build', path: '/maintenance', title: 'Mantenimientos' },
-    { icon: 'table_chart', path: '/machines-table', title: 'Tabla Máquinas' }
+  private quickNavModules = [
+    { icon: 'dashboard', path: '/dashboard', title: 'Dashboard', role: [UserRole.ADMIN, UserRole.COORDINATOR] },
+    { icon: 'precision_manufacturing', path: '/machines', title: 'Máquinas', role: [UserRole.ADMIN, UserRole.COORDINATOR] },
+    { icon: 'build', path: '/maintenance', title: 'Mantenimientos', role: [UserRole.ADMIN, UserRole.COORDINATOR, UserRole.TECHNICIAN] },
+    { icon: 'table_chart', path: '/machines-table', title: 'Tabla Máquinas', role: [UserRole.ADMIN, UserRole.COORDINATOR] }
   ];
+  constructor(
+    private router: Router,
+    public themeService: ThemeService,
+    protected authService: AuthService,
+
+  ) {
+    this.authService.getCurrentUser().subscribe((user) => {
+      if (user) {
+        this.quickNavModulesFiltered = this.quickNavModules.filter((module) => module.role.includes(user.role));
+      }
+    });
+  }
 
   // Función para obtener el icono del tema
   getThemeIcon(): string {
@@ -74,7 +85,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Actualizar el estado inmediatamente basándose en el estado actual
     this.isMenuOpen = !drawer.opened;
     this.showFilterImage = !this.showFilterImage;
-    
+
     // Realizar el toggle después de actualizar el estado
     drawer.toggle();
   }

@@ -22,6 +22,30 @@ export class MaintenanceService extends BaseApiService {
     return this.get<Maintenance[]>(this.baseUrl).pipe(map(result => result.map(this.mapToMaintenance)));
   }
 
+   /**
+   * Fetches a list of maintenances from the server.
+   * @returns An observable containing the list of maintenances.
+   */
+   getMaintenancesPending(): Observable<Maintenance[]> {
+    return this.get<Maintenance[]>(`${this.baseUrl}/pending`).pipe(map(result => result.map(this.mapToMaintenance)));
+  }
+
+  /**
+   * Fetches a list of maintenances from the server.
+   * @returns An observable containing the list of maintenances.
+   */
+  getMaintenancesByTechnicianPending(technicianId: string): Observable<Maintenance[]> {
+    return this.get<Maintenance[]>(`${this.baseUrl}/technician/${technicianId}/pending`).pipe(map(result => result.map(this.mapToMaintenance)));
+  }
+
+  /**
+   * Fetches a list of maintenances from the server.
+   * @returns An observable containing the list of maintenances.
+   */
+  getMaintenancesByTechnician(technicianId: string): Observable<Maintenance[]> {
+    return this.get<Maintenance[]>(`${this.baseUrl}/technician/${technicianId}`).pipe(map(result => result.map(this.mapToMaintenance)));
+  }
+
   /**
    * Fetches a machine by its ID.
    * @param id - The machine ID
