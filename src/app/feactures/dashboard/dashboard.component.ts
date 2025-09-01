@@ -12,6 +12,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ThemeService } from '../../services/theme.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { WebSocketService } from '../../services/websocket.service';
+import { ToastService } from '../../services/toast.service';
 import { DashboardData, MaintenanceAlert, RecentMachine } from '../../shared/models/dashboard.model';
 
 export interface PeriodicElement {
@@ -174,7 +175,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private dashboardService: DashboardService,
-    public webSocketService: WebSocketService
+    public webSocketService: WebSocketService,
+    private toastService: ToastService
   ) {
     this.getMonthToday();
     this.prepareChartOptions1();
@@ -527,6 +529,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         this.handleWebSocketUpdate(event);
       });
 
+    // Suscribirse a alertas de mantenimiento próximos
+    this.webSocketService.maintenanceAlerts$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(data => {
+        console.log('📨 Datos de alertas recibidos:', data);
+        this.handleMaintenanceAlerts(data);
+      });
+
     // Inicializar los datos
     this.dashboardService.initializeDashboard()
       .pipe(takeUntil(this.destroy$))
@@ -771,6 +781,99 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
           console.error('Error refrescando dashboard:', error);
         }
       );
+  }
+
+  /**
+   * Maneja alertas de mantenimiento próximos recibidas vía WebSocket
+   */
+  private handleMaintenanceAlerts(data: any): void {
+    console.log('📨 Procesando alertas de mantenimiento:', data);
+    
+    // Verificar si data tiene la estructura correcta
+    if (!data || !data.alerts || !Array.isArray(data.alerts)) {
+      console.warn('❌ Estructura de datos de alertas inválida:', data);
+      return;
+    }
+
+    const alerts = data.alerts;
+    console.log(`📨 Procesando ${alerts.length} alertas de mantenimiento`);
+
+    // Procesar cada alerta individualmente
+    alerts.forEach((alert: MaintenanceAlert, index: number) => {
+      console.log(`📨 Procesando alerta ${index + 1}:`, alert);
+      this.handleMaintenanceAlert(alert);
+    });
+
+    // Actualizar los datos del dashboard
+    this.refreshMaintenanceData();
+  }
+
+  /**
+   * Maneja una alerta de mantenimiento individual
+   */
+  private handleMaintenanceAlert(alert: MaintenanceAlert): void {
+    console.log('🔔 Procesando alerta individual:', alert);
+    
+    // Determinar el tipo de notificación según los días restantes y prioridad
+    if (alert.daysRemaining < 0) {
+      // Mantenimiento vencido
+      this.toastService.showOverdueMaintenanceAlert(alert);
+    } else if (alert.daysRemaining <= 3 || alert.priority === 'critical') {
+      // Mantenimiento crítico o próximo a vencer
+      this.toastService.showCriticalMaintenanceAlert(alert);
+    } else {
+      // Mantenimiento próximo
+      this.toastService.showMaintenanceAlert(alert);
+    }
+  }
+
+  /**
+   * Método de prueba para simular alertas de mantenimiento
+   * (Solo para desarrollo - eliminar en producción)
+   */
+  testMaintenanceAlert(): void {
+    const testAlert: MaintenanceAlert = {
+      id: 'test-1',
+      maintenanceId: 'maint-001',
+      machineId: 'machine-001',
+      machineModel: 'Excavadora CAT 320',
+      machineSerial: 'CAT320-2024-001',
+      client: 'Constructora ABC',
+      dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 días
+      daysRemaining: 2,
+      maintenanceType: 'Preventivo',
+      priority: 'high',
+      location: 'Sitio de construcción Norte',
+      technicianId: 'tech-001',
+      spareParts: ['Filtro de aceite', 'Filtro de aire'],
+      observations: 'Mantenimiento preventivo programado'
+    };
+
+    this.handleMaintenanceAlert(testAlert);
+  }
+
+  /**
+   * Método de prueba para simular alerta crítica
+   */
+  testCriticalAlert(): void {
+    const testAlert: MaintenanceAlert = {
+      id: 'test-2',
+      maintenanceId: 'maint-002',
+      machineId: 'machine-002',
+      machineModel: 'Bulldozer Komatsu D65',
+      machineSerial: 'KOMD65-2023-015',
+      client: 'Minería XYZ',
+      dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 día vencido
+      daysRemaining: -1,
+      maintenanceType: 'Correctivo',
+      priority: 'critical',
+      location: 'Mina Sur',
+      technicianId: 'tech-002',
+      spareParts: ['Sistema hidráulico', 'Frenos'],
+      observations: 'Mantenimiento crítico vencido - requiere atención inmediata'
+    };
+
+    this.handleMaintenanceAlert(testAlert);
   }
 
   // ===== MÉTODOS PARA MANEJAR ALERTAS DE MANTENIMIENTO =====

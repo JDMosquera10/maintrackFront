@@ -333,6 +333,7 @@ export class DashboardService extends BaseApiService {
       observer.next([
         {
           id: '1',
+          maintenanceId: 'maint-001',
           machineId: 'mach-001',
           machineModel: 'CAT 320D',
           machineSerial: 'CAT-12345',
@@ -341,10 +342,14 @@ export class DashboardService extends BaseApiService {
           daysRemaining: -3,
           maintenanceType: 'Preventivo',
           priority: 'critical',
-          location: 'Obra Norte'
+          location: 'Obra Norte',
+          technicianId: 'tech-001',
+          spareParts: ['Filtro de aceite', 'Filtro de aire'],
+          observations: 'Mantenimiento preventivo vencido'
         },
         {
           id: '2',
+          maintenanceId: 'maint-002',
           machineId: 'mach-002',
           machineModel: 'Komatsu PC200',
           machineSerial: 'KOM-67890',
@@ -353,10 +358,14 @@ export class DashboardService extends BaseApiService {
           daysRemaining: -1,
           maintenanceType: 'Correctivo',
           priority: 'critical',
-          location: 'Mina Sur'
+          location: 'Mina Sur',
+          technicianId: 'tech-002',
+          spareParts: ['Sistema hidráulico', 'Frenos'],
+          observations: 'Mantenimiento correctivo urgente'
         },
         {
           id: '3',
+          maintenanceId: 'maint-003',
           machineId: 'mach-003',
           machineModel: 'Volvo EC210',
           machineSerial: 'VOL-54321',
@@ -365,10 +374,14 @@ export class DashboardService extends BaseApiService {
           daysRemaining: 1,
           maintenanceType: 'Preventivo',
           priority: 'high',
-          location: 'Proyecto Centro'
+          location: 'Proyecto Centro',
+          technicianId: 'tech-003',
+          spareParts: ['Filtro de combustible', 'Aceite hidráulico'],
+          observations: 'Mantenimiento preventivo programado'
         },
         {
           id: '4',
+          maintenanceId: 'maint-004',
           machineId: 'mach-004',
           machineModel: 'JCB 3CX',
           machineSerial: 'JCB-98765',
@@ -377,10 +390,14 @@ export class DashboardService extends BaseApiService {
           daysRemaining: 3,
           maintenanceType: 'Preventivo',
           priority: 'high',
-          location: 'Carretera Este'
+          location: 'Carretera Este',
+          technicianId: 'tech-004',
+          spareParts: ['Filtro de aire', 'Aceite motor'],
+          observations: 'Mantenimiento preventivo próximo'
         },
         {
           id: '5',
+          maintenanceId: 'maint-005',
           machineId: 'mach-005',
           machineModel: 'Liebherr R934C',
           machineSerial: 'LIE-11111',
@@ -389,10 +406,14 @@ export class DashboardService extends BaseApiService {
           daysRemaining: 5,
           maintenanceType: 'Correctivo',
           priority: 'medium',
-          location: 'Zona Industrial'
+          location: 'Zona Industrial',
+          technicianId: 'tech-005',
+          spareParts: ['Repuestos hidráulicos'],
+          observations: 'Mantenimiento correctivo programado'
         },
         {
           id: '6',
+          maintenanceId: 'maint-006',
           machineId: 'mach-006',
           machineModel: 'Hitachi ZX200',
           machineSerial: 'HIT-22222',
@@ -401,7 +422,10 @@ export class DashboardService extends BaseApiService {
           daysRemaining: 10,
           maintenanceType: 'Preventivo',
           priority: 'low',
-          location: 'Proyecto Sur'
+          location: 'Proyecto Sur',
+          technicianId: 'tech-006',
+          spareParts: ['Filtros varios'],
+          observations: 'Mantenimiento preventivo rutinario'
         }
       ]);
       observer.complete();

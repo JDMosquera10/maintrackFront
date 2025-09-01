@@ -54,6 +54,25 @@ export class WebSocketService {
   }
 
   /**
+   * Observable para alertas de mantenimiento próximos
+   */
+  get maintenanceAlerts$(): Observable<any> {
+    return this.messagesSubject.pipe(
+      filter(event => {
+        const isMaintenanceAlert = event && event.type === 'upcoming_maintenance_alerts';
+        if (isMaintenanceAlert) {
+          console.log('🔔 Filtro de alertas de mantenimiento activado:', event);
+        }
+        return isMaintenanceAlert;
+      }),
+      map(event => {
+        console.log('📨 Mapeando datos de alertas:', event.data);
+        return event.data;
+      })
+    );
+  }
+
+  /**
    * Se conecta al WebSocket
    */
   connect(): void {
@@ -76,6 +95,7 @@ export class WebSocketService {
       this.ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          console.log('📨 Mensaje WebSocket recibido:', data);
           this.messagesSubject.next(data);
         } catch (error) {
           console.warn('Error parseando mensaje WebSocket:', error);

@@ -109,3 +109,139 @@ grid-stack {
     }
   }
 }
+
+// Estilos para las notificaciones de toast - Usando colores del tema
+.mat-mdc-snack-bar-container {
+  &.alert-critical {
+    .mdc-snackbar__surface {
+      background-color: #a44a5d !important; // Color tertiary/error del tema
+      color: white !important;
+      border-left: 4px solid #f68c9f !important; // Lighter tertiary
+      box-shadow: 0 4px 12px rgba(164, 74, 93, 0.3) !important;
+    }
+  }
+
+  &.alert-high {
+    .mdc-snackbar__surface {
+      background-color: #f0961b !important; // Color secondary del tema
+      color: white !important;
+      border-left: 4px solid #ffb86b !important; // Lighter secondary
+      box-shadow: 0 4px 12px rgba(240, 150, 27, 0.3) !important;
+    }
+  }
+
+  &.alert-medium {
+    .mdc-snackbar__surface {
+      background-color: #f0971c !important; // Color secondary del tema
+      color: white !important;
+      border-left: 4px solid #ffdcbc !important; // Lighter secondary
+      box-shadow: 0 4px 12px rgba(240, 151, 28, 0.3) !important;
+    }
+  }
+
+  &.alert-low {
+    .mdc-snackbar__surface {
+      background-color: #02BEC1 !important; // Color primary del tema
+      color: white !important;
+      border-left: 4px solid #68f7fa !important; // Lighter primary
+      box-shadow: 0 4px 12px rgba(2, 190, 193, 0.3) !important;
+    }
+  }
+
+  &.alert-info {
+    .mdc-snackbar__surface {
+      background-color: #02BEC1 !important; // Color primary del tema
+      color: white !important;
+      border-left: 4px solid #68f7fa !important; // Lighter primary
+      box-shadow: 0 4px 12px rgba(2, 190, 193, 0.3) !important;
+    }
+  }
+
+  &.alert-success {
+    .mdc-snackbar__surface {
+      background-color: #00a1a3 !important; // Darker primary
+      color: white !important;
+      border-left: 4px solid #02BEC1 !important; // Primary
+      box-shadow: 0 4px 12px rgba(0, 161, 163, 0.3) !important;
+    }
+  }
+
+  &.alert-warning {
+    .mdc-snackbar__surface {
+      background-color: #cf7e00 !important; // Darker secondary
+      color: white !important;
+      border-left: 4px solid #f0961b !important; // Secondary
+      box-shadow: 0 4px 12px rgba(207, 126, 0, 0.3) !important;
+    }
+  }
+
+  &.alert-error {
+    .mdc-snackbar__surface {
+      background-color: #a44a5d !important; // Color tertiary/error del tema
+      color: white !important;
+      border-left: 4px solid #f68c9f !important; // Lighter tertiary
+      box-shadow: 0 4px 12px rgba(164, 74, 93, 0.3) !important;
+    }
+  }
+
+  &.critical-alert {
+    .mdc-snackbar__surface {
+      background: linear-gradient(135deg, #a44a5d 0%, #7e2d40 100%) !important; // Tertiary gradient
+      color: white !important;
+      border-left: 4px solid #f68c9f !important; // Lighter tertiary
+      box-shadow: 0 4px 20px rgba(164, 74, 93, 0.4) !important;
+    }
+  }
+
+  &.overdue-alert {
+    .mdc-snackbar__surface {
+      background: linear-gradient(135deg, #7e2d40 0%, #5e1328 100%) !important; // Darker tertiary gradient
+      color: white !important;
+      border-left: 4px solid #a44a5d !important; // Tertiary
+      box-shadow: 0 4px 20px rgba(126, 45, 64, 0.5) !important;
+    }
+  }
+
+  .mdc-snackbar__surface {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    padding: 16px 20px !important;
+    min-width: 300px !important;
+    max-width: 500px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  // Adaptación para tema claro
+  html.theme-light & {
+    .mdc-snackbar__surface {
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+  }
+
+  // Adaptación para tema oscuro
+  html.theme-dark & {
+    .mdc-snackbar__surface {
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+
+  .mdc-snackbar__label {
+    color: inherit !important;
+    font-weight: inherit !important;
+  }
+
+  .mat-mdc-snack-bar-action {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 600 !important;
+    
+    &:hover {
+      color: white !important;
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+}

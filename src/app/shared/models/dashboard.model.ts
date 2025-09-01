@@ -40,6 +40,7 @@ export interface DashboardCharts {
 
 export interface MaintenanceAlert {
   id: string;
+  maintenanceId: string;
   machineId: string;
   machineModel: string;
   machineSerial: string;
@@ -49,6 +50,9 @@ export interface MaintenanceAlert {
   maintenanceType: string;
   priority: 'low' | 'medium' | 'high' | 'critical';
   location: string;
+  technicianId: string;
+  spareParts: string[];
+  observations?: string;
 }
 
 export interface RecentMachine {
