@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSidenavModule, MatDrawer } from '@angular/material/sidenav';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { ThemeService } from './services/theme.service';
-import { AuthService } from './services/auth.service';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { AuthService } from './services/auth.service';
+import { ThemeService } from './services/theme.service';
 import { UserRole } from './shared/models/user.model';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
 
   showFilterImage = false;
-  isMenuOpen = false; // Para saber si el menú está abierto
+  isMenuOpen = false;
 
   stats = [
     { label: 'Máquinas registradas', value: 14, icon: 'precision_manufacturing' },
@@ -78,23 +78,19 @@ export class AppComponent implements OnInit, OnDestroy {
     this.showFilterImage = false;
     this.router.navigate([event || '/dashboard']);
     cb.toggle();
-    this.isMenuOpen = false; // El menú se cierra después de navegar
+    this.isMenuOpen = false;
   }
 
   toggleMenu(drawer: MatDrawer) {
-    // Actualizar el estado inmediatamente basándose en el estado actual
     this.isMenuOpen = !drawer.opened;
     this.showFilterImage = !this.showFilterImage;
 
-    // Realizar el toggle después de actualizar el estado
     drawer.toggle();
   }
 
-  // Método ya no necesario - los iconos se controlan directamente con isMenuOpen
 
   navigateQuick(path: string) {
     this.router.navigate([path]);
-    // Los iconos permanecen visibles después de navegar
   }
 
   // Método para hacer logout
@@ -107,26 +103,22 @@ export class AppComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error during logout:', error);
-        // Aunque haya error, limpiar sesión local y redirigir
         this.router.navigate(['/login']);
       }
     });
   }
 
   ngOnInit(): void {
-    // Suscribirse a los eventos de navegación para detectar la ruta actual
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.isLoginRoute = event.url === '/login';
       });
 
-    // Verificar la ruta actual al inicializar
     this.isLoginRoute = this.router.url === '/login';
   }
 
   ngOnDestroy(): void {
-    // Limpiar la suscripción para evitar memory leaks
     this.routerSubscription.unsubscribe();
   }
 }

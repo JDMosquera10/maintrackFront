@@ -1,8 +1,6 @@
 @use '@angular/material' as mat;
 @use 'sass:map';
 @use '../custome-theme_theme-colors.scss' as custome;
-// @import "gridstack/dist/gridstack.min.css";
-
 
 
 $color-primary: #02BEC1;
@@ -12,7 +10,6 @@ $color-dark-alt: #202837;
 $color-accent: #a44a5d;
 $color-warning: #f0961b;
 
-// Variables CSS dinámicas para el cambio de tema
 :root {
   // Colores para tema oscuro (por defecto)
   --color-primary: #{$color-primary};
@@ -114,90 +111,90 @@ grid-stack {
 .mat-mdc-snack-bar-container {
   &.alert-critical {
     .mdc-snackbar__surface {
-      background-color: #a44a5d !important; // Color tertiary/error del tema
+      background-color: #a44a5d !important; 
       color: white !important;
-      border-left: 4px solid #f68c9f !important; // Lighter tertiary
+      border-left: 4px solid #f68c9f !important;
       box-shadow: 0 4px 12px rgba(164, 74, 93, 0.3) !important;
     }
   }
 
   &.alert-high {
     .mdc-snackbar__surface {
-      background-color: #f0961b !important; // Color secondary del tema
+      background-color: #f0961b !important;
       color: white !important;
-      border-left: 4px solid #ffb86b !important; // Lighter secondary
+      border-left: 4px solid #ffb86b !important;
       box-shadow: 0 4px 12px rgba(240, 150, 27, 0.3) !important;
     }
   }
 
   &.alert-medium {
     .mdc-snackbar__surface {
-      background-color: #f0971c !important; // Color secondary del tema
+      background-color: #f0971c !important;
       color: white !important;
-      border-left: 4px solid #ffdcbc !important; // Lighter secondary
+      border-left: 4px solid #ffdcbc !important;
       box-shadow: 0 4px 12px rgba(240, 151, 28, 0.3) !important;
     }
   }
 
   &.alert-low {
     .mdc-snackbar__surface {
-      background-color: #02BEC1 !important; // Color primary del tema
+      background-color: #02BEC1 !important;
       color: white !important;
-      border-left: 4px solid #68f7fa !important; // Lighter primary
+      border-left: 4px solid #68f7fa !important;
       box-shadow: 0 4px 12px rgba(2, 190, 193, 0.3) !important;
     }
   }
 
   &.alert-info {
     .mdc-snackbar__surface {
-      background-color: #02BEC1 !important; // Color primary del tema
+      background-color: #02BEC1 !important;
       color: white !important;
-      border-left: 4px solid #68f7fa !important; // Lighter primary
+      border-left: 4px solid #68f7fa !important;
       box-shadow: 0 4px 12px rgba(2, 190, 193, 0.3) !important;
     }
   }
 
   &.alert-success {
     .mdc-snackbar__surface {
-      background-color: #00a1a3 !important; // Darker primary
+      background-color: #00a1a3 !important;
       color: white !important;
-      border-left: 4px solid #02BEC1 !important; // Primary
+      border-left: 4px solid #02BEC1 !important;
       box-shadow: 0 4px 12px rgba(0, 161, 163, 0.3) !important;
     }
   }
 
   &.alert-warning {
     .mdc-snackbar__surface {
-      background-color: #cf7e00 !important; // Darker secondary
+      background-color: #cf7e00 !important;
       color: white !important;
-      border-left: 4px solid #f0961b !important; // Secondary
+      border-left: 4px solid #f0961b !important;
       box-shadow: 0 4px 12px rgba(207, 126, 0, 0.3) !important;
     }
   }
 
   &.alert-error {
     .mdc-snackbar__surface {
-      background-color: #a44a5d !important; // Color tertiary/error del tema
+      background-color: #a44a5d !important;
       color: white !important;
-      border-left: 4px solid #f68c9f !important; // Lighter tertiary
+      border-left: 4px solid #f68c9f !important;
       box-shadow: 0 4px 12px rgba(164, 74, 93, 0.3) !important;
     }
   }
 
   &.critical-alert {
     .mdc-snackbar__surface {
-      background: linear-gradient(135deg, #a44a5d 0%, #7e2d40 100%) !important; // Tertiary gradient
+      background: linear-gradient(135deg, #a44a5d 0%, #7e2d40 100%) !important;
       color: white !important;
-      border-left: 4px solid #f68c9f !important; // Lighter tertiary
+      border-left: 4px solid #f68c9f !important;
       box-shadow: 0 4px 20px rgba(164, 74, 93, 0.4) !important;
     }
   }
 
   &.overdue-alert {
     .mdc-snackbar__surface {
-      background: linear-gradient(135deg, #7e2d40 0%, #5e1328 100%) !important; // Darker tertiary gradient
+      background: linear-gradient(135deg, #7e2d40 0%, #5e1328 100%) !important;
       color: white !important;
-      border-left: 4px solid #a44a5d !important; // Tertiary
+      border-left: 4px solid #a44a5d !important;
       box-shadow: 0 4px 20px rgba(126, 45, 64, 0.5) !important;
     }
   }
