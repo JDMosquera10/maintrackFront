@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, AfterViewInit, Component, ViewChild, inject } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { GeneralModule } from '../../modules/general.module';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Maintenance } from '../../shared/models/maintenance.model';
-import { MaintenanceService } from '../../services/maintenance.service';
-import { MantinanceComponent } from '../modals/mantinace/mantinance.component';
-import { CompleteMaintenanceComponent, CompleteMaintenanceRequest } from '../modals/complete-maintenance/complete-maintenance.component';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { GeneralModule } from '../../modules/general.module';
 import { AuthService } from '../../services/auth.service';
+import { MaintenanceService } from '../../services/maintenance.service';
 import { MAINTENANCE_TYPE_TRANSLATIONS } from '../../shared/constants/translation.constants';
+import { Maintenance } from '../../shared/models/maintenance.model';
+import { CompleteMaintenanceComponent, CompleteMaintenanceRequest } from '../modals/complete-maintenance/complete-maintenance.component';
+import { MantinanceComponent } from '../modals/mantinace/mantinance.component';
 
 @Component({
   selector: 'app-maintenances',
