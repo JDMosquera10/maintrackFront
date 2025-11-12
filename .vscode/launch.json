@@ -59,7 +59,7 @@
       "sourceMaps": true,
       "env": {
         "NODE_ENV": "development",
-        "PORT": "3000"
+        "PORT": "3005"
       },
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"]
@@ -73,7 +73,7 @@
       "sourceMaps": true,
       "env": {
         "NODE_ENV": "development",
-        "PORT": "3000"
+        "PORT": "3005"
       },
       "console": "integratedTerminal",
       "preLaunchTask": "npm: start",
