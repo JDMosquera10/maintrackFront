@@ -1,16 +1,17 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { 
-  User, 
-  LoginRequest, 
-  LoginResponse, 
-  RegisterRequest, 
-  AuthState,
-  UserRole 
-} from '../shared/models/user.model';
+import { environment } from '../../environments/environment';
 import { IAuthService } from '../shared/interfaces/auth.interface';
+import {
+  AuthState,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  User,
+  UserRole
+} from '../shared/models/user.model';
 import { BaseApiService } from './base-api.service';
 
 @Injectable({
@@ -31,8 +32,8 @@ export class AuthService extends BaseApiService implements IAuthService {
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     this.setLoading(true);
-    
-    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, credentials).pipe(
+
+    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, credentials, { headers: { tenant: environment.tenant } }).pipe(
       tap(response => {
         if (response.success) {
           this.setAuthState(response.payload.user, response.payload.token);
@@ -48,7 +49,7 @@ export class AuthService extends BaseApiService implements IAuthService {
 
   register(userData: RegisterRequest): Observable<LoginResponse> {
     this.setLoading(true);
-    
+
     return this.http.post<LoginResponse>(`${this.baseUrl}/register`, userData).pipe(
       tap(response => {
         if (response.success) {

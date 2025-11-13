@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { ApiResponse, ErrorResponse } from '../shared/models/api-response.model';
+import { ApiResponse } from '../shared/models/api-response.model';
 
 
 
@@ -25,7 +25,7 @@ export abstract class BaseApiService {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` })
+      ...(token && { Authorization: `Bearer ${token}`, tenant: environment.tenant })
     });
   }
 
