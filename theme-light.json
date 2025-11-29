@@ -1,0 +1,40 @@
+{
+  "tenantId": "tenant_64c0132a2c9f4cc9b0112bcf6ab3d7b1",
+  "logoUrl": "https://machine-app-test-1.s3.us-east-2.amazonaws.com/fondos/logo2.png",
+  "color": {
+    "colorPrimary": "#02BEC1",
+    "colorPrimaryAlt": "#04c0c3",
+    "colorAccent": "#a44a5d",
+    "colorWarning": "#f0961b",
+    "textPrimary": "#1a202c",
+    "textSecondary": "rgba(26, 32, 44, 0.7)",
+    "textTertiary": "rgba(26, 32, 44, 0.5)",
+    "backgroundPrimary": "#f8f9fa",
+    "backgroundSecondary": "#ffffff",
+    "backgroundTertiary": "#e2e8f0",
+    "border": "rgba(203, 213, 224, 0.6)",
+    "borderStrong": "rgba(203, 213, 224, 0.8)",
+    "shadow": "rgba(0, 0, 0, 0.1)",
+    "shadowStrong": "rgba(0, 0, 0, 0.15)"
+  },
+  "theme": "light",
+  "imgVar": [
+    {
+      "identifier": "dashboard",
+      "url": "https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen.png"
+    },
+    {
+      "identifier": "machines",
+      "url": "https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen2.png"
+    },
+    {
+      "identifier": "maintenance",
+      "url": "https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen4.png"
+    },
+    {
+      "identifier": "machines-table",
+      "url": "https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen3.png"
+    }
+  ]
+}
+

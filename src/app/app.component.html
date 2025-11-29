@@ -176,7 +176,7 @@
 
     <div class="example-sidenav-content">
       @if (showFilterImage) {
-      <img [src]="'https://machine-app-test-1.s3.us-east-2.amazonaws.com/fondos/logo2.png'"
+      <img [src]="logoUrl"
         style="width: 100%; height: 100%;" alt="Sidebar image">
       } @else {
              <div class="router-outlet" [class.login-route]="isLoginRoute">
@@ -206,13 +206,15 @@
               </button>
             }
             
-            <!-- Botón de cambio de tema -->
-            <button mat-mini-fab 
-                    class="quick-nav-button theme-toggle-button" 
-                    [title]="getThemeTooltip()"
-                    (click)="toggleTheme()">
-              <mat-icon>{{ getThemeIcon() }}</mat-icon>
-            </button>
+            <!-- Botón de cambio de tema - Solo se muestra si hay más de un tema disponible -->
+            @if (shouldShowThemeToggle()) {
+              <button mat-mini-fab 
+                      class="quick-nav-button theme-toggle-button" 
+                      [title]="getThemeTooltip()"
+                      (click)="toggleTheme()">
+                <mat-icon>{{ getThemeIcon() }}</mat-icon>
+              </button>
+            }
 
             <!-- Botón de logout -->
             <button mat-mini-fab 

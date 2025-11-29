@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
+import { CorporateIdentityService } from './services/corporate-identity.service';
 import { UserRole } from './shared/models/user.model';
 import { SidebarComponent } from './sidebar/sidebar.component';
 
@@ -29,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   showFilterImage = false;
   isMenuOpen = false;
+  logoUrl: string = 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/fondos/logo2.png'; // Valor por defecto
 
   stats = [
     { label: 'Máquinas registradas', value: 14, icon: 'precision_manufacturing' },
@@ -49,13 +51,16 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     public themeService: ThemeService,
     protected authService: AuthService,
-
+    private corporateIdentityService: CorporateIdentityService
   ) {
     this.authService.getCurrentUser().subscribe((user) => {
       if (user) {
         this.quickNavModulesFiltered = this.quickNavModules.filter((module) => module.role.includes(user.role));
       }
     });
+    
+    // Cargar logo de la identidad corporativa
+    this.loadCorporateLogo();
   }
 
   // Función para obtener el icono del tema
@@ -71,6 +76,11 @@ export class AppComponent implements OnInit, OnDestroy {
   // Función para cambiar el tema
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  // Función para verificar si se debe mostrar el botón de cambio de tema
+  shouldShowThemeToggle(): boolean {
+    return this.themeService.shouldShowThemeToggle();
   }
 
   navegate(event: string, cb: MatDrawer) {
@@ -116,6 +126,24 @@ export class AppComponent implements OnInit, OnDestroy {
       });
 
     this.isLoginRoute = this.router.url === '/login';
+    
+    // Suscribirse a cambios de tema para actualizar el logo si es necesario
+    this.themeService.theme$.subscribe(() => {
+      this.loadCorporateLogo();
+    });
+  }
+
+  /**
+   * Carga el logo desde la identidad corporativa
+   */
+  private loadCorporateLogo(): void {
+    const currentTheme = this.themeService.getCurrentTheme();
+    const identity = this.corporateIdentityService.getIdentityByTheme(currentTheme);
+    
+    if (identity && identity.logoUrl) {
+      this.logoUrl = identity.logoUrl;
+    }
+    // Si no hay identidad, se mantiene el valor por defecto
   }
 
   ngOnDestroy(): void {
