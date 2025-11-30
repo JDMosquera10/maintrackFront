@@ -201,50 +201,131 @@ mat-form-field {
 }
 
 .spare-parts-list {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     
-    h4 {
-        margin: 0 0 1rem 0;
-        color: var(--text-primary);
-        font-size: 1rem;
-        font-weight: 500;
+    .spare-parts-list-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        
+        h4 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .spare-parts-count {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
     }
 }
 
-.chips-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    padding: 1rem;
+.spare-parts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.spare-part-card {
     background: var(--bg-primary);
-    border-radius: 8px;
     border: 1px solid var(--border-color);
-    min-height: 60px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     
-    mat-chip-set {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        width: 100%;
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        border-color: var(--color-primary);
     }
     
-    .spare-part-chip {
-        background-color: var(--color-primary);
-        color: var(--text-primary);
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        transition: all 0.2s ease;
+    mat-card-content {
+        padding: 1.25rem !important;
+        margin: 0 !important;
+    }
+    
+    .spare-part-card-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .spare-part-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-alt) 100%);
+        border-radius: 12px;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(2, 190, 193, 0.3);
         
         mat-icon {
+            color: white;
+            font-size: 26px;
+            width: 26px;
+            height: 26px;
+        }
+    }
+    
+    .spare-part-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        
+        .spare-part-name {
+            margin: 0;
             color: var(--text-primary);
-            opacity: 0.9;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         
+        .spare-part-index {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+    }
+    
+    .remove-button {
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        
         &:hover {
-            background-color: var(--color-primary-alt);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #a44a5d;
+            background-color: rgba(164, 74, 93, 0.1);
+            transform: scale(1.1);
+        }
+        
+        &:active {
+            transform: scale(0.95);
+        }
+        
+        mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
         }
     }
 }
@@ -308,7 +389,25 @@ mat-form-field {
         }
     }
     
-    .chips-container {
-        padding: 0.75rem;
+    .spare-parts-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .spare-part-card {
+        .spare-part-card-content {
+            gap: 0.75rem;
+        }
+        
+        .spare-part-icon {
+            width: 40px;
+            height: 40px;
+            
+            mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+        }
     }
 }

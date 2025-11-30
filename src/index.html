@@ -10,6 +10,56 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com">
+  
+  <!-- Script para aplicar el tema antes de que Angular inicie -->
+  <script>
+    (function() {
+      try {
+        // Obtener el tema guardado del localStorage (usar la misma clave que ThemeService)
+        const savedTheme = localStorage.getItem('app-theme') || 'dark';
+        const htmlElement = document.documentElement;
+        
+        // Validar que el tema sea válido
+        const validTheme = (savedTheme === 'dark' || savedTheme === 'light') ? savedTheme : 'dark';
+        
+        // Aplicar el tema inmediatamente
+        htmlElement.classList.remove('theme-dark', 'theme-light');
+        htmlElement.classList.add('theme-' + validTheme);
+        htmlElement.setAttribute('data-theme', validTheme);
+      } catch (e) {
+        // Si hay error, usar tema por defecto
+        document.documentElement.classList.add('theme-dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+  
+  <!-- Estilos críticos para evitar flash -->
+  <style>
+    /* Estilos básicos mientras carga Angular */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    app-root {
+      display: block;
+      min-height: 100vh;
+    }
+    
+    /* Ocultar contenido hasta que Angular esté listo */
+    app-root:not(.ng-version) {
+      opacity: 0;
+    }
+    
+    app-root.ng-version {
+      opacity: 1;
+      transition: opacity 0.2s ease-in;
+    }
+  </style>
 </head>
 
 <body>

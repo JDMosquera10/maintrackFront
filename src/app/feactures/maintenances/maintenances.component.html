@@ -71,10 +71,6 @@
                                     <mat-icon>timeline</mat-icon>
                                     <span>Cambiar Estado</span>
                                 </button>
-                                <button mat-menu-item (click)="completeMaintenance(element)" [disabled]="element.isCompleted">
-                                    <mat-icon>{{ element.isCompleted ? 'check_circle' : 'check_box' }}</mat-icon>
-                                    <span>{{ element.isCompleted ? 'Completado' : 'Completar' }}</span>
-                                </button>
                                 <button mat-menu-item (click)="actionMaintenance('edit', element)">
                                     <mat-icon>edit</mat-icon>
                                     <span>Editar</span>

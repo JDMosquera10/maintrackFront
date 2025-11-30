@@ -10,6 +10,14 @@
     <div class="current-state-info" *ngIf="currentStateId">
       <mat-icon>info</mat-icon>
       <span>Estado actual: <strong>{{ getCurrentStateName() }}</strong></span>
+      <span *ngIf="isLastState() && !isAdmin" class="last-state-warning">
+        <mat-icon>lock</mat-icon>
+        Estado final alcanzado
+      </span>
+      <span *ngIf="isAdmin" class="admin-badge">
+        <mat-icon>admin_panel_settings</mat-icon>
+        Modo administrador - Todos los estados disponibles
+      </span>
     </div>
 
     <mat-form-field appearance="outline" class="w-100">
@@ -21,7 +29,10 @@
           <span [class.current-state]="isCurrentState(state.stateId)">
             {{ state.order }}. {{ state.state?.name || 'Desconocido' }}
             <span *ngIf="isCurrentState(state.stateId)" class="current-badge">(Actual)</span>
-            <span *ngIf="!canMoveToState(state)" class="disabled-badge">(No disponible)</span>
+            <span *ngIf="!canMoveToState(state) && !isAdmin" class="disabled-badge">
+              <mat-icon>lock</mat-icon>
+              (Bloqueado - Estado final alcanzado)
+            </span>
           </span>
         </mat-option>
       </mat-select>

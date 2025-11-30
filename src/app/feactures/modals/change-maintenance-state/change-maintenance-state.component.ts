@@ -6,6 +6,8 @@ import { GeneralModule } from '../../../modules/general.module';
 import { Maintenance } from '../../../shared/models/maintenance.model';
 import { TypeMaintenanceStateService } from '../../../services/type-maintenance-state.service';
 import { TypeMaintenanceState } from '../../../shared/models/type-maintenance-state.model';
+import { AuthService } from '../../../services/auth.service';
+import { UserRole } from '../../../shared/models/user.model';
 
 @Component({
   selector: 'app-change-maintenance-state',
@@ -21,12 +23,15 @@ export class ChangeMaintenanceStateComponent implements OnInit, OnDestroy {
   availableStates: TypeMaintenanceState[] = [];
   currentStateId?: string;
   isLoading = true;
+  userRole?: UserRole;
+  isAdmin = false;
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ChangeMaintenanceStateComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { maintenance: Maintenance },
-    private typeMaintenanceStateService: TypeMaintenanceStateService
+    private typeMaintenanceStateService: TypeMaintenanceStateService,
+    private authService: AuthService
   ) {
     this.stateForm = this.fb.group({
       stateId: ['', Validators.required],
@@ -34,6 +39,16 @@ export class ChangeMaintenanceStateComponent implements OnInit, OnDestroy {
     });
     
     this.currentStateId = data.maintenance.currentStateId;
+    
+    // Obtener el rol del usuario actual
+    this.authService.getCurrentUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        if (user) {
+          this.userRole = user.role;
+          this.isAdmin = user.role === UserRole.ADMIN;
+        }
+      });
   }
 
   ngOnInit() {
@@ -95,13 +110,64 @@ export class ChangeMaintenanceStateComponent implements OnInit, OnDestroy {
   }
 
   canMoveToState(state: TypeMaintenanceState): boolean {
-    if (!this.currentStateId) return true; // Si no hay estado actual, puede moverse a cualquier estado
+    // Si es administrador, puede moverse a cualquier estado
+    if (this.isAdmin) {
+      return true;
+    }
+    
+    // Si no hay estado actual, puede moverse a cualquier estado
+    if (!this.currentStateId) {
+      return true;
+    }
     
     const currentState = this.availableStates.find(s => s.stateId === this.currentStateId);
-    if (!currentState) return true;
+    if (!currentState) {
+      return true;
+    }
     
-    // Puede moverse al estado actual o a estados posteriores en el orden
-    return state.order >= currentState.order;
+    // Para coordinador y técnico: solo bloquear si está en el último estado
+    const lastState = this.getLastState();
+    if (!lastState) {
+      return true;
+    }
+    
+    // Si el mantenimiento está en el último estado, bloquear todos los cambios
+    if (currentState.order === lastState.order) {
+      return false;
+    }
+    
+    // Si no está en el último estado, permitir cualquier cambio
+    return true;
+  }
+
+  /**
+   * Obtiene el último estado disponible (el de mayor orden)
+   */
+  private getLastState(): TypeMaintenanceState | undefined {
+    if (this.availableStates.length === 0) {
+      return undefined;
+    }
+    
+    return this.availableStates.reduce((prev, current) => {
+      return (current.order > prev.order) ? current : prev;
+    });
+  }
+
+  /**
+   * Verifica si el mantenimiento está en el último estado
+   */
+  isLastState(): boolean {
+    if (!this.currentStateId) {
+      return false;
+    }
+    
+    const lastState = this.getLastState();
+    if (!lastState) {
+      return false;
+    }
+    
+    const currentState = this.availableStates.find(s => s.stateId === this.currentStateId);
+    return currentState?.order === lastState.order;
   }
 
   getCurrentStateName(): string {

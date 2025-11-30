@@ -1,16 +1,5 @@
 <div class="loading-overlay" *ngIf="isLoading">
-  <div class="loading-container">
-    <div class="loading-content">
-      <div class="logo-container">
-        <img [src]="logoUrl" alt="Logo" class="loading-logo" />
-      </div>
-      <div class="loading-spinner">
-        <div class="spinner-ring"></div>
-        <div class="spinner-ring"></div>
-        <div class="spinner-ring"></div>
-      </div>
-      <p class="loading-message">{{ loadingMessage }}</p>
-    </div>
+  <div class="logo-container">
+    <img [src]="logoUrl" alt="Logo" class="loading-logo" />
   </div>
 </div>
-

@@ -120,6 +120,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Asegurar que el contenido sea visible después de que Angular inicie
+    if (typeof document !== 'undefined') {
+      const appRoot = document.querySelector('app-root');
+      if (appRoot) {
+        appRoot.classList.add('ng-version');
+      }
+    }
+
     this.routerSubscription = this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {

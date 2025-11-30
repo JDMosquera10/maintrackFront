@@ -26,11 +26,16 @@ export class ThemeService {
     this.renderer = this.rendererFactory.createRenderer(null, null);
     // Solo cargar el tema si estamos en el browser
     if (isPlatformBrowser(this.platformId)) {
+      // Aplicar el tema guardado inmediatamente para evitar flash
+      this.loadSavedThemeSync();
+      
+      // Luego cargar la identidad corporativa de forma asíncrona
       this.loadCorporateIdentity().then(() => {
-        this.loadSavedTheme();
+        // Aplicar colores corporativos después de cargar
+        this.applyCorporateColors(this.currentTheme.value);
       }).catch(() => {
         // Si falla la carga, usar valores por defecto
-        this.loadSavedTheme();
+        this.applyDefaultColors(this.currentTheme.value);
       });
     } else {
       // En el servidor, usar tema por defecto sin aplicar al DOM
@@ -259,6 +264,35 @@ export class ThemeService {
       localStorage.setItem('app-theme', theme);
     } catch (error) {
       console.warn('No se pudo guardar la preferencia de tema:', error);
+    }
+  }
+
+  /**
+   * Carga la preferencia de tema guardada de forma síncrona (sin depender de identidad corporativa)
+   * Esto se usa para evitar el flash de contenido sin estilo
+   */
+  private loadSavedThemeSync(): void {
+    // Solo acceder a localStorage si estamos en el browser
+    if (!isPlatformBrowser(this.platformId)) {
+      this.currentTheme.next('dark');
+      this.applyTheme('dark');
+      return;
+    }
+
+    try {
+      const savedTheme = localStorage.getItem('app-theme') as ThemeMode;
+      if (savedTheme && (savedTheme === 'dark' || savedTheme === 'light')) {
+        this.currentTheme.next(savedTheme);
+        this.applyTheme(savedTheme);
+      } else {
+        // Si no hay tema guardado, usar por defecto
+        this.currentTheme.next('dark');
+        this.applyTheme('dark');
+      }
+    } catch (error) {
+      console.warn('Error al cargar tema guardado:', error);
+      this.currentTheme.next('dark');
+      this.applyTheme('dark');
     }
   }
 

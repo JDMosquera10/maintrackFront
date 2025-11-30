@@ -79,11 +79,6 @@
     <mat-step [stepControl]="repuestosForm" label="Repuestos" style="height: 100%;">
       <div mat-dialog-content class="dialog-content">
         <div [formGroup]="repuestosForm" class="spare-parts-container">
-          <div class="spare-parts-header">
-            <h3>Repuestos y Materiales</h3>
-            <p class="helper-text">Agregue los repuestos o materiales necesarios para este mantenimiento. Puede dejarlo vacío si no se requieren.</p>
-          </div>
-
           <div class="spare-parts-input-section">
             <mat-form-field appearance="outline" class="spare-part-input">
               <mat-label>Nombre del repuesto</mat-label>
@@ -107,18 +102,34 @@
           </div>
 
           <div class="spare-parts-list" *ngIf="spareParts.controls.length > 0">
-            <h4>Repuestos agregados ({{ spareParts.controls.length }})</h4>
-            <div class="chips-container">
-              <mat-chip-set>
-                <mat-chip 
-                  *ngFor="let part of spareParts.controls; let i = index" 
-                  [removable]="true"
-                  (removed)="removeSparePart(i)"
-                  class="spare-part-chip">
-                  <mat-icon matChipAvatar>build</mat-icon>
-                  {{ part.value }}
-                </mat-chip>
-              </mat-chip-set>
+            <div class="spare-parts-list-header">
+              <h4>Repuestos agregados</h4>
+              <span class="spare-parts-count">{{ spareParts.controls.length }} {{ spareParts.controls.length === 1 ? 'repuesto' : 'repuestos' }}</span>
+            </div>
+            <div class="spare-parts-grid">
+              <mat-card 
+                *ngFor="let part of spareParts.controls; let i = index" 
+                class="spare-part-card">
+                <mat-card-content>
+                  <div class="spare-part-card-content">
+                    <div class="spare-part-icon">
+                      <mat-icon>build</mat-icon>
+                    </div>
+                    <div class="spare-part-info">
+                      <h5 class="spare-part-name">{{ part.value }}</h5>
+                      <span class="spare-part-index">Repuesto #{{ i + 1 }}</span>
+                    </div>
+                    <button 
+                      mat-icon-button 
+                      class="remove-button"
+                      (click)="removeSparePart(i)"
+                      matTooltip="Eliminar repuesto"
+                      aria-label="Eliminar repuesto">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                </mat-card-content>
+              </mat-card>
             </div>
           </div>
 
