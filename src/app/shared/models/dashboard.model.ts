@@ -4,7 +4,6 @@ import { Maintenance } from './maintenance.model';
 export interface DashboardStats {
   totalMachines: number;
   activeMachines: number;
-  inactiveMachines: number;
   pendingMaintenances: number;
   completedMaintenances: number;
   upcomingAlerts: number;
@@ -13,16 +12,15 @@ export interface DashboardStats {
 }
 
 export interface MaintenancesByMonth {
-  month: string;
-  preventive: number;
-  corrective: number;
-  total: number;
+  month: string; // Formato: "YYYY-MM" según documentación del backend
+  preventive: number; // Siempre 0 (tipos dinámicos)
+  corrective: number; // Siempre 0 (tipos dinámicos)
+  total: number; // Total de mantenimientos en ese mes
 }
 
 export interface MachineStatusData {
   operational: number;
   maintenance: number;
-  offline: number;
 }
 
 export interface SpareParts {
@@ -45,9 +43,9 @@ export interface MaintenanceAlert {
   machineModel: string;
   machineSerial: string;
   client: string;
-  dueDate: Date;
+  dueDate: Date | string;
   daysRemaining: number;
-  maintenanceType: string;
+  maintenanceType: string; // Actualmente siempre "preventive" por compatibilidad
   priority: 'low' | 'medium' | 'high' | 'critical';
   location: string;
   technicianId: string;
@@ -60,9 +58,9 @@ export interface RecentMachine {
   model: string;
   serialNumber: string;
   client: string;
-  nextMaintenanceDate: Date;
+  nextMaintenanceDate: Date | string;
   daysUntilMaintenance: number;
-  status: string;
+  status: string; // "operational" | "maintenance" | "out_of_service"
   location: string;
 }
 

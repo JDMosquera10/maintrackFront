@@ -5,6 +5,8 @@ import { GeneralModule } from '../../modules/general.module';
 import { MatDialog } from '@angular/material/dialog';
 import { MachineComponent } from '../modals/machine/machine.component';
 import { MachineService } from '../../services/machine.service';
+import { LoadingService } from '../../services/loading.service';
+import { ToastService } from '../../services/toast.service';
 import { Machine } from '../../shared/models/machine.model';
 import { MACHINE_STATUS_TRANSLATIONS } from '../../shared/constants/translation.constants';
 
@@ -29,10 +31,27 @@ export class MachinesComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
 
-  constructor(private machineService: MachineService) {
-    this.machineService.getMachines().subscribe((machines: Machine[]) => {
-      this.dataSource.data = machines;
-      this.dataSource.paginator = this.paginator;
+  constructor(
+    private machineService: MachineService,
+    private loadingService: LoadingService,
+    private toastService: ToastService
+  ) {
+    this.loadMachines();
+  }
+
+  private loadMachines(): void {
+    this.loadingService.show('Cargando máquinas...');
+    this.machineService.getMachines().subscribe({
+      next: (machines: Machine[]) => {
+        this.dataSource.data = machines;
+        this.dataSource.paginator = this.paginator;
+        this.loadingService.hide();
+      },
+      error: (err) => {
+        console.error('Error loading machines:', err);
+        this.loadingService.hide();
+        this.toastService.showError('Error al cargar las máquinas');
+      }
     });
   }
 
@@ -55,18 +74,26 @@ export class MachinesComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         if (type === 'add' || type === 'errorAdd') {
+          this.loadingService.show('Creando máquina...');
           this.machineService.createMachine(result).subscribe({
             next: machine => {
               this.dataSource.data.push(machine);
               this.dataSource._updateChangeSubscription();
+              this.loadingService.hide();
+              this.toastService.showSuccess('Máquina creada exitosamente');
             },
             error: err => {
+              this.loadingService.hide();
               if (err.status === 400) {
+                this.toastService.showError('Error de validación. Por favor, revise los datos ingresados');
                 this.actionMachine('errorAdd', result);
+              } else {
+                this.toastService.showError('Error al crear la máquina');
               }
             }
           });
         } else if (type === 'edit' && element) {
+          this.loadingService.show('Actualizando máquina...');
           this.machineService.updateMachine(result).subscribe({
             next: machine => {
               const index = this.dataSource.data.indexOf(element);
@@ -74,10 +101,16 @@ export class MachinesComponent {
                 this.dataSource.data[index] = machine;
                 this.dataSource._updateChangeSubscription();
               }
+              this.loadingService.hide();
+              this.toastService.showSuccess('Máquina actualizada exitosamente');
             },
             error: err => {
+              this.loadingService.hide();
               if (err.status === 400) {
+                this.toastService.showError('Error de validación. Por favor, revise los datos ingresados');
                 this.actionMachine('edit', result);
+              } else {
+                this.toastService.showError('Error al actualizar la máquina');
               }
             }
           });
@@ -91,14 +124,22 @@ export class MachinesComponent {
    * @param element - El elemento a eliminar.
    */
   deleteMachine(element: Machine): void {
+    if (!confirm('¿Está seguro de que desea eliminar esta máquina?')) {
+      return;
+    }
+
+    this.loadingService.show('Eliminando máquina...');
     this.machineService.deleteMachine(element.id).subscribe({
       next: () => {
         this.dataSource.data = this.dataSource.data.filter(machine => machine.id !== element.id);
         this.dataSource._updateChangeSubscription();
+        this.loadingService.hide();
+        this.toastService.showSuccess('Máquina eliminada exitosamente');
       }, 
       error: err => {
-        if (err.status === 400) {
-        }
+        console.error('Error deleting machine:', err);
+        this.loadingService.hide();
+        this.toastService.showError('Error al eliminar la máquina');
       }
     });
   }

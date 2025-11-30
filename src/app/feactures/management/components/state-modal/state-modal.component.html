@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Gestión de Estado</h2>
+
+<div mat-dialog-content class="dialog-content">
+  <form [formGroup]="stateForm" class="form-grid">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" required>
+      <mat-error *ngIf="stateForm.get('name')?.hasError('required')">
+        El nombre es requerido
+      </mat-error>
+      <mat-error *ngIf="stateForm.get('name')?.hasError('minlength')">
+        El nombre debe tener al menos 3 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="description" rows="3" required></textarea>
+      <mat-error *ngIf="stateForm.get('description')?.hasError('required')">
+        La descripción es requerida
+      </mat-error>
+      <mat-error *ngIf="stateForm.get('description')?.hasError('minlength')">
+        La descripción debe tener al menos 5 caracteres
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="isActive" required>
+        <mat-option [value]="true">Activo</mat-option>
+        <mat-option [value]="false">Inactivo</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</div>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancelar</button>
+  <button mat-button (click)="submit()" [disabled]="!stateForm.valid" color="primary">
+    {{ data.type === 'edit' ? 'Actualizar' : 'Guardar' }}
+  </button>
+</mat-dialog-actions>
+

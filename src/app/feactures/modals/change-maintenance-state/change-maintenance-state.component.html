@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>Cambiar Estado del Mantenimiento</h2>
+
+<div mat-dialog-content class="dialog-content">
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando estados disponibles...</p>
+  </div>
+
+  <form *ngIf="!isLoading" [formGroup]="stateForm" class="form-container">
+    <div class="current-state-info" *ngIf="currentStateId">
+      <mat-icon>info</mat-icon>
+      <span>Estado actual: <strong>{{ getCurrentStateName() }}</strong></span>
+    </div>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Nuevo Estado</mat-label>
+      <mat-select formControlName="stateId" required>
+        <mat-option *ngFor="let state of availableStates" 
+                    [value]="state.stateId"
+                    [disabled]="!canMoveToState(state)">
+          <span [class.current-state]="isCurrentState(state.stateId)">
+            {{ state.order }}. {{ state.state?.name || 'Desconocido' }}
+            <span *ngIf="isCurrentState(state.stateId)" class="current-badge">(Actual)</span>
+            <span *ngIf="!canMoveToState(state)" class="disabled-badge">(No disponible)</span>
+          </span>
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="stateForm.get('stateId')?.hasError('required')">
+        Debe seleccionar un estado
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Observaciones (opcional)</mat-label>
+      <textarea matInput formControlName="observations" rows="3" 
+                placeholder="Agregue observaciones sobre el cambio de estado..."></textarea>
+    </mat-form-field>
+
+    <div class="states-timeline" *ngIf="availableStates.length > 0">
+      <h4>Flujo de Estados:</h4>
+      <div class="timeline">
+        <div *ngFor="let state of availableStates; let i = index" 
+             class="timeline-item"
+             [class.completed]="currentStateId && getStateOrder(currentStateId) >= state.order"
+             [class.current]="isCurrentState(state.stateId)">
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <span class="timeline-order">{{ state.order }}</span>
+            <span class="timeline-name">{{ state.state?.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancelar</button>
+  <button mat-button (click)="submit()" [disabled]="!stateForm.valid || isLoading" color="primary">
+    Cambiar Estado
+  </button>
+</mat-dialog-actions>
+

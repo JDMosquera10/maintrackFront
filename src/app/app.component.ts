@@ -14,10 +14,11 @@ import { ThemeService } from './services/theme.service';
 import { CorporateIdentityService } from './services/corporate-identity.service';
 import { UserRole } from './shared/models/user.model';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { LoadingComponent } from './shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, MatCardModule, MatIconModule, MatDividerModule, MatSidenavModule, MatButtonModule, MatSnackBarModule, SidebarComponent],
+  imports: [RouterOutlet, CommonModule, MatCardModule, MatIconModule, MatDividerModule, MatSidenavModule, MatButtonModule, MatSnackBarModule, SidebarComponent, LoadingComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

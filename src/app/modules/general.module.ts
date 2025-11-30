@@ -25,6 +25,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 // charts
@@ -51,7 +53,9 @@ const MATERIAL_MODULES = [
   MatStepperModule,
   MatSelectModule,
   MatDatepickerModule,
-  MatGridListModule
+  MatGridListModule,
+  MatExpansionModule,
+  MatCheckboxModule
 ];
 
 const ANGULAR_MODULES = [

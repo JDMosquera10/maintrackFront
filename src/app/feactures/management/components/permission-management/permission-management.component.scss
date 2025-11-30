@@ -1,0 +1,70 @@
+@import '../../../../../styles.scss';
+
+.management-content {
+  padding: 1rem;
+}
+
+.card-header-strong {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+
+  .custom-input {
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .button-agregar {
+    background-color: var(--color-primary);
+    color: var(--text-primary);
+    border-radius: 4px;
+    padding: 0.5rem 1.5rem;
+    
+    &:hover {
+      background-color: var(--color-primary-alt);
+    }
+  }
+}
+
+.mat-elevation-z8 {
+  background-color: var(--bg-primary);
+  border-radius: 4px;
+  overflow: hidden;
+  
+  table {
+    width: 100%;
+    
+    th {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    
+    td {
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.active-chip {
+  background-color: #4caf50;
+  color: white;
+}
+
+.inactive-chip {
+  background-color: #f44336;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .card-header-strong {
+    flex-direction: column;
+    align-items: stretch;
+    
+    .custom-input {
+      max-width: 100%;
+    }
+  }
+}
+

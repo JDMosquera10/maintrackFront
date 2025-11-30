@@ -64,7 +64,7 @@ export class ToastService {
     const daysText = this.getDaysText(alert.daysRemaining);
     const priorityText = this.getPriorityText(alert.priority);
     
-    return `⚙️ ${priorityText}: ${alert.machineModel} (${alert.machineSerial}) - ${daysText}`;
+    return `${priorityText}: ${alert.machineModel} (${alert.machineSerial}) - ${daysText}`;
   }
 
   /**

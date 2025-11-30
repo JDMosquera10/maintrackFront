@@ -19,9 +19,15 @@
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Tipo de mantenimiento</mat-label>
             <mat-select formControlName="type" required>
-              <mat-option value="preventive">Preventivo</mat-option>
-              <mat-option value="corrective">Correctivo</mat-option>
+              <mat-option *ngIf="isLoadingTypes" disabled>Cargando tipos...</mat-option>
+              <mat-option *ngFor="let type of maintenanceTypes" [value]="type.id">
+                {{ type.name }}
+              </mat-option>
+              <mat-option *ngIf="maintenanceTypes.length === 0 && !isLoadingTypes" disabled>
+                No hay tipos disponibles. Cree tipos en el módulo de gestión.
+              </mat-option>
             </mat-select>
+            <mat-hint *ngIf="isLoadingFirstState">Cargando estado inicial...</mat-hint>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="w-100">
@@ -61,7 +67,9 @@
       </div>
       <mat-dialog-actions align="end">
         <div class="step-actions">
-          <button mat-button matStepperNext [disabled]="!datosForm.valid" type="button">Siguiente</button>
+          <button mat-button matStepperNext [disabled]="!isDatosFormValid()" type="button">
+            Siguiente
+          </button>
           <button mat-button (click)="cancel()">Cancelar</button>
         </div>
       </mat-dialog-actions>
@@ -70,23 +78,54 @@
     <!-- Paso 2: Repuestos -->
     <mat-step [stepControl]="repuestosForm" label="Repuestos" style="height: 100%;">
       <div mat-dialog-content class="dialog-content">
-        <div [formGroup]="repuestosForm" class="form-grid">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Agregar repuesto</mat-label>
-            <mat-chip-grid #chipGrid>
-              <input matInput [matChipInputFor]="chipGrid" placeholder="Nombre del repuesto"
-                (matChipInputTokenEnd)="addSparePart($event.value)">
-            </mat-chip-grid>
-          </mat-form-field>
+        <div [formGroup]="repuestosForm" class="spare-parts-container">
+          <div class="spare-parts-header">
+            <h3>Repuestos y Materiales</h3>
+            <p class="helper-text">Agregue los repuestos o materiales necesarios para este mantenimiento. Puede dejarlo vacío si no se requieren.</p>
+          </div>
 
-          <div class="chips-container" *ngIf="spareParts.controls.length > 0">
-            <mat-chip-grid #chipGrid class="mat-mdc-chip-set-stacked">
-              <mat-chip *ngFor="let part of spareParts.controls; let i = index" [removable]="true"
-                (removed)="removeSparePart(i)">
-                {{ part.value }}
-                <button mat-icon-button matChipRemove><mat-icon>cancel</mat-icon></button>
-              </mat-chip>
-            </mat-chip-grid>
+          <div class="spare-parts-input-section">
+            <mat-form-field appearance="outline" class="spare-part-input">
+              <mat-label>Nombre del repuesto</mat-label>
+              <input 
+                matInput 
+                [(ngModel)]="newSparePartInput"
+                (keydown.enter)="addSparePart()"
+                placeholder="Ej: Filtro de aceite, Bujía, etc."
+                [ngModelOptions]="{standalone: true}">
+              <mat-hint>Presione Enter o haga clic en "Agregar"</mat-hint>
+            </mat-form-field>
+            <button 
+              mat-raised-button 
+              color="primary" 
+              (click)="addSparePart()"
+              [disabled]="!newSparePartInput || newSparePartInput.trim().length === 0"
+              class="add-button">
+              <mat-icon>add</mat-icon>
+              Agregar
+            </button>
+          </div>
+
+          <div class="spare-parts-list" *ngIf="spareParts.controls.length > 0">
+            <h4>Repuestos agregados ({{ spareParts.controls.length }})</h4>
+            <div class="chips-container">
+              <mat-chip-set>
+                <mat-chip 
+                  *ngFor="let part of spareParts.controls; let i = index" 
+                  [removable]="true"
+                  (removed)="removeSparePart(i)"
+                  class="spare-part-chip">
+                  <mat-icon matChipAvatar>build</mat-icon>
+                  {{ part.value }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="spareParts.controls.length === 0">
+            <mat-icon>inventory_2</mat-icon>
+            <p>No hay repuestos agregados</p>
+            <p class="helper-text">Puede agregar repuestos usando el campo de arriba o continuar sin agregar ninguno.</p>
           </div>
         </div>
       </div>
@@ -105,7 +144,7 @@
         <h3>Resumen</h3>
         <ul>
           <li><b>Máquina:</b> {{ getMachineModelById(datosForm.value.machine) }}</li>
-          <li *ngIf="!data.istechenical"><b>Tipo:</b> {{ TRADUCERTYPES[datosForm.value.type] || datosForm.value.type }}
+          <li *ngIf="!data.istechenical"><b>Tipo:</b> {{ getMaintenanceTypeName(datosForm.value.type) }}
           </li>
           <li><b>Fecha:</b> {{ fromatDate(datosForm.value.date) }}</li>
           <li><b>Técnico:</b> {{ getNameTechnician(datosForm.value.technician) }}</li>

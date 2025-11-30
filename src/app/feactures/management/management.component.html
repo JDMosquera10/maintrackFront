@@ -1,0 +1,111 @@
+<div class="mat-header-strong">
+  <h1 class="size-title">Módulo de Gestión</h1>
+</div>
+
+<div class="content-cards">
+  <mat-card class="chart-card" appearance="outlined">
+    <mat-card-content>
+      <mat-accordion class="management-accordion">
+        
+        <!-- Submódulo: Gestión de Usuarios -->
+        <mat-expansion-panel [(expanded)]="panelOpenState.users">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>people</mat-icon>
+              <span>Gestión de Usuarios</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              Administrar usuarios del sistema
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-user-management></app-user-management>
+        </mat-expansion-panel>
+
+        <!-- Submódulo: Gestión de Roles -->
+        <!-- <mat-expansion-panel [(expanded)]="panelOpenState.roles">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>admin_panel_settings</mat-icon>
+              <span>Gestión de Roles</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              Administrar roles del sistema
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-role-management></app-role-management>
+        </mat-expansion-panel> -->
+
+        <!-- Submódulo: Gestión de Permisos -->
+        <!-- <mat-expansion-panel [(expanded)]="panelOpenState.permissions">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>security</mat-icon>
+              <span>Gestión de Permisos</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              Administrar permisos del sistema
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-permission-management></app-permission-management>
+        </mat-expansion-panel> -->
+
+        <!-- Submódulo: Gestión de Mantenimientos -->
+        <mat-expansion-panel [(expanded)]="panelOpenState.maintenances">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>build</mat-icon>
+              <span>Gestión de Mantenimientos</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              Administrar tipos de mantenimientos
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          
+          <!-- Sub-acordeón para Tipos de Mantenimientos -->
+          <mat-accordion class="nested-accordion">
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon>category</mat-icon>
+                  <span>Tipos de Mantenimientos</span>
+                </mat-panel-title>
+                <mat-panel-description>
+                  CRUD de tipos de mantenimiento
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <app-maintenance-type-management></app-maintenance-type-management>
+            </mat-expansion-panel>
+            
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon>list</mat-icon>
+                  <span>Gestión de Estados</span>
+                </mat-panel-title>
+                <mat-panel-description>
+                  CRUD de estados de mantenimiento
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <app-state-management></app-state-management>
+            </mat-expansion-panel>
+            
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon>timeline</mat-icon>
+                  <span>Estados por Tipo de Mantenimiento</span>
+                </mat-panel-title>
+                <mat-panel-description>
+                  Asignar y ordenar estados por tipo
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <app-type-maintenance-states-management></app-type-maintenance-states-management>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+</div>
+

@@ -1,0 +1,166 @@
+@import '../../../../../styles.scss';
+
+.type-states-management {
+  padding: 1rem;
+}
+
+.type-selector {
+  margin-bottom: 2rem;
+  
+  .w-100 {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+
+.states-container {
+  .header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    
+    h3 {
+      color: var(--text-primary);
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    
+    button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.states-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.empty-state,
+.no-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-secondary);
+  
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    color: var(--text-tertiary);
+  }
+  
+  p {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  .debug-info {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+}
+
+.state-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .state-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    
+    .order-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    
+    .state-details {
+      flex: 1;
+      
+      h4 {
+        margin: 0 0 0.25rem 0;
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-weight: 500;
+      }
+      
+      p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+    }
+  }
+  
+  .state-actions {
+    display: flex;
+    gap: 0.5rem;
+    
+    button {
+      &:disabled {
+        opacity: 0.3;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .state-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    
+    .state-actions {
+      justify-content: flex-end;
+    }
+  }
+}
+

@@ -55,6 +55,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
       path: '/machines-table',
       role: [UserRole.ADMIN, UserRole.COORDINATOR],
       description: 'mira los detalles de tus mantenimientos registrados en una lista.',
+    },
+    {
+      src: 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/siderbar/pruebaimagen.png',
+      title: 'Módulo de Gestión',
+      path: '/management',
+      role: [UserRole.ADMIN],
+      description: 'Administra usuarios, roles, permisos y tipos de mantenimientos.',
     }
   ];
 

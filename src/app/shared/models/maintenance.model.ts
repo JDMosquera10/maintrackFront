@@ -1,7 +1,12 @@
+import { State } from './state.model';
+
 export interface Maintenance {
   id: string;
   machineId: Machine;
   type: string;
+  typeId?: string;
+  currentStateId?: string;
+  currentState?: State;
   spareParts: string[];
   technicianId?: Technician;
   technician?: string;
@@ -34,12 +39,26 @@ export interface CreateMaintenanceRequest {
   machineId: string;
   date: Date;
   type: string;
+  typeId?: string;
+  currentStateId?: string;
   spareParts: string[];
   technicianId?: string;
   observations?: string;
   workHours?: number;
   isCompleted?: boolean;
   completedAt?: Date;
+}
+
+export interface UpdateMaintenanceStateRequest {
+  maintenanceId: string;
+  stateId: string;
+  observations?: string;
+}
+
+export interface UpdateMaintenanceStateRequest {
+  maintenanceId: string;
+  stateId: string;
+  observations?: string;
 }
 
 export interface UpdateMaintenanceRequest extends Partial<CreateMaintenanceRequest> {

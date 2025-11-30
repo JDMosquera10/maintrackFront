@@ -38,6 +38,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'management',
+    loadComponent: () => import('./feactures/management/management.component').then(m => m.ManagementComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: [UserRole.ADMIN] }
+  },
+  {
     path: '**',
     redirectTo: '/dashboard'
   }

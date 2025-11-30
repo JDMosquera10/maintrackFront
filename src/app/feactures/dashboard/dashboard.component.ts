@@ -13,6 +13,7 @@ import { ThemeService } from '../../services/theme.service';
 import { DashboardService } from '../../services/dashboard.service';
 import { WebSocketService } from '../../services/websocket.service';
 import { ToastService } from '../../services/toast.service';
+import { LoadingService } from '../../services/loading.service';
 import { DashboardData, MaintenanceAlert, RecentMachine } from '../../shared/models/dashboard.model';
 
 export interface PeriodicElement {
@@ -176,7 +177,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private dashboardService: DashboardService,
     public webSocketService: WebSocketService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private loadingService: LoadingService
   ) {
     this.getMonthToday();
     this.prepareChartOptions1();
@@ -533,21 +535,24 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     this.webSocketService.maintenanceAlerts$
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
-        console.log('📨 Datos de alertas recibidos:', data);
         this.handleMaintenanceAlerts(data);
       });
 
-    // Inicializar los datos
+    // Inicializar los datos con loading y manejo de errores
+    this.loadingService.show('Cargando datos del dashboard...');
     this.dashboardService.initializeDashboard()
       .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        data => {
+      .subscribe({
+        next: data => {
           console.log('Dashboard inicializado con datos:', data);
+          this.loadingService.hide();
         },
-        error => {
+        error: error => {
           console.error('Error inicializando dashboard:', error);
+          this.loadingService.hide();
+          this.toastService.showError('Error al cargar los datos del dashboard. Por favor, intente nuevamente.');
         }
-      );
+      });
   }
 
   /**
@@ -618,16 +623,29 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Actualiza el gráfico de mantenimientos por mes
+   * Nota: Según la documentación del backend, preventive y corrective siempre son 0
+   * porque los tipos de mantenimiento ahora son dinámicos. Solo mostramos el total.
    */
   private updateMaintenanceChart(data: any[]): void {
     const colors = this.getThemeColors();
     
+    // Formatear los meses para mostrar mejor (convertir "2024-01" a "Ene 2024")
+    const formatMonth = (monthStr: string) => {
+      try {
+        const [year, month] = monthStr.split('-');
+        const date = new Date(parseInt(year), parseInt(month) - 1);
+        return format(date, 'MMM yyyy', { locale: es });
+      } catch {
+        return monthStr;
+      }
+    };
+    
     this.barChartData = {
-      labels: data.map(item => item.month),
+      labels: data.map(item => formatMonth(item.month)),
       datasets: [
         {
-          label: 'Preventivos',
-          data: data.map(item => item.preventive),
+          label: 'Total de Mantenimientos',
+          data: data.map(item => item.total),
           backgroundColor: colors.primary,
           borderColor: colors.primary,
           borderWidth: 2,
@@ -635,17 +653,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
           barPercentage: 0.6,
           categoryPercentage: 0.8,
           hoverBackgroundColor: colors.primaryAlt
-        },
-        {
-          label: 'Correctivos',
-          data: data.map(item => item.corrective),
-          backgroundColor: colors.warning,
-          borderColor: colors.warning,
-          borderWidth: 2,
-          borderRadius: 8,
-          barPercentage: 0.6,
-          categoryPercentage: 0.8,
-          hoverBackgroundColor: colors.accent
         }
       ]
     };
@@ -656,22 +663,22 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Actualiza el gráfico de estado de máquinas
+   * Nota: Según la documentación del backend, solo hay operational y maintenance
    */
   private updateMachineStatusChart(data: any): void {
     const colors = this.getThemeColors();
     
     this.doughnutChartData = {
-      labels: ['Operación', 'Mantenimiento'],
+      labels: ['Operacionales', 'En Mantenimiento'],
       datasets: [
         {
-          data: [data.operational || 0, data.maintenance || 0, data.offline || 0],
-          backgroundColor: [colors.primary, colors.warning, colors.accent],
+          data: [data.operational || 0, data.maintenance || 0],
+          backgroundColor: [colors.primary, colors.warning],
           borderWidth: 3,
           borderColor: colors.bgSecondary,
           hoverBackgroundColor: [
             colors.primaryAlt,
-            colors.accent,
-            '#ff6b6b'
+            colors.accent
           ],
           hoverBorderWidth: 4
         }
@@ -787,20 +794,13 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
    * Maneja alertas de mantenimiento próximos recibidas vía WebSocket
    */
   private handleMaintenanceAlerts(data: any): void {
-    console.log('📨 Procesando alertas de mantenimiento:', data);
-    
-    // Verificar si data tiene la estructura correcta
     if (!data || !data.alerts || !Array.isArray(data.alerts)) {
-      console.warn('❌ Estructura de datos de alertas inválida:', data);
+      console.warn('Estructura de datos de alertas inválida:', data);
       return;
     }
 
     const alerts = data.alerts;
-    console.log(`📨 Procesando ${alerts.length} alertas de mantenimiento`);
-
-    // Procesar cada alerta individualmente
-    alerts.forEach((alert: MaintenanceAlert, index: number) => {
-      console.log(`📨 Procesando alerta ${index + 1}:`, alert);
+    alerts.forEach((alert: MaintenanceAlert) => {
       this.handleMaintenanceAlert(alert);
     });
 
@@ -812,7 +812,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
    * Maneja una alerta de mantenimiento individual
    */
   private handleMaintenanceAlert(alert: MaintenanceAlert): void {
-    console.log('🔔 Procesando alerta individual:', alert);
     
     // Determinar el tipo de notificación según los días restantes y prioridad
     if (alert.daysRemaining < 0) {

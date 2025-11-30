@@ -45,4 +45,24 @@ export interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+}
+
+export interface CreateUserRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+  isActive: boolean;
+}
+
+export interface UpdateUserRequest extends Partial<CreateUserRequest> {
+  id: string;
+}
+
+export interface UserManagementResponse {
+  success: boolean;
+  payload: User | User[];
+  message?: string;
+  error?: string;
 } 

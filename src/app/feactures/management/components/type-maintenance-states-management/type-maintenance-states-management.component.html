@@ -1,0 +1,63 @@
+<div class="type-states-management">
+  <div class="type-selector">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Seleccionar Tipo de Mantenimiento</mat-label>
+      <mat-select [value]="selectedType?.id" (selectionChange)="selectType($event.value)">
+        <mat-option *ngFor="let type of maintenanceTypes" [value]="type.id">
+          {{ type.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="selectedType" class="states-container">
+    <div class="header-actions">
+      <h3>Estados del tipo: {{ selectedType.name }}</h3>
+      <button mat-raised-button color="primary" (click)="addStateToType()">
+        <mat-icon>add</mat-icon>
+        Agregar Estado
+      </button>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoading" class="states-list">
+      <div *ngIf="typeStates.length === 0" class="empty-state">
+        <mat-icon>info</mat-icon>
+        <p>No hay estados asignados a este tipo de mantenimiento</p>
+        <p class="debug-info" *ngIf="typeStates.length === 0 && selectedType">
+          Tipo seleccionado: {{ selectedType.name }} (ID: {{ selectedType.id }})
+        </p>
+      </div>
+
+      <div *ngFor="let typeState of typeStates; let i = index" class="state-item">
+        <div class="state-info">
+          <div class="order-badge">{{ typeState.order }}</div>
+          <div class="state-details">
+            <h4>{{ typeState.state?.name || getStateName(typeState.stateId) }}</h4>
+            <p>{{ typeState.state?.description || 'Sin descripción' }}</p>
+          </div>
+        </div>
+        <div class="state-actions">
+          <button mat-icon-button (click)="moveStateUp(i)" [disabled]="i === 0" matTooltip="Mover arriba">
+            <mat-icon>arrow_upward</mat-icon>
+          </button>
+          <button mat-icon-button (click)="moveStateDown(i)" [disabled]="i === typeStates.length - 1" matTooltip="Mover abajo">
+            <mat-icon>arrow_downward</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="removeStateFromType(typeState)" matTooltip="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!selectedType" class="no-selection">
+    <mat-icon>info</mat-icon>
+    <p>Seleccione un tipo de mantenimiento para gestionar sus estados</p>
+  </div>
+</div>
+

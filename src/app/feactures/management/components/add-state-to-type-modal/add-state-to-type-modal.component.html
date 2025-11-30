@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Agregar Estado al Tipo de Mantenimiento</h2>
+
+<div mat-dialog-content class="dialog-content">
+  <form [formGroup]="addStateForm" class="form-grid">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="stateId" required>
+        <mat-option *ngFor="let state of availableStates" [value]="state.id">
+          {{ state.name }} - {{ state.description }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="addStateForm.get('stateId')?.hasError('required')">
+        Debe seleccionar un estado
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Orden</mat-label>
+      <input matInput type="number" formControlName="order" required min="1">
+      <mat-hint>El orden en que aparecerá este estado en el flujo</mat-hint>
+      <mat-error *ngIf="addStateForm.get('order')?.hasError('required')">
+        El orden es requerido
+      </mat-error>
+      <mat-error *ngIf="addStateForm.get('order')?.hasError('min')">
+        El orden debe ser mayor a 0
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancelar</button>
+  <button mat-button (click)="submit()" [disabled]="!addStateForm.valid || availableStates.length === 0" color="primary">
+    Agregar
+  </button>
+</mat-dialog-actions>
+

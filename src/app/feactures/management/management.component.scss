@@ -1,0 +1,112 @@
+@import '../../../styles.scss';
+
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: transparent;
+}
+
+
+
+.mat-header-strong {
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+
+.size-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  padding: 2rem 1rem 1rem;
+  text-align: center;
+  position: relative;
+  
+  &::after {
+      content: '';
+      position: absolute;
+      bottom: 0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 3px;
+      background: linear-gradient(90deg, $color-primary 0%, $color-accent 100%);
+      border-radius: 2px;
+  }
+}
+
+.content-cards {
+  padding: 1rem;
+}
+
+.chart-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+
+  mat-card-content {
+    padding: 1.5rem;
+  }
+}
+
+.management-accordion {
+  width: 100%;
+
+  mat-expansion-panel {
+    margin-bottom: 1rem;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+
+    mat-expansion-panel-header {
+      padding: 1rem 1.5rem;
+
+      mat-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--text-primary);
+        font-weight: 500;
+
+        mat-icon {
+          color: var(--color-primary);
+        }
+      }
+
+      mat-panel-description {
+        color: var(--text-secondary);
+      }
+    }
+
+    .mat-expansion-panel-content {
+      padding: 1.5rem;
+      background-color: var(--bg-secondary);
+    }
+  }
+}
+
+.nested-accordion {
+  margin-top: 1rem;
+
+  mat-expansion-panel {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+
+    mat-expansion-panel-header {
+      mat-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        mat-icon {
+          color: var(--color-primary);
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}

@@ -1,24 +1,18 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, combineLatest, interval, timer } from 'rxjs';
-import { map, tap, catchError, startWith, switchMap, shareReplay } from 'rxjs/operators';
-import { 
-  DashboardData, 
-  DashboardStats, 
-  DashboardCharts, 
-  MaintenanceAlert, 
-  RecentMachine,
-  DashboardFilters,
-  DashboardResponse,
-  MaintenancesByMonth,
-  MachineStatusData,
-  SpareParts 
-} from '../shared/models/dashboard.model';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, combineLatest, interval } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { ApiResponse } from '../shared/models/api-response.model';
+import {
+  DashboardCharts,
+  DashboardData,
+  DashboardFilters,
+  DashboardStats,
+  MaintenanceAlert,
+  RecentMachine
+} from '../shared/models/dashboard.model';
 import { BaseApiService } from './base-api.service';
 import { MachineService } from './machine.service';
-import { Machine } from '../shared/models/machine.model';
-import { Maintenance } from '../shared/models/maintenance.model';
 
 @Injectable({
   providedIn: 'root'
@@ -91,28 +85,42 @@ export class DashboardService extends BaseApiService {
   }
 
   /**
-   * Carga todos los datos del dashboard desde el backend
+   * Carga todos los datos del dashboard desde el backend usando el endpoint /data
+   * Según la documentación del backend, este endpoint retorna todos los datos en una sola llamada
    */
   private loadFullDashboardData(): Observable<DashboardData> {
-    const filters = this.filtersSubject.value;
-    
-    return combineLatest({
-      stats: this.getDashboardStats(filters),
-      charts: this.getDashboardCharts(filters),
-      alerts: this.getMaintenanceAlerts(filters),
-      recentMachines: this.getRecentMachines(filters)
-    }).pipe(
-      tap(data => console.log('Combined dashboard data:', data)),
-      map(({ stats, charts, alerts, recentMachines }) => {
-        const dashboardData = {
-          stats,
-          charts,
-          alerts,
-          recentMachines,
-          lastUpdated: new Date()
-        };
-        console.log('Final dashboard data structure:', dashboardData);
-        return dashboardData;
+    return this.get<ApiResponse<DashboardData>>(`${this.baseUrl}/data`).pipe(
+      tap(response => console.log('Dashboard data response from backend:', response)),
+      map((response: any) => {
+        if (response) {
+          // Asegurar que lastUpdated esté presente
+          const data = {
+            ...response,
+            lastUpdated: response?.lastUpdated || new Date()
+          };
+          console.log('Final dashboard data structure:', data);
+          return data;
+        } else {
+          throw new Error('Error loading dashboard data');
+        }
+      }),
+      catchError(error => {
+        console.error('Error loading dashboard data, using mock data:', error);
+        // Retornar datos mock como fallback
+        return combineLatest({
+          stats: this.generateMockStats(),
+          charts: this.generateMockCharts(),
+          alerts: this.generateMockAlerts(),
+          recentMachines: this.generateMockRecentMachines()
+        }).pipe(
+          map(({ stats, charts, alerts, recentMachines }) => ({
+            stats,
+            charts,
+            alerts,
+            recentMachines,
+            lastUpdated: new Date()
+          }))
+        );
       })
     );
   }
@@ -123,8 +131,14 @@ export class DashboardService extends BaseApiService {
   getDashboardStats(filters?: DashboardFilters): Observable<DashboardStats> {
     const params = this.buildQueryParams(filters);
     
-    return this.get<DashboardStats>(`${this.baseUrl}/stats`, params).pipe(
+    return this.get<ApiResponse<DashboardStats>>(`${this.baseUrl}/stats`, params).pipe(
       tap(response => console.log('Stats response from backend:', response)),
+      map(response => {
+        if (response.success && response.payload) {
+          return response.payload;
+        }
+        throw new Error(response.error || 'Error loading stats');
+      }),
       catchError(error => {
         console.log('Error loading stats, using mock data:', error);
         return this.generateMockStats();
@@ -138,8 +152,14 @@ export class DashboardService extends BaseApiService {
   getDashboardCharts(filters?: DashboardFilters): Observable<DashboardCharts> {
     const params = this.buildQueryParams(filters);
     
-    return this.get<DashboardCharts>(`${this.baseUrl}/charts`, params).pipe(
+    return this.get<ApiResponse<DashboardCharts>>(`${this.baseUrl}/charts`, params).pipe(
       tap(response => console.log('Charts response from backend:', response)),
+      map(response => {
+        if (response.success && response.payload) {
+          return response.payload;
+        }
+        throw new Error(response.error || 'Error loading charts');
+      }),
       catchError(error => {
         console.log('Error loading charts, using mock data:', error);
         return this.generateMockCharts();
@@ -153,8 +173,14 @@ export class DashboardService extends BaseApiService {
   getMaintenanceAlerts(filters?: DashboardFilters): Observable<MaintenanceAlert[]> {
     const params = this.buildQueryParams(filters);
     
-    return this.get<MaintenanceAlert[]>(`${this.baseUrl}/alerts`, params).pipe(
+    return this.get<ApiResponse<MaintenanceAlert[]>>(`${this.baseUrl}/alerts`, params).pipe(
       tap(response => console.log('Alerts response from backend:', response)),
+      map(response => {
+        if (response.success && response.payload) {
+          return response.payload;
+        }
+        throw new Error(response.error || 'Error loading alerts');
+      }),
       catchError(error => {
         console.log('Error loading alerts, using mock data:', error);
         return this.generateMockAlerts();
@@ -168,11 +194,32 @@ export class DashboardService extends BaseApiService {
   getRecentMachines(filters?: DashboardFilters): Observable<RecentMachine[]> {
     const params = this.buildQueryParams(filters);
     
-    return this.get<RecentMachine[]>(`${this.baseUrl}/machines/recent`, params).pipe(
+    return this.get<ApiResponse<RecentMachine[]>>(`${this.baseUrl}/machines/recent`, params).pipe(
       tap(response => console.log('Recent machines response from backend:', response)),
+      map(response => {
+        if (response.success && response.payload) {
+          return response.payload;
+        }
+        throw new Error(response.error || 'Error loading recent machines');
+      }),
       catchError(error => {
         console.log('Error loading recent machines, using mock data:', error);
         return this.generateMockRecentMachines();
+      })
+    );
+  }
+
+  /**
+   * Fuerza una actualización del dashboard y envía los datos vía WebSocket
+   * Requiere rol de coordinador o superior según la documentación
+   */
+  broadcastDashboardUpdate(): Observable<{ success: boolean; message?: string }> {
+    return this.post<ApiResponse<{ message: string }>>(`${this.baseUrl}/broadcast`, {}).pipe(
+      map(response => {
+        if (response.success) {
+          return { success: true, message: response.message };
+        }
+        throw new Error(response.error || 'Error broadcasting dashboard update');
       })
     );
   }
@@ -288,10 +335,9 @@ export class DashboardService extends BaseApiService {
       observer.next({
         totalMachines: 24,
         activeMachines: 18,
-        inactiveMachines: 6,
         pendingMaintenances: 8,
         completedMaintenances: 156,
-        upcomingAlerts: 6, // Actualizado para reflejar las 6 alertas mock
+        upcomingAlerts: 6,
         totalWorkHours: 2840,
         averageUsageHours: 1250
       });
@@ -303,25 +349,24 @@ export class DashboardService extends BaseApiService {
     return new Observable(observer => {
       observer.next({
         maintenancesByMonth: [
-          { month: 'Enero', preventive: 5, corrective: 3, total: 8 },
-          { month: 'Febrero', preventive: 6, corrective: 2, total: 8 },
-          { month: 'Marzo', preventive: 5, corrective: 4, total: 9 },
-          { month: 'Abril', preventive: 7, corrective: 3, total: 10 },
-          { month: 'Mayo', preventive: 4, corrective: 5, total: 9 },
-          { month: 'Junio', preventive: 9, corrective: 2, total: 11 }
+          { month: '2024-01', preventive: 0, corrective: 0, total: 8 },
+          { month: '2024-02', preventive: 0, corrective: 0, total: 8 },
+          { month: '2024-03', preventive: 0, corrective: 0, total: 9 },
+          { month: '2024-04', preventive: 0, corrective: 0, total: 10 },
+          { month: '2024-05', preventive: 0, corrective: 0, total: 9 },
+          { month: '2024-06', preventive: 0, corrective: 0, total: 11 }
         ],
         machineStatus: {
           operational: 18,
-          maintenance: 6,
-          offline: 0
+          maintenance: 6
         },
         sparePartsConsumption: [
-          { month: 'Enero', filtersUsed: 12, oilUsed: 450, partsReplaced: 8 },
-          { month: 'Febrero', filtersUsed: 19, oilUsed: 380, partsReplaced: 12 },
-          { month: 'Marzo', filtersUsed: 15, oilUsed: 520, partsReplaced: 6 },
-          { month: 'Abril', filtersUsed: 22, oilUsed: 410, partsReplaced: 15 },
-          { month: 'Mayo', filtersUsed: 18, oilUsed: 490, partsReplaced: 9 },
-          { month: 'Junio', filtersUsed: 25, oilUsed: 530, partsReplaced: 18 }
+          { month: '2024-01', filtersUsed: 12, oilUsed: 450, partsReplaced: 8 },
+          { month: '2024-02', filtersUsed: 19, oilUsed: 380, partsReplaced: 12 },
+          { month: '2024-03', filtersUsed: 15, oilUsed: 520, partsReplaced: 6 },
+          { month: '2024-04', filtersUsed: 22, oilUsed: 410, partsReplaced: 15 },
+          { month: '2024-05', filtersUsed: 18, oilUsed: 490, partsReplaced: 9 },
+          { month: '2024-06', filtersUsed: 25, oilUsed: 530, partsReplaced: 18 }
         ]
       });
       observer.complete();

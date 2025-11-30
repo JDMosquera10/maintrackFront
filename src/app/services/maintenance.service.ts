@@ -1,8 +1,8 @@
 
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { Maintenance, CreateMaintenanceRequest, UpdateMaintenanceRequest } from '../shared/models/maintenance.model';
+import { CreateMaintenanceRequest, Maintenance, UpdateMaintenanceRequest } from '../shared/models/maintenance.model';
 import { BaseApiService } from './base-api.service';
 
 @Injectable({
@@ -19,7 +19,14 @@ export class MaintenanceService extends BaseApiService {
    * @returns An observable containing the list of maintenances.
    */
   getMaintenances(): Observable<Maintenance[]> {
-    return this.get<Maintenance[]>(this.baseUrl).pipe(map(result => result.map(this.mapToMaintenance)));
+    return this.get<Maintenance[]>(this.baseUrl).pipe(
+      map(result => {
+        if (!result || !Array.isArray(result)) {
+          return [];
+        }
+        return result.map(item => this.mapToMaintenance(item));
+      })
+    );
   }
 
    /**
@@ -27,7 +34,15 @@ export class MaintenanceService extends BaseApiService {
    * @returns An observable containing the list of maintenances.
    */
    getMaintenancesPending(): Observable<Maintenance[]> {
-    return this.get<Maintenance[]>(`${this.baseUrl}/pending`).pipe(map(result => result.map(this.mapToMaintenance)));
+    return this.get<any[]>(`${this.baseUrl}/pending`).pipe(
+      map(result => {
+        if (!result || !Array.isArray(result)) {
+          console.warn('Result is not an array:', result);
+          return [];
+        }
+        return result.map(item => this.mapToMaintenance(item));
+      })
+    );
   }
 
   /**
@@ -35,7 +50,15 @@ export class MaintenanceService extends BaseApiService {
    * @returns An observable containing the list of maintenances.
    */
   getMaintenancesByTechnicianPending(technicianId: string): Observable<Maintenance[]> {
-    return this.get<Maintenance[]>(`${this.baseUrl}/technician/${technicianId}/pending`).pipe(map(result => result.map(this.mapToMaintenance)));
+    return this.get<any[]>(`${this.baseUrl}/technician/${technicianId}/pending`).pipe(
+      map(result => {
+        if (!result || !Array.isArray(result)) {
+          console.warn('Result is not an array:', result);
+          return [];
+        }
+        return result.map(item => this.mapToMaintenance(item));
+      })
+    );
   }
 
   /**
@@ -43,7 +66,14 @@ export class MaintenanceService extends BaseApiService {
    * @returns An observable containing the list of maintenances.
    */
   getMaintenancesByTechnician(technicianId: string): Observable<Maintenance[]> {
-    return this.get<Maintenance[]>(`${this.baseUrl}/technician/${technicianId}`).pipe(map(result => result.map(this.mapToMaintenance)));
+    return this.get<Maintenance[]>(`${this.baseUrl}/technician/${technicianId}`).pipe(
+      map(result => {
+        if (!result || !Array.isArray(result)) {
+          return [];
+        }
+        return result.map(item => this.mapToMaintenance(item));
+      })
+    );
   }
 
   /**
@@ -61,7 +91,9 @@ export class MaintenanceService extends BaseApiService {
    * @returns An observable containing the created machine.
    */
   createMaintenance(maintenance: CreateMaintenanceRequest): Observable<Maintenance> {
-    return this.post<Maintenance>(this.baseUrl, maintenance).pipe(map(result => this.mapToMaintenance(result)));
+    return this.post<Maintenance>(this.baseUrl, maintenance).pipe(
+      map(result => this.mapToMaintenance(result))
+    );
   }
 
   /**
@@ -70,7 +102,9 @@ export class MaintenanceService extends BaseApiService {
    * @returns An observable containing the updated machine.
    */
   updateMaintenance(maintenance: UpdateMaintenanceRequest): Observable<Maintenance> {
-    return this.put<Maintenance>(`${this.baseUrl}/${maintenance.id}`, maintenance).pipe(map(result => this.mapToMaintenance(result)));
+    return this.put<Maintenance>(`${this.baseUrl}/${maintenance.id}`, maintenance).pipe(
+      map(result => this.mapToMaintenance(result))
+    );
   }
 
   /**
@@ -97,23 +131,91 @@ export class MaintenanceService extends BaseApiService {
   }
 
   /**
-   *  Convierte un objeto de datos en un objeto de máquina.
+   * Updates the state of a maintenance.
+   * @param maintenanceId - The maintenance ID
+   * @param stateId - The new state ID
+   * @param observations - Optional observations
+   * @returns An observable with the updated maintenance.
+   */
+  updateMaintenanceState(maintenanceId: string, stateId: string, observations?: string): Observable<Maintenance> {
+    return this.patch<Maintenance>(`${this.baseUrl}/${maintenanceId}/state`, {
+      stateId,
+      observations
+    }).pipe(
+      map(result => this.mapToMaintenance(result))
+    );
+  }
+
+  /**
+   *  Convierte un objeto de datos en un objeto de mantenimiento.
    * @param data - El objeto de datos a convertir.
-   * @returns El objeto de máquina convertido.
+   * @returns El objeto de mantenimiento convertido.
    */
   mapToMaintenance(data: any): Maintenance {
+    // Extraer typeId - puede venir como objeto populated o como string
+    let typeId: string | undefined;
+    let typeName: string = '';
+    
+    if (data.typeId) {
+      if (typeof data.typeId === 'object' && data.typeId._id) {
+        // Viene populated como objeto
+        typeId = data.typeId._id;
+        typeName = data.typeId.name || '';
+      } else if (typeof data.typeId === 'object' && data.typeId.id) {
+        typeId = data.typeId.id;
+        typeName = data.typeId.name || '';
+      } else if (typeof data.typeId === 'string') {
+        typeId = data.typeId;
+      }
+    }
+    
+    // Si no hay typeId pero hay type como string, usarlo
+    if (!typeId && data.type) {
+      typeName = typeof data.type === 'string' ? data.type : data.type.name || '';
+    }
+    
+    // Extraer currentStateId - puede venir como objeto populated o como string
+    let currentStateId: string | undefined;
+    let currentState: any = undefined;
+    
+    if (data.currentStateId) {
+      if (typeof data.currentStateId === 'object' && data.currentStateId._id) {
+        // Viene populated como objeto
+        currentStateId = data.currentStateId._id;
+        currentState = this.mapState(data.currentStateId);
+      } else if (typeof data.currentStateId === 'object' && data.currentStateId.id) {
+        currentStateId = data.currentStateId.id;
+        currentState = this.mapState(data.currentStateId);
+      } else if (typeof data.currentStateId === 'string') {
+        currentStateId = data.currentStateId;
+      }
+    }
+
     return {
-      id: data._id,
+      id: data._id || data.id,
       machineId: data.machineId,
-      date: data.date,
-      observations: data.observations,
+      date: data.date ? new Date(data.date) : new Date(),
+      observations: data.observations || '',
       workHours: data.workHours,
-      type: data.type,
-      spareParts: data.spareParts,
+      type: typeName, // Nombre del tipo para compatibilidad
+      typeId: typeId,
+      currentStateId: currentStateId,
+      currentState: currentState,
+      spareParts: Array.isArray(data.spareParts) ? data.spareParts : [],
       technicianId: data.technicianId,
-      isCompleted: data.isCompleted,
+      isCompleted: data.isCompleted === true,
       createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
       updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined,
+    };
+  }
+
+  private mapState(data: any): any {
+    if (!data || typeof data !== 'object') return undefined;
+    return {
+      id: data._id || data.id,
+      name: data.name || '',
+      description: data.description || '',
+      isActive: data.isActive !== undefined ? data.isActive : true
     };
   }
 }
