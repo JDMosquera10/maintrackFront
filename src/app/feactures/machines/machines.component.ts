@@ -26,7 +26,7 @@ export class MachinesComponent {
 
   TRADUCERSTATES = MACHINE_STATUS_TRANSLATIONS;
   readonly dialog = inject(MatDialog);
-  displayedColumns: string[] = ['model', 'serialNumber', 'status', 'usageHours', 'customerId', 'location', 'acciones'];
+  displayedColumns: string[] = ['model', 'serialNumber', 'usageHours', 'customerId', 'location', 'acciones'];
   dataSource = new MatTableDataSource<Machine>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -79,10 +79,9 @@ export class MachinesComponent {
         if (type === 'add' || type === 'errorAdd') {
           this.loadingService.show('Creando máquina...');
           this.machineService.createMachine(result).subscribe({
-            next: machine => {
-              this.dataSource.data.push(machine);
-              this.dataSource._updateChangeSubscription();
-              this.loadingService.hide();
+            next: () => {
+              // Recargar la lista para obtener todos los datos completos del servidor
+              this.loadMachines();
               this.toastService.showSuccess('Máquina creada exitosamente');
             },
             error: err => {
@@ -98,13 +97,9 @@ export class MachinesComponent {
         } else if (type === 'edit' && element) {
           this.loadingService.show('Actualizando máquina...');
           this.machineService.updateMachine(result).subscribe({
-            next: machine => {
-              const index = this.dataSource.data.indexOf(element);
-              if (index >= 0) {
-                this.dataSource.data[index] = machine;
-                this.dataSource._updateChangeSubscription();
-              }
-              this.loadingService.hide();
+            next: () => {
+              // Recargar la lista para obtener todos los datos completos del servidor
+              this.loadMachines();
               this.toastService.showSuccess('Máquina actualizada exitosamente');
             },
             error: err => {
@@ -153,7 +148,14 @@ export class MachinesComponent {
     this.dataSource.filter = searchValue.trim().toLowerCase();
   }
 
-  nameCustomer(client: Customer): string {
-    return `${client.name} ${client.lastName}`;
+  nameCustomer(client: Customer | null | undefined): string {
+    if (!client) {
+      return '-';
+    }
+    // Manejar cuando customerId puede ser un objeto completo o solo un ID
+    if (typeof client === 'object' && client.name && client.lastName) {
+      return `${client.name} ${client.lastName}`;
+    }
+    return '-';
   }
 }

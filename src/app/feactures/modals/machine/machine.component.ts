@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -12,6 +12,37 @@ import { CustomerService } from '../../../services/customer.service';
 import { LoadingService } from '../../../services/loading.service';
 import { ToastService } from '../../../services/toast.service';
 import { Customer } from '../../../shared/models/customer.model';
+
+/**
+ * Validador personalizado para formato de email
+ */
+function emailValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value || control.value === '') {
+      return null; // Si está vacío, no validar (es opcional)
+    }
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const isValid = emailPattern.test(control.value);
+    return isValid ? null : { invalidEmail: true };
+  };
+}
+
+/**
+ * Validador personalizado para número de celular colombiano
+ * Debe empezar con 3, tener mínimo 7 dígitos y máximo 10
+ */
+function cellphoneValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value || control.value === '') {
+      return null; // Si está vacío, no validar (es opcional)
+    }
+    const value = control.value.toString().trim();
+    // Debe empezar con 3 y tener entre 7 y 10 dígitos
+    const cellphonePattern = /^3\d{6,9}$/;
+    const isValid = cellphonePattern.test(value);
+    return isValid ? null : { invalidCellphone: true };
+  };
+}
 
 /**
  *  @description Componente para gestionar el formulario de máquinas.
@@ -51,8 +82,8 @@ export class MachineComponent implements OnInit, OnDestroy {
         identificationNumber: ['', [Validators.required, Validators.pattern(/^\d+$/), Validators.maxLength(20)]],
         name: ['', [Validators.required, Validators.maxLength(100)]],
         lastName: ['', [Validators.required, Validators.maxLength(100)]],
-        cellphoneNumber: ['', Validators.maxLength(15)],
-        email: ['', Validators.email],
+        cellphoneNumber: ['', cellphoneValidator()],
+        email: ['', emailValidator()],
         address: ['', Validators.maxLength(200)]
       }),
       datos: this.fb.group({
@@ -226,13 +257,33 @@ export class MachineComponent implements OnInit, OnDestroy {
    * Crea un nuevo cliente
    */
   createCustomer(): void {
-    const clienteData = this.clienteForm.value;
+    // Marcar todos los campos como touched para mostrar errores
+    this.clienteForm.markAllAsTouched();
     
-    if (!clienteData.identificationNumber || !clienteData.name || !clienteData.lastName) {
+    // Validar campos requeridos
+    const identificationNumberControl = this.clienteForm.get('identificationNumber');
+    const nameControl = this.clienteForm.get('name');
+    const lastNameControl = this.clienteForm.get('lastName');
+    const emailControl = this.clienteForm.get('email');
+    const cellphoneControl = this.clienteForm.get('cellphoneNumber');
+
+    if (!identificationNumberControl?.value || !nameControl?.value || !lastNameControl?.value) {
       this.toastService.showWarning('Por favor complete los campos requeridos');
       return;
     }
 
+    // Validar campos opcionales si tienen valor
+    if (emailControl?.value && emailControl?.invalid) {
+      this.toastService.showWarning('Por favor corrija el formato del correo electrónico');
+      return;
+    }
+
+    if (cellphoneControl?.value && cellphoneControl?.invalid) {
+      this.toastService.showWarning('Por favor corrija el formato del número de celular');
+      return;
+    }
+
+    const clienteData = this.clienteForm.value;
     this.isLoadingCustomer = true;
     this.loadingService.show('Creando cliente...');
 
@@ -441,5 +492,40 @@ export class MachineComponent implements OnInit, OnDestroy {
       return `${this.createdCustomer.name} ${this.createdCustomer.lastName}`;
     }
     return '-';
+  }
+
+  /**
+   * Obtiene el mensaje de error para un campo del formulario
+   */
+  getErrorMessage(fieldName: string): string {
+    const field = this.clienteForm.get(fieldName);
+    if (!field?.errors || !field.touched) {
+      return '';
+    }
+
+    if (field.hasError('required')) {
+      return 'Este campo es requerido';
+    }
+
+    if (field.hasError('invalidEmail')) {
+      return 'El correo electrónico no es válido';
+    }
+
+    if (field.hasError('invalidCellphone')) {
+      return 'El número de celular no es válido';
+    }
+
+    if (field.hasError('pattern')) {
+      if (fieldName === 'identificationNumber') {
+        return 'Solo se permiten números';
+      }
+      return 'Formato inválido';
+    }
+
+    if (field.hasError('maxLength')) {
+      return `Máximo ${field.errors['maxlength']?.requiredLength} caracteres`;
+    }
+
+    return '';
   }
 }
