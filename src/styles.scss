@@ -1,6 +1,6 @@
 @use '@angular/material' as mat;
-@use 'sass:map';
 @use '../custome-theme_theme-colors.scss' as custome;
+@use 'sass:map';
 
 
 $color-primary: #02BEC1;
@@ -240,5 +240,68 @@ grid-stack {
       color: white !important;
       background-color: rgba(255, 255, 255, 0.1) !important;
     }
+  }
+}
+
+// ------------------------------------------------------------
+// Responsive utilities
+// ------------------------------------------------------------
+
+// Breakpoints map (Material-inspired)
+$breakpoints: (
+  xs: 0,
+  sm: 600px,
+  md: 960px,
+  lg: 1280px,
+  xl: 1920px,
+);
+
+// Media query mixin: max-width for the breakpoint
+@mixin respond($bp) {
+  $value: map-get($breakpoints, $bp);
+  @if $value == null {
+    @warn 'Unknown breakpoint: #{$bp}';
+  } @else {
+    @media (max-width: $value) { @content; }
+  }
+}
+
+// Page container: centers content and adds side padding
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+// Auto-fit grid helper for cards/tiles
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+// Make all images responsive by default
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// Typography tightening on small screens
+@include respond(sm) {
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+}
+
+// Prevent unwanted horizontal scrolling on mobile (tables handle their own)
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+  }
+  .grid-stack,
+  .example-sidenav-content,
+  .router-outlet {
+    max-width: 100%;
   }
 }
