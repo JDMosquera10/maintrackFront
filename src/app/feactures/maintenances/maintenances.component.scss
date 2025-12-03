@@ -291,6 +291,13 @@ mat-paginator {
         th, td {
             padding: 8px !important;
         }
+        // Enable horizontal scroll for wide tables
+        overflow-x: auto !important;
+        display: block;
+        
+        table {
+            min-width: 640px;
+        }
     }
 }
 

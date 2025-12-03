@@ -88,3 +88,44 @@
     }
   }
 }
+
+// Responsividad para dispositivos móviles
+@media (max-width: 768px) {
+  .sidebar-container {
+    gap: 8px;
+  }
+
+  .image-wrapper {
+    height: 140px;
+
+    .title {
+      font-size: 1rem;
+    }
+
+    .description {
+      font-size: 0.85rem;
+      padding: 0 8px;
+    }
+
+    // Neutralizar el efecto de expansión en pantallas táctiles
+    &:hover {
+      height: 140px;
+
+      img {
+        transform: none;
+        height: 140px;
+        opacity: 1;
+      }
+
+      .title {
+        bottom: auto;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .description {
+        opacity: 1;
+      }
+    }
+  }
+}
