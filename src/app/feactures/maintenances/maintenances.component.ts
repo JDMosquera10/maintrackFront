@@ -110,11 +110,13 @@ export class MaintenancesComponent {
   actionMaintenance(type: 'add' | 'edit' | 'errorAdd', element?: Maintenance): void {
     const dialogRef = this.dialog.open(MantinanceComponent, {
       data: { type, element, istechenical: this.istechenical },
-      width: '600px',
-      height: '95vh',
+      width: '90vw',
+      maxWidth: '900px',
+      maxHeight: '95vh',
+      height: 'auto',
       disableClose: true,
       autoFocus: true,
-      panelClass: 'custom-dialog-container'
+      panelClass: ['custom-dialog-container', 'maintenance-dialog']
     });
 
     dialogRef.afterClosed().subscribe(result => {

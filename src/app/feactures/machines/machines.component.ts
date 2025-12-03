@@ -64,11 +64,13 @@ export class MachinesComponent {
   actionMachine(type: 'add' | 'edit' | 'errorAdd', element?: Machine): void {
     const dialogRef = this.dialog.open(MachineComponent, {
       data: { type, element },
-      width: '600px',
+      width: '90vw',
+      maxWidth: '900px',
+      maxHeight: '95vh',
       height: 'auto',
       disableClose: true,
       autoFocus: true,
-      panelClass: 'custom-dialog-container'
+      panelClass: ['custom-dialog-container', 'machine-dialog']
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -1,36 +1,286 @@
 <h2 mat-dialog-title>Gestión de Máquina</h2>
-<div mat-dialog-content class="dialog-content">
 
-    <form [formGroup]="machineForm" (ngSubmit)="onSave()">
-        <div class="form-grid">
-            <mat-form-field appearance="outline">
-                <mat-label>Modelo</mat-label>
-                <input matInput formControlName="model" placeholder="Ej: CAT 320" />
-            </mat-form-field>
+<mat-horizontal-stepper #stepper="matStepper" linear (selectedIndexChange)="changeStepper($event)" [selectedIndex]="currentStep">
+  <form [formGroup]="stepForm">
+    <!-- Paso 1: Cliente -->
+    <mat-step label="Cliente">
+      <div mat-dialog-content class="dialog-content">
+        <div class="customer-step-container">
+          <!-- Modo búsqueda -->
+          <div *ngIf="customerSearchMode === 'search'" class="search-section">
+            <div class="search-form">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Número de Identificación</mat-label>
+                <input 
+                  matInput 
+                  [(ngModel)]="searchIdentificationNumber"
+                  (keydown.enter)="searchCustomer()"
+                  placeholder="Ej: 1234567890"
+                  [ngModelOptions]="{standalone: true}">
+                <mat-icon matSuffix>search</mat-icon>
+                <mat-hint>Ingrese el número de identificación del cliente</mat-hint>
+              </mat-form-field>
+              <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="searchCustomer()"
+                [disabled]="isSearching || !searchIdentificationNumber.trim()">
+                <mat-icon>search</mat-icon>
+                Buscar
+              </button>
+            </div>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Serie</mat-label>
-                <input matInput formControlName="serialNumber" placeholder="Ej: XYZ123" />
-            </mat-form-field>
+            <!-- Cliente encontrado -->
+            <div *ngIf="createdCustomer" class="customer-found">
+              <mat-card>
+                <mat-card-content>
+                  <div class="customer-info">
+                    <mat-icon class="success-icon">check_circle</mat-icon>
+                    <div>
+                      <h4>{{ getCustomerFullName() }}</h4>
+                      <p><strong>ID:</strong> {{ createdCustomer.identificationNumber }}</p>
+                      <p *ngIf="createdCustomer.email"><strong>Email:</strong> {{ createdCustomer.email }}</p>
+                      <p *ngIf="createdCustomer.cellphoneNumber"><strong>Teléfono:</strong> {{ createdCustomer.cellphoneNumber }}</p>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Horas de uso</mat-label>
-                <input matInput type="number" formControlName="usageHours" />
-            </mat-form-field>
+            <!-- Opción para crear nuevo cliente -->
+            <div class="switch-mode">
+              <p>¿No encontró el cliente?</p>
+              <button mat-button color="primary" (click)="switchMode('create')">
+                <mat-icon>add</mat-icon>
+                Crear Nuevo Cliente
+              </button>
+            </div>
+          </div>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Cliente</mat-label>
-                <input matInput formControlName="client" />
-            </mat-form-field>
+          <!-- Modo creación -->
+          <div *ngIf="customerSearchMode === 'create'" class="create-section">
+            <h3>Crear Nuevo Cliente</h3>
+            <div [formGroup]="clienteForm" class="form-grid">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Número de Identificación *</mat-label>
+                <input 
+                  matInput 
+                  formControlName="identificationNumber"
+                  placeholder="Ej: 1234567890"
+                  maxlength="20">
+                <mat-hint>Solo dígitos, máximo 20 caracteres</mat-hint>
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
-                <mat-label>Ubicación</mat-label>
-                <input matInput formControlName="location" />
-            </mat-form-field>
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Nombre *</mat-label>
+                <input 
+                  matInput 
+                  formControlName="name"
+                  placeholder="Ej: Juan"
+                  maxlength="100">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Apellido *</mat-label>
+                <input 
+                  matInput 
+                  formControlName="lastName"
+                  placeholder="Ej: Pérez"
+                  maxlength="100">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Teléfono</mat-label>
+                <input 
+                  matInput 
+                  formControlName="cellphoneNumber"
+                  placeholder="Ej: 3001234567"
+                  maxlength="15">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Email</mat-label>
+                <input 
+                  matInput 
+                  type="email"
+                  formControlName="email"
+                  placeholder="Ej: juan.perez@example.com">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Dirección</mat-label>
+                <input 
+                  matInput 
+                  formControlName="address"
+                  placeholder="Ej: Calle 123 #45-67"
+                  maxlength="200">
+              </mat-form-field>
+            </div>
+
+            <!-- Cliente creado exitosamente -->
+            <div *ngIf="createdCustomer" class="customer-created">
+              <mat-card>
+                <mat-card-content>
+                  <div class="customer-info">
+                    <mat-icon class="success-icon">check_circle</mat-icon>
+                    <div>
+                      <h4>Cliente creado: {{ getCustomerFullName() }}</h4>
+                      <p><strong>ID:</strong> {{ createdCustomer.identificationNumber }}</p>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Botón crear cliente -->
+            <div class="create-actions" *ngIf="!createdCustomer">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                (click)="createCustomer()"
+                [disabled]="isLoadingCustomer || !clienteForm.get('identificationNumber')?.value || !clienteForm.get('name')?.value || !clienteForm.get('lastName')?.value">
+                <mat-icon>person_add</mat-icon>
+                Crear Cliente
+              </button>
+            </div>
+
+            <!-- Opción para buscar cliente existente -->
+            <div class="switch-mode">
+              <p>¿El cliente ya existe?</p>
+              <button mat-button color="primary" (click)="switchMode('search')">
+                <mat-icon>search</mat-icon>
+                Buscar Cliente Existente
+              </button>
+            </div>
+          </div>
         </div>
-    </form>
-</div>
-<mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Cancelar</button>
-    <button mat-raised-button class="button-agregar" (click)="onSave()">Guardar</button>
-</mat-dialog-actions>
+      </div>
+      <mat-dialog-actions align="end">
+        <div class="step-actions">
+          <button mat-button (click)="nextStep()" [disabled]="!createdCustomer || isSearching" type="button">
+            Siguiente
+          </button>
+          <button mat-button (click)="cancel()">Cancelar</button>
+        </div>
+      </mat-dialog-actions>
+    </mat-step>
+
+    <!-- Paso 2: Datos de la Máquina -->
+    <mat-step [stepControl]="datosForm" label="Datos de la Máquina">
+      <div mat-dialog-content class="dialog-content">
+        <div class="customer-summary" *ngIf="createdCustomer">
+          <mat-card class="summary-card">
+            <mat-card-content>
+              <div class="summary-content">
+                <mat-icon>person</mat-icon>
+                <div>
+                  <strong>Cliente:</strong> {{ getCustomerFullName() }}
+                  <br>
+                  <small>ID: {{ createdCustomer.identificationNumber }}</small>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div [formGroup]="datosForm" class="form-grid">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Modelo *</mat-label>
+            <input matInput formControlName="model" placeholder="Ej: CAT 320" />
+            <mat-error *ngIf="datosForm.get('model')?.hasError('required')">
+              El modelo es requerido
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Número de Serie *</mat-label>
+            <input matInput formControlName="serialNumber" placeholder="Ej: XYZ123" />
+            <mat-error *ngIf="datosForm.get('serialNumber')?.hasError('required')">
+              El número de serie es requerido
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Kilometraje *</mat-label>
+            <input matInput type="number" formControlName="usageHours" min="0" />
+            <mat-error *ngIf="datosForm.get('usageHours')?.hasError('required')">
+              Las horas de uso son requeridas
+            </mat-error>
+            <mat-error *ngIf="datosForm.get('usageHours')?.hasError('min')">
+              Las horas de uso deben ser mayor o igual a 0
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Ubicación *</mat-label>
+            <input matInput formControlName="location" placeholder="Ej: Bodega Principal" />
+            <mat-error *ngIf="datosForm.get('location')?.hasError('required')">
+              La ubicación es requerida
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-dialog-actions align="end">
+        <div class="step-actions">
+          <button mat-button matStepperPrevious type="button">Anterior</button>
+          <button mat-button matStepperNext [disabled]="!isDatosFormValid()" type="button">
+            Siguiente
+          </button>
+          <button mat-button (click)="cancel()" type="button">Cancelar</button>
+        </div>
+      </mat-dialog-actions>
+    </mat-step>
+
+    <!-- Paso 3: Confirmar -->
+    <mat-step label="Confirmar">
+      <div mat-dialog-content class="dialog-content">
+        <h3>Resumen</h3>
+        <div class="summary-section">
+          <div class="summary-item">
+            <mat-icon>person</mat-icon>
+            <div>
+              <strong>Cliente:</strong>
+              <p>{{ getCustomerFullName() }}</p>
+              <small>ID: {{ createdCustomer?.identificationNumber }}</small>
+            </div>
+          </div>
+          <div class="summary-item">
+            <mat-icon>precision_manufacturing</mat-icon>
+            <div>
+              <strong>Modelo:</strong>
+              <p>{{ datosForm.value.model }}</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <mat-icon>tag</mat-icon>
+            <div>
+              <strong>Número de Serie:</strong>
+              <p>{{ datosForm.value.serialNumber }}</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <strong>Horas de Uso:</strong>
+              <p>{{ datosForm.value.usageHours }} horas</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <mat-icon>location_on</mat-icon>
+            <div>
+              <strong>Ubicación:</strong>
+              <p>{{ datosForm.value.location }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <mat-dialog-actions align="end">
+        <div class="step-actions">
+          <button mat-button matStepperPrevious type="button">Anterior</button>
+          <button mat-raised-button color="primary" (click)="submit()">Confirmar</button>
+          <button mat-button type="button" (click)="cancel()">Cancelar</button>
+        </div>
+      </mat-dialog-actions>
+    </mat-step>
+  </form>
+</mat-horizontal-stepper>
