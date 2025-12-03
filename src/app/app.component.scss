@@ -196,9 +196,8 @@
     }
     
     .quick-nav-icons {
-        flex-direction: column;
-        padding-left: 0;
-        padding-top: 60px;
+        padding-left:70px;
+        padding-top: 10px;
         gap: 6px;
     }
     
@@ -211,6 +210,16 @@
             width: 16px !important;
             height: 16px !important;
         }
+    }
+
+    // Drawer width adapts on small screens
+    .example-sidenav {
+        width: 100vw;
+    }
+
+    // Reduce padding around routed content
+    .router-outlet {
+        padding: 100px 16px 0 16px;
     }
 }
 
