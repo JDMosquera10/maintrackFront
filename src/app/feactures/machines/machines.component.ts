@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, AfterViewInit, Component, ViewChild, inject } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { GeneralModule } from '../../modules/general.module';
+import { ChangeDetectionStrategy, Component, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MachineComponent } from '../modals/machine/machine.component';
-import { MachineService } from '../../services/machine.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { GeneralModule } from '../../modules/general.module';
 import { LoadingService } from '../../services/loading.service';
+import { MachineService } from '../../services/machine.service';
 import { ToastService } from '../../services/toast.service';
-import { Machine } from '../../shared/models/machine.model';
 import { MACHINE_STATUS_TRANSLATIONS } from '../../shared/constants/translation.constants';
+import { Customer } from '../../shared/models/customer.model';
+import { Machine } from '../../shared/models/machine.model';
+import { MachineComponent } from '../modals/machine/machine.component';
 
 
 
@@ -25,7 +26,7 @@ export class MachinesComponent {
 
   TRADUCERSTATES = MACHINE_STATUS_TRANSLATIONS;
   readonly dialog = inject(MatDialog);
-  displayedColumns: string[] = ['model', 'serialNumber', 'status', 'usageHours', 'client', 'location', 'acciones'];
+  displayedColumns: string[] = ['model', 'serialNumber', 'status', 'usageHours', 'customerId', 'location', 'acciones'];
   dataSource = new MatTableDataSource<Machine>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -137,7 +138,7 @@ export class MachinesComponent {
         this.dataSource._updateChangeSubscription();
         this.loadingService.hide();
         this.toastService.showSuccess('Máquina eliminada exitosamente');
-      }, 
+      },
       error: err => {
         console.error('Error deleting machine:', err);
         this.loadingService.hide();
@@ -150,5 +151,9 @@ export class MachinesComponent {
   onSearchChange(event: Event): void {
     const searchValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = searchValue.trim().toLowerCase();
+  }
+
+  nameCustomer(client: Customer): string {
+    return `${client.name} ${client.lastName}`;
   }
 }

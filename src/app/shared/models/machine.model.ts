@@ -1,10 +1,12 @@
+import { Customer } from "./customer.model";
+
 export interface Machine {
   id: string;
   model: string;
   serialNumber: number;
   status: string;
   usageHours: number;
-  client: string;
+  customerId: Customer;
   location: string;
   createdAt?: Date;
   updatedAt?: Date;

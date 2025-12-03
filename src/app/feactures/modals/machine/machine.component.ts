@@ -78,21 +78,50 @@ export class MachineComponent implements OnInit, OnDestroy {
         }
       });
       // Si hay cliente existente, establecerlo
-      if (element.clientId || element.client?._id) {
+      // El JSON puede venir con customerId como objeto completo o como ID
+      let customerId: string | null = null;
+      let customer: Customer | null = null;
+
+      if (element.customerId) {
+        // Si customerId es un objeto completo con la información del cliente
+        if (typeof element.customerId === 'object' && element.customerId !== null && element.customerId._id) {
+          customer = element.customerId as Customer;
+          customerId = customer._id;
+        } else if (typeof element.customerId === 'string') {
+          // Si customerId es solo un string (ID)
+          customerId = element.customerId;
+        }
+      } else if (element.clientId || element.client?._id) {
+        // Compatibilidad con nombres antiguos
+        customerId = element.clientId || element.client?._id;
+        customer = element.client || null;
+      }
+
+      if (customerId) {
         this.clienteForm.patchValue({
-          customerId: element.clientId || element.client?._id
+          customerId: customerId
         });
-        this.createdCustomer = element.client;
+        
+        // Si ya tenemos el objeto completo del cliente, usarlo directamente
+        if (customer) {
+          this.createdCustomer = customer;
+          this.searchIdentificationNumber = customer.identificationNumber;
+        }
       }
     }
   }
 
   ngOnInit(): void {
-    // Si está editando y ya tiene cliente, buscar información del cliente
+    // Si está editando y ya tiene cliente, buscar información del cliente solo si no la tenemos
     if (this.data.type === 'edit' || this.data.type === 'errorAdd') {
       const customerId = this.clienteForm.get('customerId')?.value;
-      if (customerId) {
+      // Solo cargar el cliente si tenemos el ID pero no tenemos el objeto completo
+      if (customerId && !this.createdCustomer) {
         this.loadCustomerById(customerId);
+      }
+      // Si ya tenemos el cliente, asegurarnos de que el modo de búsqueda muestre la información
+      if (this.createdCustomer) {
+        this.customerSearchMode = 'search';
       }
     }
   }

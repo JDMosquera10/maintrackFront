@@ -1,10 +1,10 @@
 
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import {
-  Machine,
   CreateMachineRequest,
+  Machine,
   UpdateMachineRequest
 } from '../shared/models/machine.model';
 import { BaseApiService } from './base-api.service';
@@ -74,7 +74,7 @@ export class MachineService extends BaseApiService {
       serialNumber: data.serialNumber,
       status: data.status,
       usageHours: data.usageHours,
-      client: data.client,
+      customerId: data.customerId,
       location: data.location,
       createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
       updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined,
