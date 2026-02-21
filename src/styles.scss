@@ -87,6 +87,135 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+// ---------------------------------------------------------------------------
+// Estilo global para mat-form-field (outline): contorno continuo, centrado
+// ---------------------------------------------------------------------------
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    padding: 0 14px;
+    min-height: 0;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-tertiary);
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  /* Que el contenido ocupe todo el ancho y mismo fondo: evita la franja oscura a la derecha */
+  .mat-mdc-form-field-flex {
+    height: 42px;
+    align-items: center;
+    display: flex;
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+  }
+  .mat-mdc-form-field-infix {
+    flex: 1;
+    min-width: 0;
+    background: transparent !important;
+  }
+  .mat-mdc-form-field-focus-overlay {
+    border-radius: 8px;
+    background: transparent !important;
+  }
+
+  .mdc-notched-outline .mdc-notched-outline__leading,
+  .mdc-notched-outline .mdc-notched-outline__notch,
+  .mdc-notched-outline .mdc-notched-outline__trailing,
+  .mat-mdc-notched-outline .mat-mdc-notched-outline-notch {
+    border: none !important;
+    border-color: transparent !important;
+  }
+  .mdc-notched-outline,
+  .mat-mdc-notched-outline {
+    pointer-events: none;
+  }
+
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element {
+    padding: 0;
+    font-size: 0.9375rem;
+    height: 100%;
+    min-height: 42px;
+    line-height: 42px;
+    box-sizing: border-box;
+    background: transparent !important;
+    color: var(--text-primary);
+  }
+
+  textarea.mat-mdc-input-element {
+    min-height: 42px;
+    line-height: 1.4;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .mat-mdc-floating-label,
+  .mdc-floating-label {
+    color: var(--text-secondary);
+    line-height: 42px !important;
+  }
+  .mat-mdc-floating-label:not(.mdc-floating-label--float-above) {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+
+  &.mat-focused .mat-mdc-text-field-wrapper,
+  &.mat-form-field.mat-focused .mat-mdc-text-field-wrapper {
+    border-color: var(--color-primary);
+    background-color: var(--bg-tertiary);
+  }
+
+  &.mat-form-field-invalid .mat-mdc-text-field-wrapper {
+    border-color: var(--color-accent, #a44a5d);
+  }
+}
+
+/* Responsive: inputs más compactos en pantallas pequeñas */
+@media (max-width: 960px) {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      padding: 0 12px;
+    }
+    .mat-mdc-form-field-flex {
+      height: 40px;
+    }
+    input.mat-mdc-input-element,
+    textarea.mat-mdc-input-element {
+      min-height: 40px;
+      line-height: 40px;
+      font-size: 0.875rem;
+    }
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      line-height: 40px !important;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      padding: 0 10px;
+      border-radius: 6px;
+    }
+    .mat-mdc-form-field-flex {
+      height: 38px;
+    }
+    input.mat-mdc-input-element,
+    textarea.mat-mdc-input-element {
+      min-height: 38px;
+      line-height: 38px;
+      font-size: 0.8125rem;
+    }
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      line-height: 38px !important;
+    }
+  }
+}
+
 grid-stack {
   .grid-stack-item {
     padding: 8px !important;

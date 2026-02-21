@@ -3,8 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../../services/auth.service';
+import { CorporateIdentityService } from '../../../services/corporate-identity.service';
+import { ThemeService } from '../../../services/theme.service';
 import { LoginRequest } from '../../../shared/models/user.model';
 import { GeneralModule } from '../../../modules/general.module';
+
+const DEFAULT_LOGO_URL = 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/fondos/logo2.png';
 
 @Component({
   selector: 'app-login',
@@ -16,17 +20,37 @@ import { GeneralModule } from '../../../modules/general.module';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   isLoading = false;
+  logoUrl = DEFAULT_LOGO_URL;
+  defaultLogoUrl = DEFAULT_LOGO_URL;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private corporateIdentityService: CorporateIdentityService,
+    private themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.checkAuthStatus();
+    this.loadLogoFromParametria();
+  }
+
+  /**
+   * Carga el logo desde la identidad corporativa (parametría).
+   */
+  private loadLogoFromParametria(): void {
+    this.corporateIdentityService.getCorporateIdentity().subscribe({
+      next: () => {
+        const theme = this.themeService.getCurrentTheme();
+        const identity = this.corporateIdentityService.getIdentityByTheme(theme);
+        if (identity?.logoUrl) {
+          this.logoUrl = identity.logoUrl;
+        }
+      }
+    });
   }
 
   private checkAuthStatus(): void {
