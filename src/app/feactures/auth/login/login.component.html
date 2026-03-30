@@ -5,7 +5,7 @@
   <div class="login-container-right"> 
     <img [src]="logoUrl" alt="Logo" class="container-logo-login" (error)="logoUrl = defaultLogoUrl" />
     <div class="login-form-container">
-      <h1 class="login-form-title">Iniciar sesión</h1>     
+      <h1 class="login-form-title">Iniciar sesión</h1>
     </div>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-group">
