@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../../services/auth.service';
 import { CorporateIdentityService } from '../../../services/corporate-identity.service';
+import { DEFAULT_LOGO_URL, FaviconService } from '../../../services/favicon.service';
 import { ThemeService } from '../../../services/theme.service';
 import { LoginRequest } from '../../../shared/models/user.model';
 import { GeneralModule } from '../../../modules/general.module';
-
-const DEFAULT_LOGO_URL = 'https://machine-app-test-1.s3.us-east-2.amazonaws.com/fondos/logo2.png';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +29,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private corporateIdentityService: CorporateIdentityService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private faviconService: FaviconService
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +49,7 @@ export class LoginComponent implements OnInit {
         const identity = this.corporateIdentityService.getIdentityByTheme(theme);
         if (identity?.logoUrl) {
           this.logoUrl = identity.logoUrl;
+          this.faviconService.setFavicon(identity.logoUrl);
         }
       }
     });
@@ -73,26 +75,26 @@ export class LoginComponent implements OnInit {
       this.isLoading = true;
       const credentials: LoginRequest = this.loginForm.value;
 
-      this.authService.login(credentials).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.snackBar.open('Login successful!', 'Close', {
-              duration: 3000,
-              panelClass: ['success-snackbar']
+      this.authService
+        .login(credentials)
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.snackBar.open('Login successful!', 'Close', {
+                duration: 3000,
+                panelClass: ['success-snackbar']
+              });
+              this.router.navigate(['/dashboard']);
+            }
+          },
+          error: (error) => {
+            this.snackBar.open(error.message || 'Login failed', 'Close', {
+              duration: 5000,
+              panelClass: ['error-snackbar']
             });
-            this.router.navigate(['/dashboard']);
           }
-        },
-        error: (error) => {
-          this.snackBar.open(error.message || 'Login failed', 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar']
-          });
-        },
-        complete: () => {
-          this.isLoading = false;
-        }
-      });
+        });
     } else {
       this.loginForm.markAllAsTouched();
     }

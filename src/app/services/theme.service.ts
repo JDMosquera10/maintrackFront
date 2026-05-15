@@ -2,6 +2,7 @@ import { Injectable, Renderer2, RendererFactory2, Inject, PLATFORM_ID } from '@a
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { CorporateIdentityService } from './corporate-identity.service';
+import { FaviconService } from './favicon.service';
 import { CorporateIdentity } from '../shared/models/corporate-identity.model';
 
 export type ThemeMode = 'dark' | 'light';
@@ -21,7 +22,8 @@ export class ThemeService {
   constructor(
     private rendererFactory: RendererFactory2,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private corporateIdentityService: CorporateIdentityService
+    private corporateIdentityService: CorporateIdentityService,
+    private faviconService: FaviconService
   ) {
     this.renderer = this.rendererFactory.createRenderer(null, null);
     // Solo cargar el tema si estamos en el browser
@@ -157,6 +159,8 @@ export class ThemeService {
 
     const identity = this.corporateIdentityService.getIdentityByTheme(theme);
     const htmlElement = document.documentElement;
+
+    this.faviconService.setFavicon(identity?.logoUrl);
 
     if (identity && identity.color) {
       // Aplicar colores de la identidad corporativa

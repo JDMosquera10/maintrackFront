@@ -26,12 +26,26 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && !request.url.includes('auth/refresh')) {
+        if (error.status === 401 && this.shouldAttemptTokenRefresh(request.url)) {
           return this.handle401Error(request, next);
         }
         return throwError(() => error);
       })
     );
+  }
+
+  /**
+   * 401 en login/register es credenciales inválidas, no sesión expirada.
+   */
+  private shouldAttemptTokenRefresh(url: string): boolean {
+    const u = url.toLowerCase();
+    if (u.includes('auth/refresh')) {
+      return false;
+    }
+    if (u.includes('auth/login') || u.includes('auth/register')) {
+      return false;
+    }
+    return true;
   }
 
   private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
@@ -55,7 +69,7 @@ export class AuthInterceptor implements HttpInterceptor {
         }),
         catchError((err) => {
           this.isRefreshing = false;
-          this.authService.logout();
+          this.authService.logout().subscribe();
           return throwError(() => err);
         })
       );
