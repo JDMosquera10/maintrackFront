@@ -3,7 +3,8 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { format } from 'date-fns';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { GeneralModule } from '../../../modules/general.module';
 import { AuthService } from '../../../services/auth.service';
 import { MachineService } from '../../../services/machine.service';
@@ -27,6 +28,9 @@ export class MantinanceComponent implements OnInit, OnDestroy {
   TRADUCERTYPES = MAINTENANCE_TYPE_TRANSLATIONS;
   protected stepForm: FormGroup;
   protected machines: Machine[] = [];
+  protected filteredMachines: Machine[] = [];
+  protected machineSearchCtrl = new FormControl<string | Machine>('');
+  protected readonly displayMachineFn = (machine: Machine | null): string => this.displayMachine(machine);
   protected technicals: Technician[] = [];
   protected maintenanceTypes: MaintenanceType[] = [];
   private currentStep = 0;
@@ -109,12 +113,13 @@ export class MantinanceComponent implements OnInit, OnDestroy {
         this.datosForm.updateValueAndValidity();
       }
     });
-    this.loadMachines();
     this.loadUsers();
     this.loadMaintenanceTypes();
   }
 
   ngOnInit(): void {
+    this.setupMachineSearch();
+
     // Suscribirse a cambios en el tipo de mantenimiento para obtener el primer estado
     this.datosForm.get('type')?.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -180,16 +185,96 @@ export class MantinanceComponent implements OnInit, OnDestroy {
   }
 
 
-  loadMachines() {
-    this.machineService.getMachines().subscribe({
-      next: (machines) => {
-        this.machines = machines;
-        this.isLoadingMachines = false;
-      },
-      error: () => {
-        this.isLoadingMachines = false;
-      }
-    });
+  private setupMachineSearch(): void {
+    this.machineSearchCtrl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        tap((value) => {
+          if (typeof value === 'string') {
+            const selectedId = this.datosForm.get('machine')?.value;
+            if (selectedId) {
+              const selected = this.machines.find((m) => m.id === selectedId);
+              if (selected && value !== this.getMachineLabel(selected)) {
+                this.datosForm.get('machine')?.setValue(null);
+                this.datosForm.get('machine')?.markAsTouched();
+              }
+            }
+          }
+        }),
+        switchMap((value) => {
+          if (value && typeof value === 'object') {
+            return of(this.machines);
+          }
+
+          const query = typeof value === 'string' ? value.trim() : '';
+          this.isLoadingMachines = true;
+
+          if (!query) {
+            return this.machineService.getMachines(0, 500);
+          }
+
+          return this.machineService.searchMachines(query, 0, 100);
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (machines) => {
+          this.machines = machines;
+          this.filteredMachines = machines;
+          this.isLoadingMachines = false;
+          this.syncMachineSearchDisplay();
+        },
+        error: () => {
+          this.filteredMachines = [];
+          this.isLoadingMachines = false;
+        },
+      });
+
+    this.machineSearchCtrl.setValue('', { emitEvent: true });
+  }
+
+  onMachineSelected(machine: Machine): void {
+    if (!machine?.id) {
+      return;
+    }
+    this.datosForm.get('machine')?.setValue(machine.id);
+    this.machineSearchCtrl.setValue(this.getMachineLabel(machine), { emitEvent: false });
+  }
+
+  displayMachine(machine: Machine | null): string {
+    return machine ? this.getMachineLabel(machine) : '';
+  }
+
+  getMachineLabel(machine: Machine): string {
+    const customer = machine.customerId;
+    const customerName =
+      customer && typeof customer === 'object' && customer.name
+        ? `${customer.name} ${customer.lastName || ''}`.trim()
+        : '';
+    const parts = [
+      machine.model,
+      machine.serialNumber ? `Serie: ${machine.serialNumber}` : '',
+      machine.location ? `Ubicación: ${machine.location}` : '',
+      customerName ? `Cliente: ${customerName}` : '',
+    ].filter(Boolean);
+
+    return parts.join(' · ');
+  }
+
+  private syncMachineSearchDisplay(): void {
+    const machineId = this.datosForm.get('machine')?.value;
+    if (!machineId) {
+      return;
+    }
+
+    const machine =
+      this.machines.find((m) => m.id === machineId) ||
+      this.filteredMachines.find((m) => m.id === machineId);
+
+    if (machine) {
+      this.machineSearchCtrl.setValue(this.getMachineLabel(machine), { emitEvent: false });
+    }
   }
 
   loadUsers() {
@@ -227,6 +312,10 @@ export class MantinanceComponent implements OnInit, OnDestroy {
   isDatosFormValid(): boolean {
     const form = this.datosForm;
     if (!form) return false;
+
+    if (!form.get('machine')?.value) {
+      return false;
+    }
     
     // Si es técnico, verificar que technician tenga valor aunque no tenga validador
     const isTechnician = this.data?.istechenical === true;
@@ -309,8 +398,8 @@ export class MantinanceComponent implements OnInit, OnDestroy {
   }
 
   getMachineModelById(id: string): string {
-    const machine = this.machines.find(m => m.id === id);
-    return machine ? machine.model : '-';
+    const machine = this.machines.find(m => m.id === id) || this.filteredMachines.find(m => m.id === id);
+    return machine ? this.getMachineLabel(machine) : '-';
   }
 
   changeStepper(event: any) {

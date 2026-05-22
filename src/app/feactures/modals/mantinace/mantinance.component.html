@@ -6,14 +6,38 @@
     <mat-step [stepControl]="datosForm" label="Datos">
       <div mat-dialog-content class="dialog-content">
         <div [formGroup]="datosForm" class="form-grid">
-          <mat-form-field appearance="outline" class="w-100">
+          <mat-form-field appearance="outline" class="w-100 machine-search-field">
             <mat-label>Máquina</mat-label>
-            <mat-select formControlName="machine" required>
-              <mat-option *ngIf="isLoadingMachines" disabled>Cargando...</mat-option>
-              <mat-option *ngFor="let machine of machines" [value]="machine.id">
-                {{ machine.model }} ({{ machine.serialNumber }})
+            <input
+              matInput
+              type="text"
+              [formControl]="machineSearchCtrl"
+              [matAutocomplete]="machineAutocomplete"
+              placeholder="Buscar por modelo, serie, ubicación o cliente">
+            <mat-icon matSuffix>search</mat-icon>
+            <mat-autocomplete
+              #machineAutocomplete="matAutocomplete"
+              [displayWith]="displayMachineFn"
+              (optionSelected)="onMachineSelected($event.option.value)">
+              <mat-option *ngIf="isLoadingMachines" disabled>Buscando máquinas...</mat-option>
+              <mat-option *ngFor="let machine of filteredMachines" [value]="machine">
+                <span class="machine-option-title">{{ machine.model }} ({{ machine.serialNumber }})</span>
+                <span class="machine-option-subtitle" *ngIf="machine.location || machine.customerId">
+                  {{ machine.location }}
+                  <ng-container *ngIf="machine.location && machine.customerId"> · </ng-container>
+                  <ng-container *ngIf="machine.customerId && machine.customerId.name">
+                    {{ machine.customerId.name }} {{ machine.customerId.lastName }}
+                  </ng-container>
+                </span>
               </mat-option>
-            </mat-select>
+              <mat-option *ngIf="!isLoadingMachines && filteredMachines.length === 0" disabled>
+                No se encontraron máquinas
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="datosForm.get('machine')?.hasError('required') && datosForm.get('machine')?.touched">
+              Debe seleccionar una máquina de la lista
+            </mat-error>
+            <mat-hint>Escriba para buscar en todas las máquinas registradas</mat-hint>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="w-100">
