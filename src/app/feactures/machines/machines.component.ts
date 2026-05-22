@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
 import { GeneralModule } from '../../modules/general.module';
 import { LoadingService } from '../../services/loading.service';
 import { MachineService } from '../../services/machine.service';
@@ -11,8 +13,7 @@ import { Customer } from '../../shared/models/customer.model';
 import { Machine } from '../../shared/models/machine.model';
 import { MachineComponent } from '../modals/machine/machine.component';
 
-
-
+const LIST_PAGE_SIZE = 500;
 
 @Component({
   selector: 'app-machines',
@@ -22,38 +23,85 @@ import { MachineComponent } from '../modals/machine/machine.component';
   styleUrl: './machines.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MachinesComponent {
+export class MachinesComponent implements AfterViewInit, OnDestroy {
 
   TRADUCERSTATES = MACHINE_STATUS_TRANSLATIONS;
   readonly dialog = inject(MatDialog);
   displayedColumns: string[] = ['model', 'serialNumber', 'usageHours', 'customerId', 'location', 'acciones'];
   dataSource = new MatTableDataSource<Machine>();
+  searchTerm = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  private readonly destroy$ = new Subject<void>();
+  private readonly search$ = new Subject<string>();
 
   constructor(
     private machineService: MachineService,
     private loadingService: LoadingService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private cdr: ChangeDetectorRef
   ) {
+    this.setupSearch();
     this.loadMachines();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupSearch(): void {
+    this.search$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        switchMap((term) => {
+          const trimmed = term.trim();
+          const request = trimmed
+            ? this.machineService.searchMachines(trimmed, 0, LIST_PAGE_SIZE)
+            : this.machineService.getMachines(0, LIST_PAGE_SIZE);
+          return request;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (machines) => this.applyMachines(machines, false),
+        error: (err) => {
+          console.error('Error searching machines:', err);
+          this.toastService.showError('Error al buscar máquinas');
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   private loadMachines(): void {
     this.loadingService.show('Cargando máquinas...');
-    this.machineService.getMachines().subscribe({
-      next: (machines: Machine[]) => {
-        this.dataSource.data = machines;
-        this.dataSource.paginator = this.paginator;
-        this.loadingService.hide();
-      },
+    this.machineService.getMachines(0, LIST_PAGE_SIZE).subscribe({
+      next: (machines) => this.applyMachines(machines),
       error: (err) => {
         console.error('Error loading machines:', err);
         this.loadingService.hide();
         this.toastService.showError('Error al cargar las máquinas');
-      }
+        this.cdr.markForCheck();
+      },
     });
+  }
+
+  private applyMachines(machines: Machine[], dismissLoading = true): void {
+    this.dataSource.data = machines;
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+      this.paginator.firstPage();
+    }
+    if (dismissLoading) {
+      this.loadingService.hide();
+    }
+    this.cdr.markForCheck();
   }
 
   /**
@@ -80,8 +128,7 @@ export class MachinesComponent {
           this.loadingService.show('Creando máquina...');
           this.machineService.createMachine(result).subscribe({
             next: () => {
-              // Recargar la lista para obtener todos los datos completos del servidor
-              this.loadMachines();
+              this.reloadAfterMutation();
               this.toastService.showSuccess('Máquina creada exitosamente');
             },
             error: err => {
@@ -98,8 +145,7 @@ export class MachinesComponent {
           this.loadingService.show('Actualizando máquina...');
           this.machineService.updateMachine(result).subscribe({
             next: () => {
-              // Recargar la lista para obtener todos los datos completos del servidor
-              this.loadMachines();
+              this.reloadAfterMutation();
               this.toastService.showSuccess('Máquina actualizada exitosamente');
             },
             error: err => {
@@ -133,6 +179,7 @@ export class MachinesComponent {
         this.dataSource._updateChangeSubscription();
         this.loadingService.hide();
         this.toastService.showSuccess('Máquina eliminada exitosamente');
+        this.cdr.markForCheck();
       },
       error: err => {
         console.error('Error deleting machine:', err);
@@ -142,17 +189,24 @@ export class MachinesComponent {
     });
   }
 
-
   onSearchChange(event: Event): void {
     const searchValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = searchValue.trim().toLowerCase();
+    this.searchTerm = searchValue;
+    this.search$.next(searchValue);
+  }
+
+  private reloadAfterMutation(): void {
+    if (this.searchTerm.trim()) {
+      this.search$.next(this.searchTerm);
+    } else {
+      this.loadMachines();
+    }
   }
 
   nameCustomer(client: Customer | null | undefined): string {
     if (!client) {
       return '-';
     }
-    // Manejar cuando customerId puede ser un objeto completo o solo un ID
     if (typeof client === 'object' && client.name && client.lastName) {
       return `${client.name} ${client.lastName}`;
     }

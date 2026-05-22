@@ -837,6 +837,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       machineId: 'machine-001',
       machineModel: 'Excavadora CAT 320',
       machineSerial: 'CAT320-2024-001',
+      clientId: 'client-001',
       client: 'Constructora ABC',
       dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 días
       daysRemaining: 2,
@@ -861,6 +862,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       machineId: 'machine-002',
       machineModel: 'Bulldozer Komatsu D65',
       machineSerial: 'KOMD65-2023-015',
+      clientId: 'client-002',
       client: 'Minería XYZ',
       dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 día vencido
       daysRemaining: -1,

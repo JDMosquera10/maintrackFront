@@ -7,7 +7,7 @@
         <mat-card-header>
             <div class="card-header-strong">
                 <mat-form-field appearance="outline" class="custom-input">
-                    <input matInput placeholder="Buscar mantenimiento" (change)="onSearchChange($event)"
+                    <input matInput placeholder="Buscar mantenimiento" (input)="onSearchChange($event)"
                         aria-label="Search">
                     <mat-icon matSuffix>search</mat-icon>
                 </mat-form-field>

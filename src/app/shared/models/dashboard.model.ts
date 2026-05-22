@@ -42,6 +42,7 @@ export interface MaintenanceAlert {
   machineId: string;
   machineModel: string;
   machineSerial: string;
+  clientId: string;
   client: string;
   dueDate: Date | string;
   daysRemaining: number;
@@ -57,6 +58,7 @@ export interface RecentMachine {
   id: string;
   model: string;
   serialNumber: string;
+  clientId: string;
   client: string;
   nextMaintenanceDate: Date | string;
   daysUntilMaintenance: number;

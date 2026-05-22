@@ -1,5 +1,5 @@
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { CreateMaintenanceRequest, Maintenance, UpdateMaintenanceRequest } from '../shared/models/maintenance.model';
@@ -33,8 +33,11 @@ export class MaintenanceService extends BaseApiService {
    * Fetches a list of maintenances from the server.
    * @returns An observable containing the list of maintenances.
    */
-   getMaintenancesPending(): Observable<Maintenance[]> {
-    return this.get<any[]>(`${this.baseUrl}/pending`).pipe(
+   getMaintenancesPending(skip = 0, limit = 100): Observable<Maintenance[]> {
+    const params = new HttpParams()
+      .set('skip', skip.toString())
+      .set('limit', limit.toString());
+    return this.get<any[]>(`${this.baseUrl}/pending`, params).pipe(
       map(result => {
         if (!result || !Array.isArray(result)) {
           console.warn('Result is not an array:', result);
@@ -49,8 +52,11 @@ export class MaintenanceService extends BaseApiService {
    * Fetches a list of maintenances from the server.
    * @returns An observable containing the list of maintenances.
    */
-  getMaintenancesByTechnicianPending(technicianId: string): Observable<Maintenance[]> {
-    return this.get<any[]>(`${this.baseUrl}/technician/${technicianId}/pending`).pipe(
+  getMaintenancesByTechnicianPending(technicianId: string, skip = 0, limit = 100): Observable<Maintenance[]> {
+    const params = new HttpParams()
+      .set('skip', skip.toString())
+      .set('limit', limit.toString());
+    return this.get<any[]>(`${this.baseUrl}/technician/${technicianId}/pending`, params).pipe(
       map(result => {
         if (!result || !Array.isArray(result)) {
           console.warn('Result is not an array:', result);
@@ -81,6 +87,34 @@ export class MaintenanceService extends BaseApiService {
    * @param id - The machine ID
    * @returns An observable containing the machine data.
    */
+  searchMaintenances(
+    query: string,
+    options: { pendingOnly?: boolean; technicianId?: string } = {},
+    skip = 0,
+    limit = 100
+  ): Observable<Maintenance[]> {
+    let params = new HttpParams()
+      .set('q', query.trim())
+      .set('skip', skip.toString())
+      .set('limit', limit.toString());
+
+    if (options.pendingOnly) {
+      params = params.set('pending', 'true');
+    }
+    if (options.technicianId) {
+      params = params.set('technicianId', options.technicianId);
+    }
+
+    return this.get<any[]>(`${this.baseUrl}/search`, params).pipe(
+      map((result) => {
+        if (!result || !Array.isArray(result)) {
+          return [];
+        }
+        return result.map((item) => this.mapToMaintenance(item));
+      })
+    );
+  }
+
   getMaintenanceById(id: string): Observable<Maintenance> {
     return this.get<Maintenance>(`${this.baseUrl}/${id}`);
   }

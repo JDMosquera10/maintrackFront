@@ -382,6 +382,7 @@ export class DashboardService extends BaseApiService {
           machineId: 'mach-001',
           machineModel: 'CAT 320D',
           machineSerial: 'CAT-12345',
+          clientId: 'client-001',
           client: 'Constructora ABC',
           dueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // Vencido hace 3 días
           daysRemaining: -3,
@@ -398,6 +399,7 @@ export class DashboardService extends BaseApiService {
           machineId: 'mach-002',
           machineModel: 'Komatsu PC200',
           machineSerial: 'KOM-67890',
+          clientId: 'client-002',
           client: 'Minera XYZ',
           dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // Vencido hace 1 día
           daysRemaining: -1,
@@ -414,6 +416,7 @@ export class DashboardService extends BaseApiService {
           machineId: 'mach-003',
           machineModel: 'Volvo EC210',
           machineSerial: 'VOL-54321',
+          clientId: 'client-003',
           client: 'Constructora DEF',
           dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000), // Vence mañana
           daysRemaining: 1,
@@ -430,6 +433,7 @@ export class DashboardService extends BaseApiService {
           machineId: 'mach-004',
           machineModel: 'JCB 3CX',
           machineSerial: 'JCB-98765',
+          clientId: 'client-004',
           client: 'Infraestructura GHI',
           dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // Vence en 3 días
           daysRemaining: 3,
@@ -446,6 +450,7 @@ export class DashboardService extends BaseApiService {
           machineId: 'mach-005',
           machineModel: 'Liebherr R934C',
           machineSerial: 'LIE-11111',
+          clientId: 'client-005',
           client: 'Demoliciones JKL',
           dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // Vence en 5 días
           daysRemaining: 5,
@@ -462,6 +467,7 @@ export class DashboardService extends BaseApiService {
           machineId: 'mach-006',
           machineModel: 'Hitachi ZX200',
           machineSerial: 'HIT-22222',
+          clientId: 'client-006',
           client: 'Construcciones MNO',
           dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // Vence en 10 días
           daysRemaining: 10,
@@ -484,6 +490,7 @@ export class DashboardService extends BaseApiService {
           id: 'mach-001',
           model: 'CAT 320D',
           serialNumber: 'CAT-12345',
+          clientId: 'client-001',
           client: 'Constructora ABC',
           nextMaintenanceDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
           daysUntilMaintenance: 5,
@@ -494,6 +501,7 @@ export class DashboardService extends BaseApiService {
           id: 'mach-002',
           model: 'Komatsu PC200',
           serialNumber: 'KOM-67890',
+          clientId: 'client-002',
           client: 'Minera XYZ',
           nextMaintenanceDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
           daysUntilMaintenance: 2,
@@ -504,6 +512,7 @@ export class DashboardService extends BaseApiService {
           id: 'mach-003',
           model: 'Volvo EC210',
           serialNumber: 'VOL-54321',
+          clientId: 'client-003',
           client: 'Constructora DEF',
           nextMaintenanceDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
           daysUntilMaintenance: 6,
@@ -514,6 +523,7 @@ export class DashboardService extends BaseApiService {
           id: 'mach-004',
           model: 'JCB 3CX',
           serialNumber: 'JCB-98765',
+          clientId: 'client-004',
           client: 'Infraestructura GHI',
           nextMaintenanceDate: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000),
           daysUntilMaintenance: 12,
@@ -524,6 +534,7 @@ export class DashboardService extends BaseApiService {
           id: 'mach-005',
           model: 'Liebherr R934C',
           serialNumber: 'LIE-11111',
+          clientId: 'client-005',
           client: 'Demoliciones JKL',
           nextMaintenanceDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000),
           daysUntilMaintenance: 8,

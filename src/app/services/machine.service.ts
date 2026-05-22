@@ -1,5 +1,5 @@
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import {
@@ -22,8 +22,23 @@ export class MachineService extends BaseApiService {
    * Fetches a list of machines from the server.
    * @returns An observable containing the list of machines.
    */
-  getMachines(): Observable<Machine[]> {
-    return this.get<Machine[]>(this.baseUrl).pipe(map(result => result.map(this.mapToMachine)));
+  getMachines(skip = 0, limit = 100): Observable<Machine[]> {
+    const params = new HttpParams()
+      .set('skip', skip.toString())
+      .set('limit', limit.toString());
+    return this.get<Machine[]>(this.baseUrl, params).pipe(
+      map((result) => (result ?? []).map(this.mapToMachine))
+    );
+  }
+
+  searchMachines(query: string, skip = 0, limit = 100): Observable<Machine[]> {
+    const params = new HttpParams()
+      .set('q', query.trim())
+      .set('skip', skip.toString())
+      .set('limit', limit.toString());
+    return this.get<Machine[]>(`${this.baseUrl}/search`, params).pipe(
+      map((result) => (result ?? []).map(this.mapToMachine))
+    );
   }
 
   /**

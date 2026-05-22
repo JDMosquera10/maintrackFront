@@ -1,7 +1,9 @@
-import { Component, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
 import { GeneralModule } from '../../modules/general.module';
 import { AuthService } from '../../services/auth.service';
 import { LoadingService } from '../../services/loading.service';
@@ -13,6 +15,8 @@ import { ChangeMaintenanceStateComponent } from '../modals/change-maintenance-st
 import { CompleteMaintenanceComponent, CompleteMaintenanceRequest } from '../modals/complete-maintenance/complete-maintenance.component';
 import { MantinanceComponent } from '../modals/mantinace/mantinance.component';
 
+const LIST_PAGE_SIZE = 500;
+
 @Component({
   selector: 'app-maintenances',
   imports: [GeneralModule],
@@ -20,7 +24,7 @@ import { MantinanceComponent } from '../modals/mantinace/mantinance.component';
   templateUrl: './maintenances.component.html',
   styleUrl: './maintenances.component.scss'
 })
-export class MaintenancesComponent {
+export class MaintenancesComponent implements AfterViewInit, OnDestroy {
 
   TRADUCERTYPES = MAINTENANCE_TYPE_TRANSLATIONS;
 
@@ -28,8 +32,15 @@ export class MaintenancesComponent {
   displayColunmMaintenance: string[] = ['date', 'type', 'currentState', 'spareParts', 'acciones'];
   dataSource = new MatTableDataSource<Maintenance>();
   istechenical = true;
+  searchTerm = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  private readonly destroy$ = new Subject<void>();
+  private readonly search$ = new Subject<string>();
+  private pendingOnly = true;
+  private currentTechnicianId?: string;
+  private listReady = false;
 
   constructor(
     private readonly maintenanceService: MaintenanceService,
@@ -37,69 +48,110 @@ export class MaintenancesComponent {
     private readonly loadingService: LoadingService,
     private readonly toastService: ToastService
   ) {
+    this.setupSearch();
     this.loadMaintenances();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupSearch(): void {
+    this.search$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        switchMap((term) => {
+          if (!this.listReady) {
+            return new Observable<Maintenance[]>((subscriber) => subscriber.complete());
+          }
+          return this.fetchMaintenances(term.trim());
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (maintenances) => this.applyMaintenances(maintenances, false),
+        error: (err) => {
+          console.error('Error searching maintenances:', err);
+          this.toastService.showError('Error al buscar mantenimientos');
+        },
+      });
   }
 
   private loadMaintenances(): void {
     this.loadingService.show('Cargando mantenimientos...');
     this.authService.getCurrentUser().subscribe({
       next: (user) => {
-        if (user) {
-          if (['coordinator', 'admin'].includes(user?.role || '')) {
-            this.maintenanceService.getMaintenancesPending().subscribe({
-              next: (maintenances: Maintenance[]) => {
-                this.istechenical = false;
-                this.displayColunmMaintenance = ['date', 'type', 'currentState', 'spareParts', 'technicianId', 'acciones'];
-                
-                if (maintenances && Array.isArray(maintenances)) {
-                  maintenances.forEach((item: Maintenance) => {
-                    if (item.technicianId && typeof item.technicianId === 'object') {
-                      item.technician = `${(item.technicianId as any)?.firstName || ''} ${(item.technicianId as any)?.lastName || ''}`.trim();
-                    }
-                  });
-                  this.dataSource.data = maintenances;
-                  this.dataSource.paginator = this.paginator;
-                } else {
-                  this.dataSource.data = [];
-                }
-                this.loadingService.hide();
-              },
-              error: (err) => {
-                console.error('Error loading maintenances:', err);
-                this.dataSource.data = [];
-                this.loadingService.hide();
-                this.toastService.showError('Error al cargar los mantenimientos');
-              }
-            });
-          } else {
-            this.maintenanceService.getMaintenancesByTechnicianPending(user?._id || '').subscribe({
-              next: (maintenances: Maintenance[]) => {
-                if (maintenances && Array.isArray(maintenances)) {
-                  this.dataSource.data = maintenances;
-                  this.dataSource.paginator = this.paginator;
-                } else {
-                  this.dataSource.data = [];
-                }
-                this.loadingService.hide();
-              },
-              error: (err) => {
-                console.error('Error loading maintenances:', err);
-                this.dataSource.data = [];
-                this.loadingService.hide();
-                this.toastService.showError('Error al cargar los mantenimientos');
-              }
-            });
-          }
-        } else {
+        if (!user) {
           this.loadingService.hide();
+          return;
         }
+
+        const isCoordinator = ['coordinator', 'admin'].includes(user?.role || '');
+        this.istechenical = !isCoordinator;
+        this.pendingOnly = true;
+        this.currentTechnicianId = isCoordinator ? undefined : user._id;
+        this.displayColunmMaintenance = isCoordinator
+          ? ['date', 'type', 'currentState', 'spareParts', 'technicianId', 'acciones']
+          : ['date', 'type', 'currentState', 'spareParts', 'acciones'];
+
+        this.listReady = true;
+        this.fetchMaintenances('').subscribe({
+          next: (maintenances) => this.applyMaintenances(maintenances),
+          error: (err) => {
+            console.error('Error loading maintenances:', err);
+            this.dataSource.data = [];
+            this.loadingService.hide();
+            this.toastService.showError('Error al cargar los mantenimientos');
+          },
+        });
       },
       error: () => {
         this.loadingService.hide();
-      }
+      },
     });
   }
 
+  private fetchMaintenances(searchTerm: string): Observable<Maintenance[]> {
+    if (searchTerm) {
+      return this.maintenanceService.searchMaintenances(searchTerm, {
+        pendingOnly: this.pendingOnly,
+        technicianId: this.currentTechnicianId,
+      }, 0, LIST_PAGE_SIZE);
+    }
+
+    if (this.currentTechnicianId) {
+      return this.maintenanceService.getMaintenancesByTechnicianPending(
+        this.currentTechnicianId,
+        0,
+        LIST_PAGE_SIZE
+      );
+    }
+
+    return this.maintenanceService.getMaintenancesPending(0, LIST_PAGE_SIZE);
+  }
+
+  private applyMaintenances(maintenances: Maintenance[], dismissLoading = true): void {
+    const items = maintenances ?? [];
+    items.forEach((item) => {
+      if (item.technicianId && typeof item.technicianId === 'object') {
+        item.technician = `${(item.technicianId as any)?.firstName || ''} ${(item.technicianId as any)?.lastName || ''}`.trim();
+      }
+    });
+    this.dataSource.data = items;
+    if (this.paginator) {
+      this.dataSource.paginator = this.paginator;
+      this.paginator.firstPage();
+    }
+    if (dismissLoading) {
+      this.loadingService.hide();
+    }
+  }
 
   /**
  *  @description Abre un diálogo para agregar una nueva máquina.
@@ -256,6 +308,7 @@ export class MaintenancesComponent {
 
   onSearchChange(event: Event): void {
     const searchValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = searchValue.trim().toLowerCase();
+    this.searchTerm = searchValue;
+    this.search$.next(searchValue);
   }
 }
