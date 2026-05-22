@@ -128,7 +128,8 @@ export class MachinesComponent implements AfterViewInit, OnDestroy {
           this.loadingService.show('Creando máquina...');
           this.machineService.createMachine(result).subscribe({
             next: () => {
-              this.reloadAfterMutation();
+              this.loadingService.hide();
+              this.refreshListSilently();
               this.toastService.showSuccess('Máquina creada exitosamente');
             },
             error: err => {
@@ -145,7 +146,8 @@ export class MachinesComponent implements AfterViewInit, OnDestroy {
           this.loadingService.show('Actualizando máquina...');
           this.machineService.updateMachine(result).subscribe({
             next: () => {
-              this.reloadAfterMutation();
+              this.loadingService.hide();
+              this.refreshListSilently();
               this.toastService.showSuccess('Máquina actualizada exitosamente');
             },
             error: err => {
@@ -195,12 +197,18 @@ export class MachinesComponent implements AfterViewInit, OnDestroy {
     this.search$.next(searchValue);
   }
 
-  private reloadAfterMutation(): void {
-    if (this.searchTerm.trim()) {
-      this.search$.next(this.searchTerm);
-    } else {
-      this.loadMachines();
-    }
+  private refreshListSilently(): void {
+    const request = this.searchTerm.trim()
+      ? this.machineService.searchMachines(this.searchTerm.trim(), 0, LIST_PAGE_SIZE)
+      : this.machineService.getMachines(0, LIST_PAGE_SIZE);
+
+    request.subscribe({
+      next: (machines) => this.applyMachines(machines, false),
+      error: (err) => {
+        console.error('Error refreshing machines:', err);
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   nameCustomer(client: Customer | null | undefined): string {

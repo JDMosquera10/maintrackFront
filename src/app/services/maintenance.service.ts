@@ -237,10 +237,20 @@ export class MaintenanceService extends BaseApiService {
       currentState: currentState,
       spareParts: Array.isArray(data.spareParts) ? data.spareParts : [],
       technicianId: data.technicianId,
+      technician: this.mapTechnicianName(data.technicianId),
       isCompleted: data.isCompleted === true,
       createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
       updatedAt: data.updatedAt ? new Date(data.updatedAt) : undefined,
     };
+  }
+
+  private mapTechnicianName(technicianId: unknown): string | undefined {
+    if (!technicianId || typeof technicianId !== 'object') {
+      return undefined;
+    }
+    const technician = technicianId as { firstName?: string; lastName?: string };
+    const name = `${technician.firstName || ''} ${technician.lastName || ''}`.trim();
+    return name || undefined;
   }
 
   private mapState(data: any): any {

@@ -139,9 +139,7 @@ export class MaintenancesComponent implements AfterViewInit, OnDestroy {
   private applyMaintenances(maintenances: Maintenance[], dismissLoading = true): void {
     const items = maintenances ?? [];
     items.forEach((item) => {
-      if (item.technicianId && typeof item.technicianId === 'object') {
-        item.technician = `${(item.technicianId as any)?.firstName || ''} ${(item.technicianId as any)?.lastName || ''}`.trim();
-      }
+      item.technician = item.technician || this.getTechnicianDisplayName(item);
     });
     this.dataSource.data = items;
     if (this.paginator) {
@@ -177,7 +175,7 @@ export class MaintenancesComponent implements AfterViewInit, OnDestroy {
           this.loadingService.show('Creando mantenimiento...');
           this.maintenanceService.createMaintenance(result).subscribe({
             next: maintenance => {
-              maintenance.technician = `${maintenance.technicianId?.firstName} ${maintenance.technicianId?.lastName}`
+              maintenance.technician = maintenance.technician || this.getTechnicianDisplayName(maintenance);
               this.dataSource.data.push(maintenance);
               this.dataSource._updateChangeSubscription();
               this.loadingService.hide();
@@ -199,7 +197,8 @@ export class MaintenancesComponent implements AfterViewInit, OnDestroy {
             next: maintenance => {
               const index = this.dataSource.data.indexOf(element);
               if (index >= 0) {
-                maintenance.technician = `${maintenance.technicianId?.firstName} ${maintenance.technicianId?.lastName}`
+                maintenance.technician =
+                  maintenance.technician || this.getTechnicianDisplayName(maintenance, element);
                 this.dataSource.data[index] = maintenance;
                 this.dataSource._updateChangeSubscription();
               }
@@ -290,6 +289,9 @@ export class MaintenancesComponent implements AfterViewInit, OnDestroy {
           next: (updatedMaintenance) => {
             const index = this.dataSource.data.findIndex(m => m.id === element.id);
             if (index >= 0) {
+              updatedMaintenance.technician =
+                updatedMaintenance.technician ||
+                this.getTechnicianDisplayName(updatedMaintenance, element);
               this.dataSource.data[index] = updatedMaintenance;
               this.dataSource._updateChangeSubscription();
             }
@@ -310,5 +312,13 @@ export class MaintenancesComponent implements AfterViewInit, OnDestroy {
     const searchValue = (event.target as HTMLInputElement).value;
     this.searchTerm = searchValue;
     this.search$.next(searchValue);
+  }
+
+  private getTechnicianDisplayName(maintenance: Maintenance, fallback?: Maintenance): string {
+    const technician = maintenance.technicianId;
+    if (technician && typeof technician === 'object') {
+      return `${(technician as { firstName?: string }).firstName || ''} ${(technician as { lastName?: string }).lastName || ''}`.trim();
+    }
+    return maintenance.technician || fallback?.technician || '';
   }
 }

@@ -151,6 +151,35 @@ body {
     padding-bottom: 10px;
   }
 
+  &:has(textarea.mat-mdc-input-element) {
+    .mat-mdc-form-field-flex {
+      height: auto;
+      min-height: 96px;
+      align-items: flex-start;
+    }
+
+    .mat-mdc-form-field-infix {
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      line-height: 1.25 !important;
+    }
+
+    .mat-mdc-floating-label:not(.mdc-floating-label--float-above) {
+      top: 16px !important;
+      transform: none !important;
+    }
+
+    textarea.mat-mdc-input-element {
+      min-height: 72px;
+      line-height: 1.5 !important;
+      padding-top: 8px;
+    }
+  }
+
   .mat-mdc-floating-label,
   .mdc-floating-label {
     color: var(--text-secondary);
